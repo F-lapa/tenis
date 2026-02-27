@@ -877,7 +877,6 @@
             color: var(--primary);
         }
 
-        /* NOVO: Estilos para H2H melhorado */
         .h2h-header {
             background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(59, 130, 246, 0.05));
             border: 1px solid var(--border-subtle);
@@ -1038,7 +1037,6 @@
             color: var(--accent);
         }
 
-        /* NOVO: Estilo para ranking destacado na análise */
         .ranking-highlight {
             background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(59, 130, 246, 0.1));
             border: 2px solid var(--primary);
@@ -1073,7 +1071,6 @@
             font-weight: 500;
         }
 
-        /* NOVO: Estilos para o formulário de jogadores */
         .player-form-section {
             background: var(--background-deep);
             border: 1px solid var(--border-subtle);
@@ -1159,7 +1156,6 @@
             margin-top: 0.25rem;
         }
 
-        /* NOVO: Estilos para ranking badge nos cards */
         .ranking-badge {
             display: inline-flex;
             align-items: center;
@@ -1191,6 +1187,113 @@
             margin-top: 0.25rem;
         }
 
+        .filters-wrapper {
+            background: var(--background-deep);
+            border: 1px solid var(--border-subtle);
+            border-radius: 1rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .filters-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .filters-title {
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            align-items: end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.375rem;
+        }
+
+        .filter-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .filter-select {
+            padding: 0.625rem 0.875rem;
+            font-size: 0.875rem;
+            background: var(--card-base);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .filter-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.15);
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 0.75rem;
+            align-items: end;
+        }
+
+        .active-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .filter-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.375rem 0.875rem;
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid rgba(6, 182, 212, 0.25);
+            border-radius: 9999px;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            color: var(--primary);
+            transition: all 0.2s ease;
+        }
+
+        .filter-tag:hover {
+            background: rgba(6, 182, 212, 0.2);
+            border-color: rgba(6, 182, 212, 0.4);
+        }
+
+        .filter-tag button {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            padding: 0;
+            font-size: 0.75rem;
+            line-height: 1;
+            transition: color 0.2s ease;
+        }
+
+        .filter-tag button:hover {
+            color: var(--danger);
+        }
+
         @media (max-width: 640px) {
             .player-vs-layout {
                 flex-direction: column;
@@ -1217,6 +1320,14 @@
                 width: 48px;
                 height: 48px;
                 font-size: 1.25rem;
+            }
+
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-actions {
+                justify-content: flex-end;
             }
         }
 
@@ -1265,7 +1376,6 @@
             border-width: 0;
         }
     </style>
-<base target="_blank">
 </head>
 <body>
     <!-- Loading Overlay -->
@@ -1319,7 +1429,6 @@
                 </div>
                 
                 <div class="space-y-4">
-                    <!-- Ranking com pontos ao lado -->
                     <div class="flex items-center justify-between p-3 rounded-lg bg-background-deep/50">
                         <span class="stat-label">
                             <i class="fas fa-trophy text-primary w-5"></i>
@@ -1359,12 +1468,11 @@
                 </div>
             </div>
 
-            <!-- Ranking Analysis Card - COM RANKING DESTACADO -->
+            <!-- Ranking Analysis Card -->
             <div class="dashboard-card p-6 space-y-4">
                 <h2 class="text-lg font-bold text-text-main mb-2">Análise de Ranking</h2>
                 
                 <div class="space-y-4">
-                    <!-- RANKING DESTACADO -->
                     <div class="ranking-highlight">
                         <div class="flex items-center justify-between">
                             <span class="stat-label">
@@ -1456,14 +1564,57 @@
                 <!-- Temporadas Tab -->
                 <div id="temporadas" class="tab-content active" role="tabpanel">
                     <div class="dashboard-card p-6">
-                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
-                            <h2 class="text-2xl font-extrabold text-text-main">Histórico de Campanhas</h2>
+                        <div class="flex flex-col gap-4 mb-6">
+                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                <h2 class="text-2xl font-extrabold text-text-main">Histórico de Campanhas</h2>
+                            </div>
                             
-                            <div class="flex items-center gap-3 bg-background-deep p-2 rounded-lg border border-border-subtle">
-                                <label for="seasonFilter" class="text-sm font-medium text-text-muted whitespace-nowrap">Temporada:</label>
-                                <select id="seasonFilter" class="form-select w-auto min-w-[120px] bg-transparent border-none focus:ring-0">
-                                    <option value="all">Todas</option>
-                                </select>
+                            <div class="filters-wrapper">
+                                <div class="filters-header">
+                                    <div class="filters-title">
+                                        <i class="fas fa-filter text-primary"></i>
+                                        Filtros
+                                    </div>
+                                    <button onclick="clearFilters()" class="btn btn-ghost text-xs py-1.5 px-3" title="Limpar todos os filtros">
+                                        <i class="fas fa-undo mr-1"></i>
+                                        Limpar
+                                    </button>
+                                </div>
+                                
+                                <div class="filters-grid">
+                                    <div class="filter-group">
+                                        <label class="filter-label">Temporada</label>
+                                        <select id="seasonFilter" class="form-select filter-select">
+                                            <option value="all">Toda a Carreira</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="filter-group">
+                                        <label class="filter-label">Tipo de Torneio</label>
+                                        <select id="typeFilter" class="form-select filter-select">
+                                            <option value="all">Todos os Tipos</option>
+                                            <option value="Grand Slam">Grand Slam</option>
+                                            <option value="ATP Finals">ATP Finals</option>
+                                            <option value="ATP Masters 1000">Masters 1000</option>
+                                            <option value="ATP 500">ATP 500</option>
+                                            <option value="ATP 250">ATP 250</option>
+                                            <option value="Jogos Olímpicos">Jogos Olímpicos</option>
+                                            <option value="Challenger">Challengers</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="filter-group">
+                                        <label class="filter-label">Superfície</label>
+                                        <select id="surfaceFilter" class="form-select filter-select">
+                                            <option value="all">Todas as Superfícies</option>
+                                            <option value="Saibro">Saibro</option>
+                                            <option value="Rápida">Rápida</option>
+                                            <option value="Grama">Grama</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div id="activeFilters" class="active-filters" style="display: none;"></div>
                             </div>
                         </div>
 
@@ -1496,7 +1647,6 @@
                                         <th>Torneio</th>
                                         <th class="text-center">Tipo</th>
                                         <th class="text-center">Superfície</th>
-                                        <th class="text-center">Status</th>
                                         <th class="text-center">Resultado</th>
                                         <th class="text-center rounded-tr-lg">Ações</th>
                                     </tr>
@@ -1510,7 +1660,7 @@
                         <div id="noTournamentsMsg" class="empty-state hidden">
                             <i class="fas fa-tennis-ball empty-state-icon"></i>
                             <p class="text-lg font-medium mb-2">Nenhum torneio encontrado</p>
-                            <p class="text-sm">Clique em "Novo Torneio" para começar a registrar sua carreira.</p>
+                            <p class="text-sm">Ajuste os filtros ou adicione novos torneios.</p>
                         </div>
                     </div>
                 </div>
@@ -1570,7 +1720,7 @@
                     </div>
                 </div>
 
-                <!-- H2H Tab - COMPLETAMENTE REDESENHADA -->
+                <!-- H2H Tab -->
                 <div id="h2h" class="tab-content" role="tabpanel">
                     <div class="dashboard-card p-6">
                         <h2 class="text-2xl font-extrabold mb-6 text-text-main">Head-to-Head (H2H)</h2>
@@ -1711,6 +1861,7 @@
             'ZAM':'ZM','ZIM':'ZW'
         };
 
+        // ==================== WORLD RECORDS ====================
         const WORLD_RECORDS = [
             { id: 'weeksAtNo1', title: 'Semanas como Nº 1', holder: 'Novak Djokovic', value: 428, format: v => `${v} sem` },
             { id: 'consecutiveWeeks', title: 'Semanas consecutivas Nº 1', holder: 'Roger Federer', value: 237, format: v => `${v} sem` },
@@ -1736,7 +1887,110 @@
             { id: 'usOpen', title: 'Títulos US Open', holder: 'Jimmy Connors, Pete Sampras, Roger Federer', value: 5, stat: s => 0, format: v => `${v}` },
             { id: 'australianOpen', title: 'Títulos Australian Open', holder: 'Novak Djokovic', value: 10, stat: s => 0, format: v => `${v}` },
             { id: 'doubleCareer', title: 'Grand Slam duplo (carreira)', holder: 'Novak Djokovic', value: 2, stat: s => (s.porTipo?.['Grand Slam']?.titulos || 0) >= 2 ? 1 : 0, format: v => v >= 1 ? 'Sim' : 'Não' },
-            { id: 'goldenMasters', title: 'Golden Masters (todos M1000)', holder: 'Novak Djokovic', value: 9, stat: s => 0, format: v => `${v}/9` }
+            { id: 'goldenMasters', title: 'Golden Masters (todos M1000)', holder: 'Novak Djokovic', value: 9, stat: s => 0, format: v => `${v}/9` },
+            { id: 'bigTitles', title: 'Big Titles (GS + M1000 + Finals)', holder: 'Novak Djokovic', value: 72, stat: s => {
+                const gs = s.porTipo?.['Grand Slam']?.titulos || 0;
+                const m1000 = s.porTipo?.['ATP Masters 1000']?.titulos || 0;
+                const finals = s.porTipo?.['ATP Finals']?.titulos || 0;
+                return gs + m1000 + finals;
+            }, format: v => `${v}` },
+            { id: 'titlesInSingleSeason', title: 'Títulos em uma única temporada', holder: 'John McEnroe', value: 82, stat: s => {
+                const titlesByYear = {};
+                allTournaments.forEach(t => {
+                    if (t.faseFinal === 'Campeão' && !t.tipo?.startsWith('CH')) {
+                        titlesByYear[t.ano] = (titlesByYear[t.ano] || 0) + 1;
+                    }
+                });
+                return Math.max(...Object.values(titlesByYear), 0);
+            }, format: v => `${v}` },
+            { id: 'grandSlamFinals', title: 'Finais de Grand Slam', holder: 'Novak Djokovic', value: 37, stat: s => {
+                return allTournaments.filter(t => t.tipo === 'Grand Slam' && (t.faseFinal === 'F' || t.faseFinal === 'Campeão')).length;
+            }, format: v => `${v}` },
+            { id: 'weeksInTop10', title: 'Semanas no Top 10', holder: 'Roger Federer', value: 906, stat: s => 0, format: v => `${v} sem` },
+            { id: 'consecutiveSemifinals', title: 'Semifinais consecutivas em GS', holder: 'Novak Djokovic', value: 23, stat: s => {
+                const gsTournaments = allTournaments
+                    .filter(t => t.tipo === 'Grand Slam')
+                    .sort((a, b) => new Date(b.dataInicio) - new Date(a.dataInicio));
+                
+                let consecutive = 0;
+                for (const t of gsTournaments) {
+                    const rounds = t.jogos?.map(j => j.rodada) || [];
+                    const reachedSF = rounds.includes('SF') || rounds.includes('F') || t.faseFinal === 'Campeão';
+                    if (reachedSF) {
+                        consecutive++;
+                    } else {
+                        break;
+                    }
+                }
+                return consecutive;
+            }, format: v => `${v}` },
+            { id: 'bagels', title: 'Sets ganhos por 6-0 (careira)', holder: 'Novak Djokovic', value: 200, stat: s => {
+                let bagels = 0;
+                allTournaments.forEach(t => {
+                    (t.jogos || []).forEach(j => {
+                        if (j.resultado === 'V' && j.placar) {
+                            const sets = j.placar.split(',').map(s => s.trim());
+                            sets.forEach(set => {
+                                if (set.includes('6-0')) bagels++;
+                            });
+                        }
+                    });
+                });
+                return bagels;
+            }, format: v => `${v}` },
+            { id: 'decidingSetWins', title: 'Vitórias no set decisivo', holder: 'Novak Djokovic', value: 150, stat: s => {
+                let decidingWins = 0;
+                allTournaments.forEach(t => {
+                    (t.jogos || []).forEach(j => {
+                        if (j.resultado === 'V' && j.placar) {
+                            const sets = j.placar.split(',').map(s => s.trim());
+                            if (sets.length === 3 || (sets.length === 2 && (sets[1].includes('7-') || sets[1].includes('6-4')))) {
+                                decidingWins++;
+                            }
+                        }
+                    });
+                });
+                return decidingWins;
+            }, format: v => `${v}` },
+            { id: 'top10Wins', title: 'Vitórias contra Top 10', holder: 'Novak Djokovic', value: 260, stat: s => {
+                let top10Wins = 0;
+                allTournaments.forEach(t => {
+                    (t.jogos || []).forEach(j => {
+                        if (j.resultado === 'V' && j.adversarioRanking && parseInt(j.adversarioRanking) <= 10) {
+                            top10Wins++;
+                        }
+                    });
+                });
+                return top10Wins;
+            }, format: v => `${v}` },
+            { id: 'no1Wins', title: 'Vitórias contra Nº 1 do mundo', holder: 'Novak Djokovic', value: 31, stat: s => {
+                let no1Wins = 0;
+                allTournaments.forEach(t => {
+                    (t.jogos || []).forEach(j => {
+                        if (j.resultado === 'V' && j.adversarioRanking === 1) {
+                            no1Wins++;
+                        }
+                    });
+                });
+                return no1Wins;
+            }, format: v => `${v}` },
+            { id: 'youngestNo1', title: 'Mais jovem Nº 1 da história', holder: 'Carlos Alcaraz', value: 19, stat: s => {
+                const birthDate = new Date('2011-02-18');
+                const today = new Date();
+                const age = today.getFullYear() - birthDate.getFullYear();
+                return currentRanking === 1 ? age : 0;
+            }, format: v => v > 0 ? `${v} anos` : 'N/A' },
+            { id: 'tripleCrown', title: 'Triple Crown (GS + Ouro + Davis)', holder: 'Vários', value: 1, stat: s => {
+                const gs = s.porTipo?.['Grand Slam']?.titulos || 0;
+                const olympic = s.porTipo?.['Jogos Olímpicos']?.titulos || 0;
+                return (gs > 0 && olympic > 0) ? 1 : 0;
+            }, format: v => v >= 1 ? 'Sim' : 'Não' },
+            { id: 'surfaceSlam', title: 'Surface Slam (títulos nas 3 superfícies)', holder: 'Vários', value: 1, stat: s => {
+                const clay = s.porSuperficie?.['Saibro']?.titulosATP || 0;
+                const hard = s.porSuperficie?.['Rápida']?.titulosATP || 0;
+                const grass = s.porSuperficie?.['Grama']?.titulosATP || 0;
+                return (clay > 0 && hard > 0 && grass > 0) ? 1 : 0;
+            }, format: v => v >= 1 ? 'Sim' : 'Não' }
         ];
 
         // ==================== STATE MANAGEMENT ====================
@@ -1896,6 +2150,9 @@
                     ...doc.data()
                 }));
                 
+                // CORREÇÃO: Definir temporada atual como padrão APÓS carregar os dados
+                initializeSeasonFilter();
+                
                 updateUI();
                 showToast(`${allTournaments.length} torneios carregados`, 'success');
             } catch (error) {
@@ -1903,6 +2160,30 @@
                 showToast('Erro ao carregar dados. Verifique sua conexão.', 'error');
             } finally {
                 showLoading(false);
+            }
+        }
+
+        // NOVA FUNÇÃO: Inicializar o filtro de temporada com o ano atual selecionado
+        function initializeSeasonFilter() {
+            const years = [...new Set(allTournaments.map(t => t.ano))].sort((a, b) => b - a);
+            const seasonSelect = document.getElementById('seasonFilter');
+            
+            // Preencher as opções
+            seasonSelect.innerHTML = '<option value="all">Toda a Carreira</option>' + 
+                years.map(y => `<option value="${y}">${y}</option>`).join('');
+            
+            // Verificar se existe dados para o ano atual
+            const hasCurrentYear = years.includes(CURRENT_YEAR);
+            
+            if (hasCurrentYear) {
+                // Se existir torneios no ano atual, selecionar o ano atual
+                seasonSelect.value = CURRENT_YEAR.toString();
+            } else if (years.length > 0) {
+                // Se não existir ano atual, selecionar o ano mais recente disponível
+                seasonSelect.value = years[0].toString();
+            } else {
+                // Se não houver nenhum torneio, deixar em "Toda a Carreira"
+                seasonSelect.value = 'all';
             }
         }
 
@@ -2065,7 +2346,6 @@
             stats.melhorSequencia = melhorSequencia;
             stats.sequenciaAtual = sequenciaAtual;
             
-            // ATP: Soma dos 19 melhores resultados
             const allPoints = allTournaments
                 .map(t => Number(t.pontos) || 0)
                 .filter(p => p > 0)
@@ -2079,10 +2359,9 @@
         // ==================== UI UPDATES ====================
         function updateUI() {
             const stats = calculateStats();
-            const season = document.getElementById('seasonFilter').value;
             
             updateSidebar(stats);
-            updateSeasonsTab(stats, season);
+            updateSeasonsTab();
             updateTitulosTab(stats);
             updateVitoriasTab(stats);
             updateH2HTab();
@@ -2091,13 +2370,11 @@
         }
 
         function updateSidebar(stats) {
-            // Atualizar pontos ao lado do ranking
             document.getElementById('sidebarPoints').textContent = `${stats.pontosRanking.toLocaleString()} pts`;
             document.getElementById('premiacao').textContent = formatCurrency(stats.premiacao);
             document.getElementById('titulosTotal').textContent = stats.titulosATP;
             document.getElementById('vitoriasDerrotas').textContent = `${stats.vitoriasATP} / ${stats.derrotasATP}`;
             
-            // Análise de ranking
             document.getElementById('currentRankingPoints').textContent = `${stats.pontosRanking.toLocaleString()} pts`;
             document.getElementById('pointsToDefend').textContent = `${stats.pontosDefender.toLocaleString()} pts`;
             
@@ -2105,37 +2382,40 @@
             document.getElementById('projectedPoints').textContent = `${projected.toLocaleString()} pts`;
         }
 
-        function updateSeasonsTab(stats, season) {
-            const filtered = season === 'all' 
-                ? allTournaments 
-                : allTournaments.filter(t => t.ano == season);
-            
-            const years = [...new Set(allTournaments.map(t => t.ano))].sort((a, b) => b - a);
-            const select = document.getElementById('seasonFilter');
-            const currentVal = select.value;
-            
-            select.innerHTML = '<option value="all">Todas as temporadas</option>' + 
-                years.map(y => `<option value="${y}">${y}</option>`).join('');
-            
-            if (!currentVal || currentVal === 'all') {
-                if (years.includes(CURRENT_YEAR)) {
-                    select.value = CURRENT_YEAR;
-                } else if (years.length > 0) {
-                    select.value = years[0];
-                } else {
-                    select.value = 'all';
-                }
-            } else {
-                select.value = currentVal;
-            }
-            
-            const finalSeason = select.value;
-            const finalFiltered = finalSeason === 'all' 
-                ? allTournaments 
-                : allTournaments.filter(t => t.ano == finalSeason);
+        // ==================== TEMPORADAS TAB ====================
+        function updateSeasonsTab() {
+            const seasonFilter = document.getElementById('seasonFilter').value;
+            const typeFilter = document.getElementById('typeFilter').value;
+            const surfaceFilter = document.getElementById('surfaceFilter').value;
 
+            // Aplicar filtros
+            let filtered = [...allTournaments];
+
+            // Filtro de temporada
+            if (seasonFilter !== 'all') {
+                filtered = filtered.filter(t => t.ano == seasonFilter);
+            }
+
+            // Filtro de tipo
+            if (typeFilter !== 'all') {
+                if (typeFilter === 'Challenger') {
+                    filtered = filtered.filter(t => t.tipo?.startsWith('CH'));
+                } else {
+                    filtered = filtered.filter(t => t.tipo === typeFilter);
+                }
+            }
+
+            // Filtro de superfície
+            if (surfaceFilter !== 'all') {
+                filtered = filtered.filter(t => t.superficie === surfaceFilter);
+            }
+
+            // Atualizar tags de filtros ativos
+            updateActiveFilters();
+
+            // Calcular estatísticas dos filtrados
             let vitorias = 0, derrotas = 0, titulos = 0, premiacao = 0;
-            finalFiltered.forEach(t => {
+            filtered.forEach(t => {
                 const isATP = !t.tipo?.startsWith('CH');
                 if (isATP) {
                     vitorias += (t.jogos || []).filter(j => j.resultado === 'V').length;
@@ -2153,14 +2433,14 @@
             const tbody = document.getElementById('temporadasTabela');
             const noData = document.getElementById('noTournamentsMsg');
             
-            if (finalFiltered.length === 0) {
+            if (filtered.length === 0) {
                 tbody.innerHTML = '';
                 noData.classList.remove('hidden');
                 return;
             }
             
             noData.classList.add('hidden');
-            tbody.innerHTML = finalFiltered.map(t => {
+            tbody.innerHTML = filtered.map(t => {
                 const v = (t.jogos || []).filter(j => j.resultado === 'V').length;
                 const d = (t.jogos || []).filter(j => j.resultado === 'D').length;
                 const isChampion = t.faseFinal === 'Campeão';
@@ -2187,11 +2467,6 @@
                         </td>
                         <td class="text-center text-text-muted">${t.superficie}</td>
                         <td class="text-center">
-                            <span class="badge ${t.status === 'Finalizado' ? 'badge-success' : 'badge-warning'}">
-                                ${t.status === 'Finalizado' ? '✓ Finalizado' : '⏳ Em andamento'}
-                            </span>
-                        </td>
-                        <td class="text-center">
                             <div class="flex items-center justify-center gap-2">
                                 <span class="text-secondary font-bold">${v}</span>
                                 <span class="text-text-muted">/</span>
@@ -2211,6 +2486,62 @@
                 `;
             }).join('');
         }
+
+        function updateActiveFilters() {
+            const container = document.getElementById('activeFilters');
+            const filters = [];
+            
+            const season = document.getElementById('seasonFilter').value;
+            const type = document.getElementById('typeFilter').value;
+            const surface = document.getElementById('surfaceFilter').value;
+
+            if (season !== 'all') filters.push({ type: 'season', label: `Temporada: ${season}` });
+            if (type !== 'all') filters.push({ type: 'type', label: `Tipo: ${type}` });
+            if (surface !== 'all') filters.push({ type: 'surface', label: `Superfície: ${surface}` });
+
+            if (filters.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+
+            container.style.display = 'flex';
+            container.innerHTML = filters.map(f => `
+                <span class="filter-tag">
+                    ${f.label}
+                    <button onclick="removeFilter('${f.type}')" title="Remover filtro">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </span>
+            `).join('');
+        }
+
+        window.removeFilter = function(filterType) {
+            if (filterType === 'season') document.getElementById('seasonFilter').value = 'all';
+            if (filterType === 'type') document.getElementById('typeFilter').value = 'all';
+            if (filterType === 'surface') document.getElementById('surfaceFilter').value = 'all';
+            
+            updateSeasonsTab();
+        };
+
+        window.clearFilters = function() {
+            // CORREÇÃO: Voltar para o ano atual em vez de "all"
+            const years = [...new Set(allTournaments.map(t => t.ano))].sort((a, b) => b - a);
+            const hasCurrentYear = years.includes(CURRENT_YEAR);
+            
+            if (hasCurrentYear) {
+                document.getElementById('seasonFilter').value = CURRENT_YEAR.toString();
+            } else if (years.length > 0) {
+                document.getElementById('seasonFilter').value = years[0].toString();
+            } else {
+                document.getElementById('seasonFilter').value = 'all';
+            }
+            
+            document.getElementById('typeFilter').value = 'all';
+            document.getElementById('surfaceFilter').value = 'all';
+            
+            updateSeasonsTab();
+            showToast('Filtros resetados para temporada atual', 'info');
+        };
 
         function updateTitulosTab(stats) {
             document.getElementById('titulosTotalResumo').textContent = stats.titulosATP;
@@ -2370,21 +2701,20 @@
             }
         };
 
-        // ==================== NOVO: FUNÇÃO PARA RENDERIZAR PARTIDA COM RANKING BONITO ====================
+        // ==================== FUNÇÃO PARA RENDERIZAR PARTIDA COM RANKING HISTÓRICO ====================
         function renderVSMatch(j, flSeedFromFirstMatch = null) {
             const isWin = j.resultado === 'V';
             const isLoss = j.resultado === 'D';
             const isBye = j.resultado === 'Bye';
             
-            // Informações do adversário - RANKING BONITO SEM #
+            // CORREÇÃO: Usa o ranking salvo no jogo (histórico), não o ranking atual do sistema
             const opponentRankingHtml = j.adversarioRanking ? 
                 `<span class="ranking-badge opponent"><i class="fas fa-chart-line text-xs"></i> <span class="ranking-number">${j.adversarioRanking}</span></span>` : '';
             const opponentSeed = j.adversarioSeed ? `<span class="seed-badge ml-1">(${j.adversarioSeed})</span>` : '';
             
-            // Informações do Fernando - usa o seed do primeiro jogo se disponível
+            // CORREÇÃO: Usa o ranking salvo no jogo (histórico), não o ranking atual do sistema
             const flRankingHtml = j.flRanking ? 
-                `<span class="ranking-badge"><i class="fas fa-chart-line text-xs"></i> <span class="ranking-number">${j.flRanking}</span></span>` : 
-                (currentRanking ? `<span class="ranking-badge"><i class="fas fa-chart-line text-xs"></i> <span class="ranking-number">${currentRanking}</span></span>` : '');
+                `<span class="ranking-badge"><i class="fas fa-chart-line text-xs"></i> <span class="ranking-number">${j.flRanking}</span></span>` : '';
             const flSeed = j.flSeed ? `<span class="seed-badge ml-1">(${j.flSeed})</span>` : (flSeedFromFirstMatch ? `<span class="seed-badge ml-1">(${flSeedFromFirstMatch})</span>` : '');
             
             return `
@@ -2508,7 +2838,6 @@
                     const v = (t.jogos || []).filter(j => j.resultado === 'V').length;
                     const d = (t.jogos || []).filter(j => j.resultado === 'D').length;
                     
-                    // Pega o seed do Fernando do primeiro jogo real (não bye)
                     const firstRealMatch = (t.jogos || []).find(j => j.resultado !== 'Bye');
                     const flSeedFromFirstMatch = firstRealMatch?.flSeed || null;
                     
@@ -2565,7 +2894,6 @@
             content.classList.toggle('open');
         };
 
-        // ==================== H2H - NOVO DESIGN ====================
         function updateH2HTab() {
             const opponentMap = new Map();
             availableCountries = new Set();
@@ -2639,7 +2967,6 @@
 
         document.getElementById('h2hCountryFilter').addEventListener('change', displayH2H);
 
-        // ==================== H2H DISPLAY - NOVO DESIGN MELHORADO ====================
         function displayH2H() {
             const name = h2hSearch.value.trim();
             const country = document.getElementById('h2hCountryFilter').value;
@@ -2716,9 +3043,7 @@
 
             matches.sort((a, b) => b.data - a.data);
 
-            // NOVO DESIGN DO H2H
             container.innerHTML = `
-                <!-- Header com placar grande -->
                 <div class="h2h-header">
                     <div class="h2h-score-big">
                         <div class="h2h-player">
@@ -2743,7 +3068,6 @@
                         </div>
                     </div>
                     
-                    <!-- Estatísticas rápidas -->
                     <div class="grid grid-cols-3 gap-4 mt-4 pt-4 border-t border-border-subtle">
                         <div class="text-center">
                             <div class="text-2xl font-bold text-secondary">${wins}</div>
@@ -2760,7 +3084,6 @@
                     </div>
                 </div>
                 
-                <!-- Lista de partidas em cards -->
                 <div class="h2h-matches-grid">
                     ${matches.map((m, index) => `
                         <div class="h2h-match-card" style="animation: fadeIn 0.3s ease ${index * 0.1}s both;">
@@ -2905,7 +3228,6 @@
             });
         }
 
-        // ==================== FORMULÁRIO SIMPLIFICADO - SEM RANKING DO FL ====================
         function openCreateTournamentModal() {
             const body = `
                 <form id="createTournamentForm" class="space-y-4">
@@ -2950,7 +3272,6 @@
                         </div>
                     </div>
                     
-                    <!-- SEÇÃO: CABEÇA DE CHAVE DO FERNANDO (APENAS NO PRIMEIRO JOGO) -->
                     <div class="player-form-section">
                         <div class="player-form-header">
                             <div class="player-form-avatar fl">FL</div>
@@ -2968,11 +3289,10 @@
                         </div>
                         <p class="seed-info-text">
                             <i class="fas fa-info-circle mr-1"></i>
-                            O número do cabeça de chave será mantido para todo o torneio. Seu ranking atual (${currentRanking}) será usado automaticamente.
+                            O número do cabeça de chave será mantido para todo o torneio. Seu ranking atual (${currentRanking}) será salvo automaticamente.
                         </p>
                     </div>
                     
-                    <!-- SEÇÃO: INFORMAÇÕES DO ADVERSÁRIO -->
                     <div class="player-form-section">
                         <div class="player-form-header">
                             <div class="player-form-avatar opp">?</div>
@@ -3091,10 +3411,7 @@
             const isBye = document.getElementById('jAdversario').value.toLowerCase() === 'bye';
             const resultado = isBye ? 'Bye' : document.getElementById('jResultado').value;
             
-            // Coletar dados do Fernando Lapa - RANKING AUTOMÁTICO DO SISTEMA
             const flSeed = document.getElementById('flSeed').value;
-            
-            // Coletar dados do adversário
             const adversarioRanking = document.getElementById('adversarioRanking').value;
             const adversarioSeed = document.getElementById('adversarioSeed').value;
             
@@ -3104,10 +3421,8 @@
                 nacionalidade: isBye ? 'ATP' : document.getElementById('jNacionalidade').value.toUpperCase(),
                 placar: isBye ? 'Bye' : document.getElementById('jPlacar').value,
                 resultado: resultado,
-                // Dados do Fernando Lapa - RANKING PEGA AUTOMATICAMENTE DO SISTEMA
-                flRanking: currentRanking, // <-- AQUI: Pega do sistema automaticamente
+                flRanking: currentRanking,
                 flSeed: flSeed ? parseInt(flSeed) : null,
-                // Dados do adversário
                 adversarioRanking: adversarioRanking ? parseInt(adversarioRanking) : null,
                 adversarioSeed: adversarioSeed ? parseInt(adversarioSeed) : null
             });
@@ -3137,7 +3452,6 @@
             const t = allTournaments.find(x => x.id === id);
             if (!t) return;
 
-            // Pega o seed do Fernando do primeiro jogo real (não bye)
             const firstRealMatch = (t.jogos || []).find(j => j.resultado !== 'Bye');
             const flSeedFromFirstMatch = firstRealMatch?.flSeed || null;
 
@@ -3158,7 +3472,6 @@
                         <div class="border-t border-border-subtle pt-4 mt-4">
                             <h4 class="font-semibold text-text-main mb-3">Adicionar Próxima Partida</h4>
                             
-                            <!-- Dados do Fernando Lapa - HERDADO DO PRIMEIRO JOGO -->
                             <div class="player-form-section mb-3">
                                 <div class="player-form-header">
                                     <div class="player-form-avatar fl">FL</div>
@@ -3176,11 +3489,10 @@
                                     ${flSeedFromFirstMatch 
                                         ? `Cabeça de chave (${flSeedFromFirstMatch}) herdado do primeiro jogo` 
                                         : 'Você não era cabeça de chave neste torneio'}
-                                    • Seu ranking atual (${currentRanking}) será usado automaticamente
+                                    • Seu ranking atual (${currentRanking}) será salvo automaticamente
                                 </p>
                             </div>
                             
-                            <!-- Dados do Adversário -->
                             <div class="player-form-section mb-3">
                                 <div class="player-form-header">
                                     <div class="player-form-avatar opp">?</div>
@@ -3288,10 +3600,7 @@
 
             const t = allTournaments.find(x => x.id === id);
             
-            // Coletar dados do Fernando Lapa - RANKING AUTOMÁTICO DO SISTEMA
-            const flSeed = document.getElementById('nextFlSeed').value; // Herdado do primeiro jogo
-            
-            // Coletar dados do adversário
+            const flSeed = document.getElementById('nextFlSeed').value;
             const adversarioRanking = document.getElementById('nextAdversarioRanking').value;
             const adversarioSeed = document.getElementById('nextAdversarioSeed').value;
             
@@ -3301,10 +3610,8 @@
                 nacionalidade: nacionalidade || 'UNK',
                 placar,
                 resultado: result,
-                // Dados do Fernando Lapa - RANKING PEGA AUTOMATICAMENTE DO SISTEMA
-                flRanking: currentRanking, // <-- AQUI: Pega do sistema automaticamente
+                flRanking: currentRanking,
                 flSeed: flSeed ? parseInt(flSeed) : null,
-                // Dados do adversário
                 adversarioRanking: adversarioRanking ? parseInt(adversarioRanking) : null,
                 adversarioSeed: adversarioSeed ? parseInt(adversarioSeed) : null
             };
@@ -3420,9 +3727,10 @@
                 });
             });
 
-            document.getElementById('seasonFilter').addEventListener('change', (e) => {
-                updateSeasonsTab(calculateStats(), e.target.value);
-            });
+            // Event listeners para os filtros da aba Temporadas
+            document.getElementById('seasonFilter').addEventListener('change', updateSeasonsTab);
+            document.getElementById('typeFilter').addEventListener('change', updateSeasonsTab);
+            document.getElementById('surfaceFilter').addEventListener('change', updateSeasonsTab);
 
             document.getElementById('createTournamentBtn').addEventListener('click', openCreateTournamentModal);
 
@@ -3453,7 +3761,9 @@
             showDetails: window.showDetails,
             toggleSublist: window.toggleSublist,
             toggleTournamentList: window.toggleTournamentList,
-            updateRanking: window.updateRanking
+            updateRanking: window.updateRanking,
+            removeFilter: window.removeFilter,
+            clearFilters: window.clearFilters
         });
     </script>
 </body>
