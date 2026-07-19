@@ -1,0 +1,40 @@
+name: Atualizar ranking ATP
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "15 7 * * 1"
+
+permissions:
+  contents: write
+
+jobs:
+  atualizar-ranking:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Atualizar ranking
+        run: npm run update-ranking
+
+      - name: Salvar ranking
+        run: |
+          if git diff --quiet -- data/ranking.json; then
+            echo "Sem alteração válida."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add data/ranking.json
+          git commit -m "Atualiza ranking ATP"
+          git push
