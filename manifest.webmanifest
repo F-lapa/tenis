@@ -1,0 +1,25 @@
+{
+  "name": "Fernando Lapa Tennis Dashboard",
+  "short_name": "Fernando Lapa",
+  "description": "Dashboard profissional de carreira, ranking e estatísticas de Fernando Lapa.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
