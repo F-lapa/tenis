@@ -1,8 +1,7 @@
 {
-  "name": "fernando-lapa-dashboard",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "update-ranking": "node scripts/update-ranking.mjs"
-  }
+  "source": "ATP Tour oficial",
+  "updatedAt": null,
+  "rankingDate": null,
+  "count": 0,
+  "players": []
 }
