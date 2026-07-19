@@ -2,130 +2,247 @@ import fs from "node:fs/promises";
 import path from "node:path";
 
 const OUTPUT = path.resolve("data/ranking.json");
-const ATP_URL = "https://www.atptour.com/en/rankings/singles?rankRange=1-1000";
-const TEXT_URLS = [
-  "https://r.jina.ai/https://www.atptour.com/en/rankings/singles?rankRange=1-1000",
-  "https://r.jina.ai/http://www.atptour.com/en/rankings/singles?rankRange=1-1000"
-];
+
+const ATP_PAGE =
+  "https://www.atptour.com/en/rankings/singles?rankRange=1-1000";
+
+const ATP_TEXT =
+  "https://r.jina.ai/https://www.atptour.com/en/rankings/singles?rankRange=1-1000";
 
 function number(value) {
-  return Number(String(value ?? "").replace(/[^\d]/g, "")) || 0;
+  return Number(
+    String(value ?? "").replace(/[^\d]/g, "")
+  ) || 0;
 }
 
-function clean(value) {
-  return String(value ?? "")
-    .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
-    .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
-    .replace(/[*_`]/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
+function linkText(line) {
+  const match = String(line).match(
+    /\[([^\]]+)\]\([^)]+\)/
+  );
+
+  return match ? match[1].trim() : "";
+}
+
+function validName(value) {
+  return (
+    value.length >= 3 &&
+    value.length <= 80 &&
+    /[A-Za-zÀ-ÿ]/.test(value) &&
+    !/ATP|Rankings|Official Points|Refresh/i.test(value)
+  );
 }
 
 function parseRanking(text) {
-  const lines = String(text || "").replace(/\r/g, "").split("\n").map(l => l.trim()).filter(Boolean);
+  const lines = String(text)
+    .replace(/\r/g, "")
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  const headerIndex = lines.findIndex((line) =>
+    /Hidden header Rank\s+Player\s+Official Points/i.test(
+      line
+    )
+  );
+
+  if (headerIndex < 0) {
+    throw new Error(
+      "O cabeçalho do ranking ATP não foi encontrado."
+    );
+  }
+
   const players = [];
-  const seen = new Set();
+  const seenRanks = new Set();
 
-  for (const line of lines) {
-    if (!line.includes("|")) continue;
-    const cells = line.split("|").map(clean).filter(Boolean);
-    if (cells.length < 3) continue;
+  for (
+    let index = headerIndex + 1;
+    index < lines.length;
+    index++
+  ) {
+    const rankMatch = lines[index].match(
+      /^(\d{1,4})$/
+    );
 
-    const rankIndex = cells.findIndex(c => /^\d{1,4}$/.test(c.replace(/[^\d]/g, "")));
-    if (rankIndex < 0) continue;
+    if (!rankMatch) continue;
 
-    const rank = number(cells[rankIndex]);
-    if (!rank || seen.has(rank)) continue;
+    const rank = Number(rankMatch[1]);
+
+    if (
+      rank < 1 ||
+      rank > 1000 ||
+      seenRanks.has(rank)
+    ) {
+      continue;
+    }
 
     let name = "";
-    let country = "";
     let points = 0;
 
-    for (let i = rankIndex + 1; i < cells.length; i++) {
-      const cell = cells[i];
+    for (
+      let next = index + 1;
+      next < Math.min(index + 8, lines.length);
+      next++
+    ) {
+      const textFromLink = linkText(lines[next]);
 
-      if (!name && /[A-Za-zÀ-ÿ]/.test(cell) && !/^(rank|player|age|official points)$/i.test(cell)) {
-        name = cell;
+      if (
+        !name &&
+        textFromLink &&
+        validName(textFromLink)
+      ) {
+        name = textFromLink;
         continue;
       }
 
-      if (name && !country && /^[A-Z]{3}$/.test(cell)) {
-        country = cell;
-        continue;
-      }
-
-      if (name && /^[\d,.]+$/.test(cell)) {
-        points = number(cell);
-        if (points > 0) break;
+      if (
+        name &&
+        textFromLink &&
+        /^[\d,.]+$/.test(textFromLink)
+      ) {
+        points = number(textFromLink);
+        break;
       }
     }
 
-    if (!name || !points) continue;
+    if (!name || points <= 0) continue;
 
-    seen.add(rank);
-    players.push({ rank, name, country, points });
+    seenRanks.add(rank);
+
+    players.push({
+      rank,
+      name,
+      country: "",
+      points
+    });
   }
 
-  return players.sort((a, b) => a.rank - b.rank);
+  return players.sort(
+    (first, second) => first.rank - second.rank
+  );
 }
 
-function validate(players) {
-  if (!Array.isArray(players) || players.length < 50) {
-    throw new Error(`Tabela incompleta: ${players?.length || 0} jogadores.`);
+function validateRanking(players) {
+  if (players.length < 100) {
+    throw new Error(
+      `Ranking incompleto: somente ${players.length} jogadores reconhecidos.`
+    );
   }
 
-  for (let i = 0; i < 10; i++) {
-    if (!players[i] || players[i].rank !== i + 1 || !players[i].name || players[i].points <= 0) {
-      throw new Error(`Top 10 inválido na posição ${i + 1}.`);
+  for (let index = 0; index < 10; index++) {
+    const player = players[index];
+
+    if (!player || player.rank !== index + 1) {
+      throw new Error(
+        `Top 10 inválido na posição ${index + 1}.`
+      );
+    }
+
+    if (!player.name || player.points <= 0) {
+      throw new Error(
+        `Dados inválidos na posição ${index + 1}.`
+      );
     }
   }
 }
 
-async function fetchText() {
-  let lastError;
-
-  for (const url of TEXT_URLS) {
-    try {
-      const response = await fetch(`${url}&_=${Date.now()}`, {
-        cache: "no-store",
-        headers: { Accept: "text/plain,*/*", "User-Agent": "Fernando-Lapa-Dashboard/2.0" }
-      });
-
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      const text = await response.text();
-
-      if (!/ATP Rankings|Official Points|PIF ATP/i.test(text)) {
-        throw new Error("Resposta não reconhecida como ranking ATP");
+async function downloadRanking() {
+  const response = await fetch(
+    `${ATP_TEXT}&cache=${Date.now()}`,
+    {
+      cache: "no-store",
+      headers: {
+        Accept: "text/plain,*/*",
+        "User-Agent":
+          "Fernando-Lapa-Tennis-Dashboard/3.0"
       }
-
-      return text;
-    } catch (error) {
-      lastError = error;
     }
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      `Falha ao consultar a ATP: HTTP ${response.status}`
+    );
   }
 
-  throw lastError || new Error("Nenhuma fonte respondeu");
+  const text = await response.text();
+
+  if (
+    !text.includes("Official Points") ||
+    !text.includes("ATP Rankings")
+  ) {
+    throw new Error(
+      "A resposta recebida não contém o ranking ATP."
+    );
+  }
+
+  return text;
+}
+
+async function previousRankingExists() {
+  try {
+    const previous = JSON.parse(
+      await fs.readFile(OUTPUT, "utf8")
+    );
+
+    return Array.isArray(previous.players) &&
+      previous.players.length > 0;
+  } catch {
+    return false;
+  }
 }
 
 try {
-  const text = await fetchText();
+  console.log(
+    "Consultando a classificação oficial da ATP..."
+  );
+
+  const text = await downloadRanking();
   const players = parseRanking(text);
-  validate(players);
+
+  validateRanking(players);
 
   const payload = {
     source: "ATP Tour oficial",
-    sourceUrl: ATP_URL,
+    sourceUrl: ATP_PAGE,
     updatedAt: new Date().toISOString(),
     rankingDate: new Date().toISOString(),
     count: players.length,
     players
   };
 
-  await fs.mkdir(path.dirname(OUTPUT), { recursive: true });
-  await fs.writeFile(OUTPUT, JSON.stringify(payload, null, 2) + "\n", "utf8");
-  console.log(`Ranking atualizado com ${players.length} jogadores.`);
+  await fs.mkdir(
+    path.dirname(OUTPUT),
+    { recursive: true }
+  );
+
+  await fs.writeFile(
+    OUTPUT,
+    JSON.stringify(payload, null, 2) + "\n",
+    "utf8"
+  );
+
+  console.log(
+    `Ranking salvo com ${players.length} jogadores.`
+  );
+
+  console.log(
+    `Número 1: ${players[0].name}, ` +
+    `${players[0].points} pontos.`
+  );
 } catch (error) {
-  console.error("Atualização rejeitada. O ranking anterior foi preservado.");
+  const hasPrevious =
+    await previousRankingExists();
+
+  if (hasPrevious) {
+    console.error(
+      "A atualização falhou, mas o ranking anterior foi preservado."
+    );
+  } else {
+    console.error(
+      "A atualização falhou e ainda não existe ranking anterior."
+    );
+  }
+
   console.error(error);
   process.exitCode = 1;
 }
