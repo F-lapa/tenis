@@ -1,0 +1,8 @@
+{
+  "name": "fernando-lapa-dashboard",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "update-ranking": "node scripts/update-ranking.mjs"
+  }
+}
