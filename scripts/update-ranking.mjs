@@ -1,122 +1,159 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { chromium } from "playwright";
 
 const OUTPUT = path.resolve("data/ranking.json");
-const ATP_URL =
-  "https://www.atptour.com/en/rankings/singles?rankRange=0-5000";
 
-function number(value) {
-  return Number(String(value ?? "").replace(/[^\d]/g, "")) || 0;
-}
+const RANKINGS_URL =
+  "https://raw.githubusercontent.com/JeffSackmann/tennis_atp/master/atp_rankings_current.csv";
 
-function cleanName(value) {
-  return String(value ?? "")
-    .replace(/\s+/g, " ")
-    .trim();
-}
+const PLAYERS_URL =
+  "https://raw.githubusercontent.com/JeffSackmann/tennis_atp/master/atp_players.csv";
 
-function isValidPlayer(player) {
-  return (
-    Number.isInteger(player.rank) &&
-    player.rank > 0 &&
-    player.name.length >= 3 &&
-    Number.isFinite(player.points) &&
-    player.points >= 0
-  );
-}
+function parseCsvLine(line) {
+  const values = [];
+  let current = "";
+  let quoted = false;
 
-function removeDuplicates(players) {
-  const unique = new Map();
+  for (let index = 0; index < line.length; index++) {
+    const char = line[index];
+    const next = line[index + 1];
 
-  for (const player of players) {
-    const key = player.name.toLowerCase();
-
-    if (!unique.has(key) || player.rank < unique.get(key).rank) {
-      unique.set(key, player);
+    if (char === '"' && quoted && next === '"') {
+      current += '"';
+      index++;
+    } else if (char === '"') {
+      quoted = !quoted;
+    } else if (char === "," && !quoted) {
+      values.push(current.trim());
+      current = "";
+    } else {
+      current += char;
     }
   }
 
-  return [...unique.values()].sort((a, b) => a.rank - b.rank);
+  values.push(current.trim());
+  return values;
 }
 
-async function extractRanking(page) {
-  return page.evaluate(() => {
-    const toNumber = (value) =>
-      Number(String(value ?? "").replace(/[^\d]/g, "")) || 0;
+function onlyNumber(value) {
+  return Number(String(value ?? "").replace(/[^\d]/g, "")) || 0;
+}
 
-    const rows = [
-      ...document.querySelectorAll(
-        "table tbody tr, .mega-table tbody tr, [class*='ranking'] tbody tr"
-      ),
-    ];
-
-    const result = [];
-
-    for (const row of rows) {
-      const cells = [...row.querySelectorAll("td")].map((td) =>
-        td.innerText.trim()
-      );
-
-      if (cells.length < 3) continue;
-
-      const rank = toNumber(cells[0]);
-
-      const playerElement =
-        row.querySelector("a[href*='/players/']") ||
-        row.querySelector("[class*='player'] a") ||
-        row.querySelector("[class*='name']");
-
-      const name = (
-        playerElement?.textContent ||
-        cells[1] ||
-        ""
-      )
-        .replace(/\s+/g, " ")
-        .trim();
-
-      const countryElement =
-        row.querySelector("[data-country]") ||
-        row.querySelector("[class*='country']") ||
-        row.querySelector("img[alt][src*='flag']");
-
-      let country =
-        countryElement?.getAttribute("data-country") ||
-        countryElement?.getAttribute("alt") ||
-        countryElement?.textContent ||
-        "";
-
-      country = country
-        .toUpperCase()
-        .replace(/[^A-Z]/g, "")
-        .slice(0, 3);
-
-      const possiblePoints = cells
-        .slice(2)
-        .map((cell) => ({
-          text: cell,
-          value: toNumber(cell),
-        }))
-        .filter(
-          (item) =>
-            /^[\d,.\s]+$/.test(item.text) &&
-            item.value >= 0
-        );
-
-      const points = possiblePoints[0]?.value ?? 0;
-
-      if (rank && name) {
-        result.push({
-          rank,
-          name,
-          country,
-          points,
-        });
-      }
-    }
-
-    return result;
+async function downloadText(url) {
+  const response = await fetch(`${url}?v=${Date.now()}`, {
+    headers: {
+      "User-Agent": "Fernando-Lapa-Tennis-Dashboard/1.0",
+      Accept: "text/csv,text/plain,*/*",
+    },
   });
+
+  if (!response.ok) {
+    throw new Error(`Falha ao baixar ${url}: HTTP ${response.status}`);
+  }
+
+  return response.text();
+}
+
+function parsePlayers(text) {
+  const map = new Map();
+  const lines = String(text || "").split(/\r?\n/).filter(Boolean);
+
+  for (let index = 0; index < lines.length; index++) {
+    const cells = parseCsvLine(lines[index]);
+
+    if (cells.length < 6) continue;
+    if (index === 0 && /player_id/i.test(cells[0])) continue;
+
+    const playerId = String(cells[0] || "").trim();
+    const firstName = String(cells[1] || "").trim();
+    const lastName = String(cells[2] || "").trim();
+    const country = String(cells[5] || "")
+      .trim()
+      .toUpperCase()
+      .replace(/[^A-Z]/g, "")
+      .slice(0, 3);
+
+    const name = `${firstName} ${lastName}`
+      .replace(/\s+/g, " ")
+      .trim();
+
+    if (!playerId || !name) continue;
+
+    map.set(playerId, {
+      name,
+      country,
+    });
+  }
+
+  return map;
+}
+
+function parseRankings(text, playerMap) {
+  const rows = [];
+  const lines = String(text || "").split(/\r?\n/).filter(Boolean);
+  let latestDate = 0;
+
+  for (let index = 0; index < lines.length; index++) {
+    const cells = parseCsvLine(lines[index]);
+
+    if (cells.length < 4) continue;
+    if (index === 0 && /ranking_date/i.test(cells[0])) continue;
+
+    const rankingDate = onlyNumber(cells[0]);
+    const rank = onlyNumber(cells[1]);
+    const playerId = String(cells[2] || "").trim();
+    const points = onlyNumber(cells[3]);
+
+    if (!rankingDate || !rank || !playerId) continue;
+
+    latestDate = Math.max(latestDate, rankingDate);
+
+    rows.push({
+      rankingDate,
+      rank,
+      playerId,
+      points,
+    });
+  }
+
+  const players = rows
+    .filter((row) => row.rankingDate === latestDate)
+    .sort((a, b) => a.rank - b.rank)
+    .map((row) => {
+      const player = playerMap.get(row.playerId);
+
+      return {
+        rank: row.rank,
+        name: player?.name || `Jogador ${row.playerId}`,
+        country: player?.country || "",
+        points: row.points,
+      };
+    })
+    .filter(
+      (player) =>
+        Number.isInteger(player.rank) &&
+        player.rank > 0 &&
+        player.name &&
+        Number.isFinite(player.points)
+    );
+
+  return {
+    latestDate,
+    players,
+  };
+}
+
+function formatRankingDate(value) {
+  const text = String(value || "");
+
+  if (text.length !== 8) {
+    return new Date().toISOString();
+  }
+
+  return `${text.slice(0, 4)}-${text.slice(4, 6)}-${text.slice(
+    6,
+    8
+  )}T00:00:00.000Z`;
 }
 
 async function readPreviousRanking() {
@@ -127,75 +164,35 @@ async function readPreviousRanking() {
   }
 }
 
-const browser = await chromium.launch({
-  headless: true,
-});
-
 try {
-  const page = await browser.newPage({
-    locale: "en-US",
-    userAgent:
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) " +
-      "AppleWebKit/537.36 (KHTML, like Gecko) " +
-      "Chrome/131.0.0.0 Safari/537.36",
-  });
+  console.log("Baixando cadastro de jogadores...");
+  const playersText = await downloadText(PLAYERS_URL);
 
-  await page.goto(ATP_URL, {
-    waitUntil: "domcontentloaded",
-    timeout: 90000,
-  });
+  console.log("Baixando ranking atual...");
+  const rankingsText = await downloadText(RANKINGS_URL);
 
-  await page.waitForTimeout(10000);
+  const playerMap = parsePlayers(playersText);
+  const ranking = parseRankings(rankingsText, playerMap);
 
-  const cookieButtons = [
-    "Accept All",
-    "Accept all",
-    "I Accept",
-    "Agree",
-  ];
-
-  for (const label of cookieButtons) {
-    const button = page.getByRole("button", {
-      name: label,
-      exact: false,
-    });
-
-    if (await button.count()) {
-      await button.first().click().catch(() => {});
-      break;
-    }
+  if (playerMap.size < 1000) {
+    throw new Error(
+      `Cadastro de jogadores inválido: somente ${playerMap.size} registros.`
+    );
   }
 
-  await page.waitForTimeout(3000);
-
-  let players = await extractRanking(page);
-
-  players = removeDuplicates(
-    players
-      .map((player) => ({
-        rank: number(player.rank),
-        name: cleanName(player.name),
-        country: String(player.country || "")
-          .toUpperCase()
-          .replace(/[^A-Z]/g, "")
-          .slice(0, 3),
-        points: number(player.points),
-      }))
-      .filter(isValidPlayer)
-  );
-
-  if (players.length < 20) {
+  if (ranking.players.length < 20) {
     throw new Error(
-      `A ATP devolveu apenas ${players.length} jogadores reconhecidos.`
+      `Ranking inválido: somente ${ranking.players.length} jogadores reconhecidos.`
     );
   }
 
   const payload = {
-    source: "ATP Tour oficial via GitHub Actions",
-    sourceUrl: ATP_URL,
-    updatedAt: new Date().toISOString(),
-    count: players.length,
-    players,
+    source: "Jeff Sackmann / Tennis Abstract",
+    sourceUrl: "https://github.com/JeffSackmann/tennis_atp",
+    updatedAt: formatRankingDate(ranking.latestDate),
+    generatedAt: new Date().toISOString(),
+    count: ranking.players.length,
+    players: ranking.players,
   };
 
   await fs.mkdir(path.dirname(OUTPUT), {
@@ -209,7 +206,11 @@ try {
   );
 
   console.log(
-    `Ranking atualizado com ${players.length} jogadores.`
+    `Ranking atualizado: ${ranking.players.length} jogadores.`
+  );
+
+  console.log(
+    `Data do ranking: ${payload.updatedAt}`
   );
 } catch (error) {
   const previous = await readPreviousRanking();
@@ -222,6 +223,4 @@ try {
 
   console.error(error);
   process.exitCode = 1;
-} finally {
-  await browser.close();
 }
