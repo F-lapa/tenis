@@ -15,6 +15,13 @@ jobs:
       - name: Baixar repositório
         uses: actions/checkout@v4
 
+      - name: Verificar imagem do ícone
+        run: |
+          if [ ! -f "app-icon.png" ]; then
+            echo "ERRO: o arquivo app-icon.png não foi encontrado na raiz."
+            exit 1
+          fi
+
       - name: Configurar Java 17
         uses: actions/setup-java@v4
         with:
@@ -34,11 +41,22 @@ jobs:
         with:
           gradle-version: "9.5.0"
 
+      - name: Instalar ferramenta de imagens
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pillow
+
       - name: Criar projeto Android
         run: |
           mkdir -p android-app/app/src/main/java/com/fernandolapa/tennis
           mkdir -p android-app/app/src/main/res/layout
           mkdir -p android-app/app/src/main/res/values
+
+          mkdir -p android-app/app/src/main/res/mipmap-mdpi
+          mkdir -p android-app/app/src/main/res/mipmap-hdpi
+          mkdir -p android-app/app/src/main/res/mipmap-xhdpi
+          mkdir -p android-app/app/src/main/res/mipmap-xxhdpi
+          mkdir -p android-app/app/src/main/res/mipmap-xxxhdpi
 
           cat > android-app/settings.gradle <<'EOF'
           pluginManagement {
@@ -86,8 +104,8 @@ jobs:
                   applicationId "com.fernandolapa.tennis"
                   minSdk 24
                   targetSdk 36
-                  versionCode 1
-                  versionName "1.0.0"
+                  versionCode 2
+                  versionName "1.1.0"
               }
 
               buildTypes {
@@ -113,6 +131,8 @@ jobs:
 
               <application
                   android:allowBackup="true"
+                  android:icon="@mipmap/ic_launcher"
+                  android:roundIcon="@mipmap/ic_launcher"
                   android:label="Fernando Lapa"
                   android:supportsRtl="true"
                   android:theme="@style/Theme.FernandoLapa"
@@ -359,6 +379,38 @@ jobs:
           }
           EOF
 
+      - name: Criar tamanhos do ícone
+        run: |
+          python <<'PY'
+          from PIL import Image, ImageOps
+
+          original = Image.open("app-icon.png").convert("RGBA")
+
+          sizes = {
+              "mdpi": 48,
+              "hdpi": 72,
+              "xhdpi": 96,
+              "xxhdpi": 144,
+              "xxxhdpi": 192
+          }
+
+          for density, size in sizes.items():
+              icon = ImageOps.fit(
+                  original,
+                  (size, size),
+                  method=Image.Resampling.LANCZOS,
+                  centering=(0.5, 0.5)
+              )
+
+              output = (
+                  f"android-app/app/src/main/res/"
+                  f"mipmap-{density}/ic_launcher.png"
+              )
+
+              icon.save(output, "PNG")
+              print(f"Ícone criado: {output}")
+          PY
+
       - name: Compilar APK
         working-directory: android-app
         run: gradle assembleRelease
@@ -366,6 +418,7 @@ jobs:
       - name: Preparar arquivo para download
         run: |
           mkdir -p resultado
+
           cp android-app/app/build/outputs/apk/release/app-release.apk \
              resultado/fernando-lapa.apk
 
@@ -383,6 +436,6 @@ jobs:
           name: Fernando Lapa Android
           body: |
             Aplicativo Android do dashboard Fernando Lapa.
-            Abra os arquivos desta versão e baixe fernando-lapa.apk.
+            Esta versão inclui o novo ícone personalizado.
           files: resultado/fernando-lapa.apk
           make_latest: true
