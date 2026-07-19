@@ -1,0 +1,388 @@
+name: Gerar APK Android
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  gerar-apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Configurar Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Instalar componentes Android
+        run: |
+          yes | sdkmanager --licenses >/dev/null || true
+          sdkmanager "platforms;android-36" "build-tools;36.0.0"
+
+      - name: Configurar Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "9.5.0"
+
+      - name: Criar projeto Android
+        run: |
+          mkdir -p android-app/app/src/main/java/com/fernandolapa/tennis
+          mkdir -p android-app/app/src/main/res/layout
+          mkdir -p android-app/app/src/main/res/values
+
+          cat > android-app/settings.gradle <<'EOF'
+          pluginManagement {
+              repositories {
+                  google()
+                  mavenCentral()
+                  gradlePluginPortal()
+              }
+          }
+
+          dependencyResolutionManagement {
+              repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+              repositories {
+                  google()
+                  mavenCentral()
+              }
+          }
+
+          rootProject.name = "FernandoLapa"
+          include(":app")
+          EOF
+
+          cat > android-app/build.gradle <<'EOF'
+          plugins {
+              id 'com.android.application' version '9.3.0' apply false
+          }
+          EOF
+
+          cat > android-app/gradle.properties <<'EOF'
+          org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
+          android.useAndroidX=true
+          android.nonTransitiveRClass=true
+          EOF
+
+          cat > android-app/app/build.gradle <<'EOF'
+          plugins {
+              id 'com.android.application'
+          }
+
+          android {
+              namespace 'com.fernandolapa.tennis'
+              compileSdk 36
+
+              defaultConfig {
+                  applicationId "com.fernandolapa.tennis"
+                  minSdk 24
+                  targetSdk 36
+                  versionCode 1
+                  versionName "1.0.0"
+              }
+
+              buildTypes {
+                  debug {
+                      applicationIdSuffix ""
+                      versionNameSuffix ""
+                  }
+
+                  release {
+                      minifyEnabled false
+                      signingConfig signingConfigs.debug
+                  }
+              }
+          }
+          EOF
+
+          cat > android-app/app/src/main/AndroidManifest.xml <<'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+              <uses-permission android:name="android.permission.INTERNET" />
+              <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+              <application
+                  android:allowBackup="true"
+                  android:label="Fernando Lapa"
+                  android:supportsRtl="true"
+                  android:theme="@style/Theme.FernandoLapa"
+                  android:usesCleartextTraffic="false">
+
+                  <activity
+                      android:name=".MainActivity"
+                      android:exported="true"
+                      android:screenOrientation="portrait">
+
+                      <intent-filter>
+                          <action android:name="android.intent.action.MAIN" />
+                          <category android:name="android.intent.category.LAUNCHER" />
+                      </intent-filter>
+
+                  </activity>
+              </application>
+          </manifest>
+          EOF
+
+          cat > android-app/app/src/main/res/values/styles.xml <<'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <resources>
+              <style
+                  name="Theme.FernandoLapa"
+                  parent="android:style/Theme.Material.Light.NoActionBar">
+
+                  <item name="android:fontFamily">sans</item>
+                  <item name="android:windowActionModeOverlay">true</item>
+                  <item name="android:colorAccent">#06B6D4</item>
+                  <item name="android:statusBarColor">#0F172A</item>
+                  <item name="android:navigationBarColor">#0F172A</item>
+                  <item name="android:windowLightStatusBar">false</item>
+              </style>
+          </resources>
+          EOF
+
+          cat > android-app/app/src/main/res/layout/activity_main.xml <<'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <FrameLayout
+              xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="#0F172A">
+
+              <WebView
+                  android:id="@+id/webView"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent" />
+
+              <LinearLayout
+                  android:id="@+id/errorPanel"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  android:background="#0F172A"
+                  android:gravity="center"
+                  android:orientation="vertical"
+                  android:padding="32dp"
+                  android:visibility="gone">
+
+                  <TextView
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="Sem conexão"
+                      android:textColor="#F8FAFC"
+                      android:textSize="24sp"
+                      android:textStyle="bold" />
+
+                  <TextView
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:layout_marginTop="12dp"
+                      android:gravity="center"
+                      android:text="Não foi possível carregar o sistema. Verifique sua internet."
+                      android:textColor="#94A3B8"
+                      android:textSize="15sp" />
+
+                  <Button
+                      android:id="@+id/retryButton"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:layout_marginTop="22dp"
+                      android:text="Tentar novamente" />
+
+              </LinearLayout>
+          </FrameLayout>
+          EOF
+
+          cat > android-app/app/src/main/java/com/fernandolapa/tennis/MainActivity.java <<'EOF'
+          package com.fernandolapa.tennis;
+
+          import android.annotation.SuppressLint;
+          import android.app.Activity;
+          import android.graphics.Bitmap;
+          import android.net.ConnectivityManager;
+          import android.net.Network;
+          import android.net.NetworkCapabilities;
+          import android.os.Bundle;
+          import android.view.View;
+          import android.webkit.CookieManager;
+          import android.webkit.WebChromeClient;
+          import android.webkit.WebResourceError;
+          import android.webkit.WebResourceRequest;
+          import android.webkit.WebSettings;
+          import android.webkit.WebView;
+          import android.webkit.WebViewClient;
+          import android.widget.Button;
+          import android.widget.LinearLayout;
+
+          public class MainActivity extends Activity {
+
+              private static final String APP_URL =
+                      "https://f-lapa.github.io/tenis/";
+
+              private WebView webView;
+              private LinearLayout errorPanel;
+
+              @SuppressLint("SetJavaScriptEnabled")
+              @Override
+              protected void onCreate(Bundle savedInstanceState) {
+                  super.onCreate(savedInstanceState);
+                  setContentView(R.layout.activity_main);
+
+                  webView = findViewById(R.id.webView);
+                  errorPanel = findViewById(R.id.errorPanel);
+                  Button retryButton = findViewById(R.id.retryButton);
+
+                  WebSettings settings = webView.getSettings();
+                  settings.setJavaScriptEnabled(true);
+                  settings.setDomStorageEnabled(true);
+                  settings.setDatabaseEnabled(true);
+                  settings.setCacheMode(WebSettings.LOAD_DEFAULT);
+                  settings.setMediaPlaybackRequiresUserGesture(false);
+                  settings.setSupportZoom(false);
+                  settings.setBuiltInZoomControls(false);
+                  settings.setDisplayZoomControls(false);
+
+                  CookieManager.getInstance().setAcceptCookie(true);
+                  CookieManager.getInstance()
+                          .setAcceptThirdPartyCookies(webView, true);
+
+                  webView.setWebChromeClient(new WebChromeClient());
+
+                  webView.setWebViewClient(new WebViewClient() {
+
+                      @Override
+                      public void onPageStarted(
+                              WebView view,
+                              String url,
+                              Bitmap favicon
+                      ) {
+                          showWebView();
+                      }
+
+                      @Override
+                      public void onPageFinished(
+                              WebView view,
+                              String url
+                      ) {
+                          showWebView();
+                      }
+
+                      @Override
+                      public void onReceivedError(
+                              WebView view,
+                              WebResourceRequest request,
+                              WebResourceError error
+                      ) {
+                          if (request.isForMainFrame()) {
+                              showError();
+                          }
+                      }
+                  });
+
+                  retryButton.setOnClickListener(v -> loadSystem());
+
+                  if (savedInstanceState == null) {
+                      loadSystem();
+                  } else {
+                      webView.restoreState(savedInstanceState);
+                  }
+              }
+
+              private void loadSystem() {
+                  if (!hasInternet()) {
+                      showError();
+                      return;
+                  }
+
+                  showWebView();
+                  webView.loadUrl(APP_URL);
+              }
+
+              private boolean hasInternet() {
+                  ConnectivityManager manager =
+                          (ConnectivityManager)
+                                  getSystemService(CONNECTIVITY_SERVICE);
+
+                  Network network = manager.getActiveNetwork();
+
+                  if (network == null) {
+                      return false;
+                  }
+
+                  NetworkCapabilities capabilities =
+                          manager.getNetworkCapabilities(network);
+
+                  return capabilities != null &&
+                          capabilities.hasCapability(
+                                  NetworkCapabilities.NET_CAPABILITY_INTERNET
+                          );
+              }
+
+              private void showError() {
+                  errorPanel.setVisibility(View.VISIBLE);
+                  webView.setVisibility(View.GONE);
+              }
+
+              private void showWebView() {
+                  errorPanel.setVisibility(View.GONE);
+                  webView.setVisibility(View.VISIBLE);
+              }
+
+              @Override
+              public void onBackPressed() {
+                  if (webView.canGoBack()) {
+                      webView.goBack();
+                  } else {
+                      super.onBackPressed();
+                  }
+              }
+
+              @Override
+              protected void onSaveInstanceState(Bundle outState) {
+                  webView.saveState(outState);
+                  super.onSaveInstanceState(outState);
+              }
+
+              @Override
+              protected void onDestroy() {
+                  webView.destroy();
+                  super.onDestroy();
+              }
+          }
+          EOF
+
+      - name: Compilar APK
+        working-directory: android-app
+        run: gradle assembleRelease
+
+      - name: Preparar arquivo para download
+        run: |
+          mkdir -p resultado
+          cp android-app/app/build/outputs/apk/release/app-release.apk \
+             resultado/fernando-lapa.apk
+
+      - name: Disponibilizar APK na execução
+        uses: actions/upload-artifact@v4
+        with:
+          name: Fernando-Lapa-APK
+          path: resultado/fernando-lapa.apk
+          retention-days: 30
+
+      - name: Publicar APK em Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: app-latest
+          name: Fernando Lapa Android
+          body: |
+            Aplicativo Android do dashboard Fernando Lapa.
+            Abra os arquivos desta versão e baixe fernando-lapa.apk.
+          files: resultado/fernando-lapa.apk
+          make_latest: true
