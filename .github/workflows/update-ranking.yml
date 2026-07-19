@@ -23,6 +23,8 @@ jobs:
           node-version: "20"
 
       - name: Atualizar ranking
+        env:
+          API_TENNIS_KEY: ${{ secrets.API_TENNIS_KEY }}
         run: npm run update-ranking
 
       - name: Salvar ranking
