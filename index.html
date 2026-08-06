@@ -561,11 +561,20 @@
             border: 1px solid var(--border-subtle);
             border-radius: 0.5rem;
             margin-top: 0.5rem;
-            max-height: 300px;
+            max-height: 280px;
             overflow-y: auto;
-            z-index: 20;
+            z-index: 60;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
             display: none;
+        }
+
+        .modal-body .search-container {
+            position: relative;
+            z-index: 5;
+        }
+
+        .modal-body .suggestions-dropdown.active {
+            z-index: 70;
         }
 
         .suggestions-dropdown.active {
@@ -5278,6 +5287,250 @@
         }
 
 
+
+        // ==================== AUTOCOMPLETE DE ADVERSÁRIOS (ATP + HISTÓRICO) ====================
+        function normalizePlayerName(value) {
+            return String(value || '')
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase()
+                .trim()
+                .replace(/\s+/g, ' ');
+        }
+
+        function escapeHtmlAttr(value) {
+            return String(value || '')
+                .replace(/&/g, '&amp;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+        }
+
+        function escapeHtmlText(value) {
+            return String(value || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+        }
+
+        function buildOpponentDirectory() {
+            const map = new Map();
+
+            // 1) Ranking ATP oficial (prioridade máxima para ranking e país)
+            (atpRanking || []).forEach(p => {
+                const name = String(p.name || '').trim();
+                if (!name) return;
+                const key = normalizePlayerName(name);
+                if (key === 'fernando lapa') return;
+                const rank = Number(p.rank) || Number(p.position) || null;
+                const country = String(p.country || '').trim().toUpperCase();
+                map.set(key, {
+                    name,
+                    country: country || '',
+                    ranking: rank > 0 ? rank : null,
+                    points: Number(p.points) || 0,
+                    source: 'atp'
+                });
+            });
+
+            // 2) Histórico de confrontos (complementa quem não está no ranking ou sem país)
+            (allTournaments || []).forEach(t => {
+                (t.jogos || []).forEach(j => {
+                    const name = String(j.adversario || '').trim();
+                    if (!name || name.toLowerCase() === 'bye') return;
+                    const key = normalizePlayerName(name);
+                    if (key === 'fernando lapa') return;
+
+                    const existing = map.get(key);
+                    const country = String(j.nacionalidade || '').trim().toUpperCase();
+                    const ranking = Number(j.adversarioRanking) || null;
+
+                    if (!existing) {
+                        map.set(key, {
+                            name,
+                            country: country || '',
+                            ranking: ranking > 0 ? ranking : null,
+                            points: 0,
+                            source: 'history'
+                        });
+                        return;
+                    }
+
+                    // Preenche gaps sem sobrescrever dados oficiais do ATP
+                    if (!existing.country && country) existing.country = country;
+                    if ((!existing.ranking || existing.ranking <= 0) && ranking > 0) {
+                        existing.ranking = ranking;
+                    }
+                    if (existing.source !== 'atp') existing.name = name;
+                });
+            });
+
+            return [...map.values()].sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
+        }
+
+        function searchOpponents(query, limit = 8) {
+            const q = normalizePlayerName(query);
+            if (!q || q.length < 1) return [];
+
+            const directory = buildOpponentDirectory();
+            const starts = [];
+            const contains = [];
+
+            for (const player of directory) {
+                const n = normalizePlayerName(player.name);
+                if (n.startsWith(q)) starts.push(player);
+                else if (n.includes(q)) contains.push(player);
+                if (starts.length + contains.length >= limit * 3) break;
+            }
+
+            return [...starts, ...contains].slice(0, limit);
+        }
+
+        function selectOpponentForForm(name, country, ranking, nameInputId, countryInputId, rankingInputId, dropdownId) {
+            const nameInput = document.getElementById(nameInputId);
+            const countryInput = document.getElementById(countryInputId);
+            const rankingInput = document.getElementById(rankingInputId);
+            const dropdown = document.getElementById(dropdownId);
+
+            if (nameInput) {
+                nameInput.value = name || '';
+                nameInput.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+            if (countryInput && country) {
+                countryInput.value = String(country).toUpperCase().slice(0, 3);
+            }
+            if (rankingInput && ranking) {
+                rankingInput.value = Number(ranking) || '';
+            }
+            if (dropdown) dropdown.classList.remove('active');
+        }
+
+        window.selectOpponentForForm = selectOpponentForForm;
+
+        function setupOpponentAutocomplete({ nameId, countryId, rankingId, dropdownId }) {
+            const input = document.getElementById(nameId);
+            const dropdown = document.getElementById(dropdownId);
+            if (!input || !dropdown) return;
+
+            let debounceTimer = null;
+
+            const renderSuggestions = (query) => {
+                const results = searchOpponents(query, 8);
+                if (!results.length) {
+                    dropdown.classList.remove('active');
+                    dropdown.innerHTML = '';
+                    return;
+                }
+
+                dropdown.innerHTML = results.map((p, idx) => {
+                    const flag = getFlagEmoji(p.country);
+                    const rankLabel = p.ranking
+                        ? `<span class="ranking-badge opponent text-[10px]"><i class="fas fa-chart-line text-xs"></i> <span class="ranking-number">${p.ranking}</span></span>`
+                        : '<span class="text-[10px] text-text-muted">sem ranking</span>';
+                    const sourceLabel = p.source === 'atp'
+                        ? '<span class="text-[10px] text-secondary font-semibold">ATP</span>'
+                        : '<span class="text-[10px] text-text-muted">Histórico</span>';
+
+                    return `
+                        <div class="suggestion-item opponent-suggestion"
+                             data-idx="${idx}"
+                             role="option">
+                            <div class="flex items-center justify-between gap-3">
+                                <div class="flex items-center gap-2 min-w-0">
+                                    <span class="text-lg shrink-0">${flag}</span>
+                                    <div class="min-w-0">
+                                        <div class="font-medium truncate">${escapeHtmlText(p.name)}</div>
+                                        <div class="text-[10px] text-text-muted">${escapeHtmlText(p.country || '—')} · ${sourceLabel}</div>
+                                    </div>
+                                </div>
+                                <div class="shrink-0">${rankLabel}</div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                dropdown.classList.add('active');
+
+                const applySelection = (idx) => {
+                    const p = results[idx];
+                    if (!p) return;
+                    selectOpponentForForm(
+                        p.name,
+                        p.country || '',
+                        p.ranking || '',
+                        nameId,
+                        countryId,
+                        rankingId,
+                        dropdownId
+                    );
+                };
+
+                dropdown.querySelectorAll('.opponent-suggestion').forEach((el, idx) => {
+                    el.addEventListener('mousedown', (ev) => {
+                        ev.preventDefault();
+                        applySelection(idx);
+                    });
+                    el.addEventListener('click', (ev) => {
+                        ev.preventDefault();
+                        applySelection(idx);
+                    });
+                });
+            };
+
+            input.setAttribute('autocomplete', 'off');
+            input.setAttribute('spellcheck', 'false');
+
+            input.addEventListener('input', (e) => {
+                clearTimeout(debounceTimer);
+                const value = e.target.value.trim();
+                if (!value) {
+                    dropdown.classList.remove('active');
+                    dropdown.innerHTML = '';
+                    return;
+                }
+                debounceTimer = setTimeout(() => renderSuggestions(value), 180);
+            });
+
+            input.addEventListener('focus', () => {
+                const value = input.value.trim();
+                if (value) renderSuggestions(value);
+            });
+
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    dropdown.classList.remove('active');
+                }
+                if (e.key === 'Enter' && dropdown.classList.contains('active')) {
+                    const first = dropdown.querySelector('.suggestion-item');
+                    if (first) {
+                        e.preventDefault();
+                        first.click();
+                    }
+                }
+            });
+        }
+
+        function wireOpponentAutocompleteInModal() {
+            // Novo torneio
+            if (document.getElementById('jAdversario') && document.getElementById('jAdversarioSuggestions')) {
+                setupOpponentAutocomplete({
+                    nameId: 'jAdversario',
+                    countryId: 'jNacionalidade',
+                    rankingId: 'adversarioRanking',
+                    dropdownId: 'jAdversarioSuggestions'
+                });
+            }
+            // Próxima partida
+            if (document.getElementById('nextAdversario') && document.getElementById('nextAdversarioSuggestions')) {
+                setupOpponentAutocomplete({
+                    nameId: 'nextAdversario',
+                    countryId: 'nextNacionalidade',
+                    rankingId: 'nextAdversarioRanking',
+                    dropdownId: 'nextAdversarioSuggestions'
+                });
+            }
+        }
+
         // ==================== FORMULÁRIO SIMPLIFICADO - SEM RANKING DO FL ====================
         function openCreateTournamentModal() {
             const body = `
@@ -5356,9 +5609,11 @@
                         </div>
                         <div class="space-y-3">
                             <div class="grid grid-cols-2 gap-3">
-                                <div>
+                                <div class="search-container relative">
                                     <label class="block text-xs font-medium text-text-muted mb-1">Nome do Adversário *</label>
-                                    <input type="text" id="jAdversario" class="form-input" required placeholder="Nome do adversário">
+                                    <input type="text" id="jAdversario" class="form-input" required placeholder="Digite para buscar no ranking ATP..." autocomplete="off">
+                                    <div id="jAdversarioSuggestions" class="suggestions-dropdown"></div>
+                                    <p class="seed-info-text mt-1"><i class="fas fa-magic mr-1"></i>Ao selecionar, ranking e país são preenchidos automaticamente</p>
                                 </div>
                                 <div>
                                     <label class="block text-xs font-medium text-text-muted mb-1">Nacionalidade</label>
@@ -5418,6 +5673,7 @@
             const today = new Date();
             document.getElementById('tDataInicio').valueAsDate = today;
             document.getElementById('tDataFim').valueAsDate = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+            wireOpponentAutocompleteInModal();
         }
 
         window.updateRounds = function() {
@@ -5566,8 +5822,12 @@
                                         <select id="nextRound" class="form-select">
                                             ${nextRounds.map(r => `<option value="${r}">${r}</option>`).join('')}
                                         </select>
-                                        <input type="text" id="nextAdversario" class="form-input" placeholder="Adversário">
+                                        <div class="search-container relative">
+                                            <input type="text" id="nextAdversario" class="form-input" placeholder="Buscar adversário..." autocomplete="off">
+                                            <div id="nextAdversarioSuggestions" class="suggestions-dropdown"></div>
+                                        </div>
                                     </div>
+                                    <p class="seed-info-text -mt-1"><i class="fas fa-magic mr-1"></i>Selecione o jogador para preencher ranking e país automaticamente</p>
                                     <div class="grid grid-cols-2 gap-3">
                                         <input type="text" id="nextNacionalidade" class="form-input" placeholder="País (Ex: ESP)" maxlength="3">
                                         <input type="text" id="nextPlacar" class="form-input" placeholder="Placar">
@@ -5646,6 +5906,7 @@
                 <span class="text-2xl mr-2">${getFlagEmoji(t.paisTorneio)}</span>
                 Detalhes do Torneio
             `, body, footer);
+            wireOpponentAutocompleteInModal();
         };
 
         window.addMatch = function(id, result) {
@@ -6064,6 +6325,9 @@
             document.addEventListener('click', (e) => {
                 if (!e.target.closest('.search-container')) {
                     h2hSuggestions.classList.remove('active');
+                    document.querySelectorAll('.suggestions-dropdown.active').forEach(el => {
+                        el.classList.remove('active');
+                    });
                 }
             });
 
