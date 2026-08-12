@@ -848,43 +848,7 @@
             transform: rotate(180deg);
         }
 
-        .ranking-input {
-            background: transparent;
-            border: none;
-            color: var(--text-main);
-            font-weight: 800;
-            font-size: 1.5rem;
-            width: 60px;
-            text-align: right;
-            padding: 0;
-            margin: 0;
-        }
-
-        .ranking-input:focus {
-            outline: none;
-            border-bottom: 2px solid var(--primary);
-        }
-
-        .ranking-display {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .ranking-edit-btn {
-            opacity: 0;
-            transition: opacity 0.2s ease;
-            cursor: pointer;
-            color: var(--text-muted);
-        }
-
-        .ranking-display:hover .ranking-edit-btn {
-            opacity: 1;
-        }
-
-        .ranking-edit-btn:hover {
-            color: var(--primary);
-        }
+        /* ranking-input / ranking-display styles definidos no bloco sidebar redesign */
 
         /* NOVO: Estilos para H2H melhorado */
         .h2h-header {
@@ -1047,14 +1011,146 @@
             color: var(--accent);
         }
 
-        /* NOVO: Estilo para ranking destacado na análise */
+        /* ===== SIDEBAR STATS – redesign limpo ===== */
+        .sidebar-stats-card {
+            background: var(--card-base);
+            border: 1px solid var(--border-subtle);
+            border-radius: 1rem;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .sidebar-stats-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            opacity: 0.7;
+        }
+
+        .sidebar-stats-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.25rem 0.75rem;
+            border-bottom: 1px solid rgba(51, 65, 85, 0.6);
+        }
+
+        .sidebar-stats-header h2 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-main);
+            letter-spacing: -0.01em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sidebar-stats-header h2 i {
+            color: var(--primary);
+            font-size: 0.9rem;
+        }
+
+        .sidebar-stats-body {
+            padding: 0.5rem 0.75rem 0.85rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .stat-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 0.7rem 0.85rem;
+            border-radius: 0.7rem;
+            background: rgba(15, 23, 42, 0.55);
+            border: 1px solid transparent;
+            transition: background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .stat-row:hover {
+            background: rgba(6, 182, 212, 0.06);
+            border-color: rgba(6, 182, 212, 0.18);
+        }
+
+        .stat-row-left {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            min-width: 0;
+        }
+
+        .stat-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 0.6rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 0.85rem;
+        }
+
+        .stat-icon.trophy { background: rgba(6, 182, 212, 0.15); color: var(--primary); }
+        .stat-icon.money { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+        .stat-icon.medal { background: rgba(252, 211, 77, 0.15); color: #fcd34d; }
+        .stat-icon.record { background: rgba(248, 113, 113, 0.12); color: #f87171; }
+        .stat-icon.star { background: rgba(6, 182, 212, 0.15); color: var(--primary); }
+        .stat-icon.shield { background: rgba(239, 68, 68, 0.12); color: #f87171; }
+        .stat-icon.hourglass { background: rgba(251, 146, 60, 0.14); color: #fb923c; }
+        .stat-icon.chart { background: rgba(56, 189, 248, 0.14); color: #38bdf8; }
+        .stat-icon.crown {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.25), rgba(14, 165, 233, 0.2));
+            color: var(--primary);
+        }
+
+        .stat-label-text {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            line-height: 1.25;
+        }
+
+        .stat-value-wrap {
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .stat-value-main {
+            font-weight: 800;
+            font-size: 1.05rem;
+            color: var(--text-main);
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        .stat-value-main.green { color: #34d399; }
+        .stat-value-main.gold { color: #fcd34d; }
+        .stat-value-main.red { color: #f87171; }
+        .stat-value-main.orange { color: #fb923c; }
+        .stat-value-main.sky { color: #38bdf8; }
+        .stat-value-main.primary { color: var(--primary); }
+
+        .stat-value-sub {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-top: 0.1rem;
+        }
+
         .ranking-highlight {
-            background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(59, 130, 246, 0.1));
-            border: 2px solid var(--primary);
-            border-radius: 0.75rem;
-            padding: 1rem;
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.16), rgba(14, 165, 233, 0.08));
+            border: 1px solid rgba(6, 182, 212, 0.35);
+            border-radius: 0.85rem;
+            padding: 1rem 1.1rem;
             position: relative;
             overflow: hidden;
+            margin-bottom: 0.15rem;
         }
 
         .ranking-highlight::before {
@@ -1064,7 +1160,7 @@
             left: 0;
             right: 0;
             height: 3px;
-            background: linear-gradient(90deg, var(--primary), #0ea5e9);
+            background: linear-gradient(90deg, var(--primary), #0ea5e9, var(--primary));
         }
 
         .ranking-highlight .stat-value {
@@ -1075,11 +1171,56 @@
         .ranking-number {
             font-weight: 900;
             color: var(--primary);
+            font-size: 1.65rem;
+            letter-spacing: -0.03em;
+            line-height: 1;
         }
 
         .points-display {
             color: var(--text-muted);
             font-weight: 500;
+        }
+
+        .ranking-display {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            justify-content: flex-end;
+        }
+
+        .ranking-input {
+            background: transparent;
+            border: none;
+            color: var(--primary);
+            font-weight: 900;
+            font-size: 1.15rem;
+            width: 48px;
+            text-align: right;
+            padding: 0;
+            margin: 0;
+            letter-spacing: -0.02em;
+        }
+
+        .ranking-input:focus {
+            outline: none;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .ranking-edit-btn {
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            cursor: pointer;
+            color: var(--text-muted);
+            font-size: 0.7rem;
+        }
+
+        .stat-row:hover .ranking-edit-btn,
+        .ranking-display:hover .ranking-edit-btn {
+            opacity: 1;
+        }
+
+        .ranking-edit-btn:hover {
+            color: var(--primary);
         }
 
         /* NOVO: Estilos para o formulário de jogadores */
@@ -1650,6 +1791,175 @@
         }
 
     
+        /* ===== HISTÓRICO DE CAMPANHAS – header + filtro ===== */
+        .campaigns-header {
+            display: flex;
+            flex-direction: column;
+            gap: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .campaigns-title-row {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .campaigns-title-block h2 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin: 0 0 0.35rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .campaigns-title-block h2 i {
+            color: var(--primary);
+            font-size: 1.15rem;
+        }
+
+        .campaigns-subtitle {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        .season-scope-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.45rem 0.9rem;
+            border-radius: 9999px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+            border: 1px solid transparent;
+            white-space: nowrap;
+            transition: all 0.25s ease;
+        }
+
+        .season-scope-badge.career {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.18), rgba(99, 102, 241, 0.12));
+            border-color: rgba(168, 85, 247, 0.35);
+            color: #c4b5fd;
+        }
+
+        .season-scope-badge.season {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.18), rgba(14, 165, 233, 0.12));
+            border-color: rgba(6, 182, 212, 0.4);
+            color: #67e8f9;
+        }
+
+        .season-scope-badge i {
+            font-size: 0.75rem;
+        }
+
+        .season-filter-panel {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            padding: 0.85rem 1rem;
+            border-radius: 0.95rem;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.85), rgba(30, 41, 59, 0.55));
+            border: 1px solid rgba(6, 182, 212, 0.22);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+            flex-wrap: wrap;
+        }
+
+        .season-filter-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.22), rgba(14, 165, 233, 0.12));
+            color: var(--primary);
+            font-size: 1rem;
+            flex-shrink: 0;
+            border: 1px solid rgba(6, 182, 212, 0.25);
+        }
+
+        .season-filter-meta {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .season-filter-meta .label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            margin-bottom: 0.15rem;
+        }
+
+        .season-filter-meta .hint {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            opacity: 0.85;
+        }
+
+        .season-filter-select-wrap {
+            position: relative;
+            min-width: 160px;
+        }
+
+        .season-filter-select-wrap select {
+            width: 100%;
+            appearance: none;
+            -webkit-appearance: none;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(6, 182, 212, 0.35);
+            border-radius: 0.7rem;
+            color: var(--text-main);
+            font-weight: 700;
+            font-size: 0.95rem;
+            padding: 0.7rem 2.4rem 0.7rem 1rem;
+            cursor: pointer;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .season-filter-select-wrap select:hover,
+        .season-filter-select-wrap select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.18);
+        }
+
+        .season-filter-select-wrap::after {
+            content: '\f078';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            right: 0.95rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+            pointer-events: none;
+            font-size: 0.75rem;
+        }
+
+        @media (max-width: 640px) {
+            .campaigns-title-block h2 {
+                font-size: 1.25rem;
+            }
+            .season-filter-panel {
+                padding: 0.75rem;
+            }
+            .season-filter-select-wrap {
+                width: 100%;
+                min-width: 0;
+            }
+        }
+
         /* ===== TEMPORADAS: CARDS DE CAMPANHA ===== */
         .season-campaigns-list {
             display: flex;
@@ -2279,96 +2589,123 @@
             </div>
 
             <!-- Key Stats Card -->
-            <div class="dashboard-card p-6 space-y-4">
-                <div class="flex items-center justify-between mb-2">
-                    <h2 class="text-lg font-bold text-text-main">Estatísticas Chave</h2>
-                    <button class="text-text-muted hover:text-primary transition-colors" onclick="refreshData()" title="Atualizar dados">
-                        <i class="fas fa-sync-alt"></i>
+            <div class="sidebar-stats-card">
+                <div class="sidebar-stats-header">
+                    <h2><i class="fas fa-chart-pie"></i> Estatísticas Chave</h2>
+                    <button class="text-text-muted hover:text-primary transition-colors p-1 rounded-md hover:bg-white/5" onclick="refreshData()" title="Atualizar dados">
+                        <i class="fas fa-sync-alt text-sm"></i>
                     </button>
                 </div>
                 
-                <div class="space-y-4">
-                    <!-- Ranking com pontos ao lado -->
-                    <div class="flex items-center justify-between p-3 rounded-lg bg-background-deep/50">
-                        <span class="stat-label">
-                            <i class="fas fa-trophy text-primary w-5"></i>
-                            Ranking Atual
-                        </span>
-                        <div class="ranking-display">
-                            <input type="number" id="rankingInput" class="ranking-input" value="1" min="1" readonly>
-                            <span class="text-text-muted">-</span>
-                            <span id="sidebarPoints" class="points-display">0 pts</span>
-                            <i class="fas fa-pen ranking-edit-btn text-xs" onclick="document.getElementById('rankingInput').focus()"></i>
+                <div class="sidebar-stats-body">
+                    <div class="stat-row">
+                        <div class="stat-row-left">
+                            <div class="stat-icon trophy"><i class="fas fa-trophy"></i></div>
+                            <span class="stat-label-text">Ranking Atual</span>
                         </div>
-                    </div>
-                    
-                    <div class="flex items-center justify-between p-3 rounded-lg bg-background-deep/50">
-                        <span class="stat-label">
-                            <i class="fas fa-dollar-sign text-secondary w-5"></i>
-                            Total em Prêmios
-                        </span>
-                        <span id="premiacao" class="stat-value text-secondary">$0.00</span>
-                    </div>
-                    
-                    <div class="flex items-center justify-between p-3 rounded-lg bg-background-deep/50">
-                        <span class="stat-label">
-                            <i class="fas fa-medal text-accent w-5"></i>
-                            Títulos ATP
-                        </span>
-                        <span id="titulosTotal" class="stat-value text-accent">0</span>
-                    </div>
-                    
-                    <div class="flex items-center justify-between p-3 rounded-lg bg-background-deep/50">
-                        <span class="stat-label">
-                            <i class="fas fa-exchange-alt text-red-400 w-5"></i>
-                            V/D na Carreira
-                        </span>
-                        <span id="vitoriasDerrotas" class="stat-value">0 / 0</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Ranking Analysis Card - COM RANKING DESTACADO -->
-            <div class="dashboard-card p-6 space-y-4">
-                <h2 class="text-lg font-bold text-text-main mb-2">Análise de Ranking</h2>
-                
-                <div class="space-y-4">
-                    <!-- RANKING DESTACADO -->
-                    <div class="ranking-highlight">
-                        <div class="flex items-center justify-between">
-                            <span class="stat-label">
-                                <i class="fas fa-crown text-primary w-5"></i>
-                                Posição no Ranking
-                            </span>
-                            <div class="text-right">
-                                <span class="ranking-number stat-value" id="analysisRanking">1</span>
-                                <span class="text-text-muted text-sm ml-2">ATP</span>
+                        <div class="stat-value-wrap">
+                            <div class="ranking-display">
+                                <input type="number" id="rankingInput" class="ranking-input" value="1" min="1" readonly>
+                                <span class="text-text-muted text-xs">·</span>
+                                <span id="sidebarPoints" class="points-display text-sm">0 pts</span>
+                                <i class="fas fa-pen ranking-edit-btn" onclick="document.getElementById('rankingInput').focus()"></i>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="flex items-center justify-between p-3 rounded-lg bg-background-deep/50">
-                        <span class="stat-label">
-                            <i class="fas fa-star text-primary w-5"></i>
-                            Pontos Atuais
-                        </span>
-                        <span id="currentRankingPoints" class="stat-value">0 pts</span>
+                    <div class="stat-row">
+                        <div class="stat-row-left">
+                            <div class="stat-icon money"><i class="fas fa-dollar-sign"></i></div>
+                            <span class="stat-label-text">Total em Prêmios</span>
+                        </div>
+                        <div class="stat-value-wrap">
+                            <span id="premiacao" class="stat-value-main green">$0.00</span>
+                        </div>
                     </div>
                     
-                    <div class="flex items-center justify-between p-3 rounded-lg bg-background-deep/50 border-l-4 border-red-500">
-                        <span class="stat-label">
-                            <i class="fas fa-shield-alt text-red-400 w-5"></i>
-                            Pontos a Defender
-                        </span>
-                        <span id="pointsToDefend" class="stat-value text-red-400">0 pts</span>
+                    <div class="stat-row">
+                        <div class="stat-row-left">
+                            <div class="stat-icon medal"><i class="fas fa-medal"></i></div>
+                            <span class="stat-label-text">Títulos ATP</span>
+                        </div>
+                        <div class="stat-value-wrap">
+                            <span id="titulosTotal" class="stat-value-main gold">0</span>
+                        </div>
                     </div>
                     
-                    <div class="flex items-center justify-between p-3 rounded-lg bg-background-deep/50 border-l-4 border-sky-400">
-                        <span class="stat-label">
-                            <i class="fas fa-chart-line text-sky-400 w-5"></i>
-                            Projeção de Pontos
-                        </span>
-                        <span id="projectedPoints" class="stat-value text-sky-400">0 pts</span>
+                    <div class="stat-row">
+                        <div class="stat-row-left">
+                            <div class="stat-icon record"><i class="fas fa-exchange-alt"></i></div>
+                            <span class="stat-label-text">V/D na Carreira</span>
+                        </div>
+                        <div class="stat-value-wrap">
+                            <span id="vitoriasDerrotas" class="stat-value-main">0 / 0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ranking Analysis Card -->
+            <div class="sidebar-stats-card">
+                <div class="sidebar-stats-header">
+                    <h2><i class="fas fa-ranking-star"></i> Análise de Ranking</h2>
+                </div>
+                
+                <div class="sidebar-stats-body">
+                    <div class="ranking-highlight">
+                        <div class="flex items-center justify-between gap-3">
+                            <div class="stat-row-left">
+                                <div class="stat-icon crown"><i class="fas fa-crown"></i></div>
+                                <div>
+                                    <div class="stat-label-text">Posição no Ranking</div>
+                                    <div class="text-[0.7rem] text-text-muted mt-0.5">Classificação ATP</div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="ranking-number" id="analysisRanking">1</span>
+                                <span class="text-text-muted text-xs font-semibold ml-1">ATP</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-row">
+                        <div class="stat-row-left">
+                            <div class="stat-icon star"><i class="fas fa-star"></i></div>
+                            <span class="stat-label-text">Pontos Atuais</span>
+                        </div>
+                        <div class="stat-value-wrap">
+                            <span id="currentRankingPoints" class="stat-value-main primary">0 pts</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-row" style="border-left: 3px solid #f87171;">
+                        <div class="stat-row-left">
+                            <div class="stat-icon shield"><i class="fas fa-shield-alt"></i></div>
+                            <span class="stat-label-text">Pontos a Defender</span>
+                        </div>
+                        <div class="stat-value-wrap">
+                            <span id="pointsToDefend" class="stat-value-main red">0 pts</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-row" style="border-left: 3px solid #fb923c;">
+                        <div class="stat-row-left">
+                            <div class="stat-icon hourglass"><i class="fas fa-hourglass-end"></i></div>
+                            <span class="stat-label-text">Pontos já expirados</span>
+                        </div>
+                        <div class="stat-value-wrap">
+                            <span id="pointsExpiredTotal" class="stat-value-main orange">0 pts</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-row" style="border-left: 3px solid #38bdf8;">
+                        <div class="stat-row-left">
+                            <div class="stat-icon chart"><i class="fas fa-chart-line"></i></div>
+                            <span class="stat-label-text">Projeção de Pontos</span>
+                        </div>
+                        <div class="stat-value-wrap">
+                            <span id="projectedPoints" class="stat-value-main sky">0 pts</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2429,14 +2766,32 @@
                 <!-- Temporadas Tab -->
                 <div id="temporadas" class="tab-content active" role="tabpanel">
                     <div class="dashboard-card p-6">
-                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
-                            <h2 class="text-2xl font-extrabold text-text-main">Histórico de Campanhas</h2>
-                            
-                            <div class="flex items-center gap-3 bg-background-deep p-2 rounded-lg border border-border-subtle">
-                                <label for="seasonFilter" class="text-sm font-medium text-text-muted whitespace-nowrap">Temporada:</label>
-                                <select id="seasonFilter" class="form-select w-auto min-w-[120px] bg-transparent border-none focus:ring-0">
-                                    <option value="all">Todas</option>
-                                </select>
+                        <div class="campaigns-header">
+                            <div class="campaigns-title-row">
+                                <div class="campaigns-title-block">
+                                    <h2><i class="fas fa-calendar-alt"></i> Histórico de Campanhas</h2>
+                                    <p class="campaigns-subtitle">Acompanhe o desempenho por temporada ou veja a carreira completa</p>
+                                </div>
+                                <span id="seasonScopeBadge" class="season-scope-badge season">
+                                    <i class="fas fa-calendar-day"></i>
+                                    <span id="seasonScopeLabel">Temporada 2026</span>
+                                </span>
+                            </div>
+
+                            <div class="season-filter-panel">
+                                <div class="season-filter-icon">
+                                    <i class="fas fa-filter"></i>
+                                </div>
+                                <div class="season-filter-meta">
+                                    <div class="label">Filtrar por período</div>
+                                    <div class="hint" id="seasonFilterHint">Exibindo resultados de uma temporada específica</div>
+                                </div>
+                                <div class="season-filter-select-wrap">
+                                    <label for="seasonFilter" class="sr-only">Temporada</label>
+                                    <select id="seasonFilter">
+                                        <option value="all">Carreira Toda</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
 
@@ -4038,25 +4393,8 @@
                         : ' | Impacto no top 18: 0 pts');
             }
 
-            // Garante linha "Pontos já expirados" na análise de ranking
-            let expiredLine = document.getElementById('pointsExpiredTotal');
-            if (!expiredLine) {
-                const defendNode = document.getElementById('pointsToDefend');
-                const defendRow = defendNode && defendNode.closest('.flex');
-                if (defendRow && defendRow.parentElement) {
-                    const wrap = document.createElement('div');
-                    wrap.className = 'flex items-center justify-between p-3 rounded-lg bg-background-deep/50 border-l-4 border-orange-400';
-                    wrap.innerHTML = `
-                        <span class="stat-label">
-                            <i class="fas fa-hourglass-end text-orange-400 w-5"></i>
-                            Pontos já expirados
-                        </span>
-                        <span id="pointsExpiredTotal" class="stat-value text-orange-400">0 pts</span>
-                    `;
-                    defendRow.parentElement.insertBefore(wrap, defendRow.nextSibling);
-                    expiredLine = document.getElementById('pointsExpiredTotal');
-                }
-            }
+            // Atualiza linha "Pontos já expirados" na análise de ranking
+            const expiredLine = document.getElementById('pointsExpiredTotal');
             if (expiredLine) {
                 const totalExp = Number(stats.pontosExpiradosTotal) || 0;
                 expiredLine.textContent = `${totalExp.toLocaleString('pt-BR')} pts`;
@@ -4129,6 +4467,23 @@
             `;
         }
 
+        function updateSeasonScopeUI(seasonValue) {
+            const badge = document.getElementById('seasonScopeBadge');
+            const label = document.getElementById('seasonScopeLabel');
+            const hint = document.getElementById('seasonFilterHint');
+            if (!badge || !label) return;
+
+            if (String(seasonValue) === 'all') {
+                badge.className = 'season-scope-badge career';
+                badge.innerHTML = '<i class="fas fa-globe"></i><span id="seasonScopeLabel">Carreira Toda</span>';
+                if (hint) hint.textContent = 'Exibindo o histórico completo da carreira';
+            } else {
+                badge.className = 'season-scope-badge season';
+                badge.innerHTML = `<i class="fas fa-calendar-day"></i><span id="seasonScopeLabel">Temporada ${seasonValue}</span>`;
+                if (hint) hint.textContent = `Exibindo apenas os resultados de ${seasonValue}`;
+            }
+        }
+
         function updateSeasonsTab(stats, season) {
             const filtered = season === 'all' 
                 ? allTournaments 
@@ -4138,8 +4493,8 @@
             const select = document.getElementById('seasonFilter');
             const currentVal = select.value;
             
-            select.innerHTML = '<option value="all">Todas as temporadas</option>' + 
-                years.map(y => `<option value="${y}">${y}</option>`).join('');
+            select.innerHTML = '<option value="all">Carreira Toda</option>' + 
+                years.map(y => `<option value="${y}">Temporada ${y}</option>`).join('');
             
             if (!currentVal || currentVal === 'all') {
                 if (years.includes(CURRENT_YEAR)) {
@@ -4157,6 +4512,9 @@
             const finalFiltered = finalSeason === 'all' 
                 ? allTournaments 
                 : allTournaments.filter(t => t.ano == finalSeason);
+
+            // Atualiza badge e dica do filtro (Carreira Toda vs Temporada)
+            updateSeasonScopeUI(finalSeason);
 
             let vitorias = 0, derrotas = 0, titulos = 0, premiacao = 0;
             finalFiltered.forEach(t => {
@@ -6534,6 +6892,7 @@
             });
 
             document.getElementById('seasonFilter').addEventListener('change', (e) => {
+                updateSeasonScopeUI(e.target.value);
                 updateSeasonsTab(calculateStats(), e.target.value);
             });
 
