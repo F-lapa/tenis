@@ -442,8 +442,9 @@
         .modal-backdrop {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(4px);
+            background: rgba(0, 0, 0, 0);
+            backdrop-filter: blur(0px);
+            -webkit-backdrop-filter: blur(0px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -451,12 +452,22 @@
             z-index: 50;
             opacity: 0;
             visibility: hidden;
-            transition: all 0.3s ease;
+            pointer-events: none;
+            transition:
+                opacity 0.55s ease,
+                visibility 0.55s ease,
+                background 0.55s ease,
+                backdrop-filter 0.55s ease,
+                -webkit-backdrop-filter 0.55s ease;
         }
 
         .modal-backdrop.active {
             opacity: 1;
             visibility: visible;
+            pointer-events: auto;
+            background: rgba(0, 0, 0, 0.68);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
         }
 
         .modal-content {
@@ -467,12 +478,17 @@
             max-width: 700px;
             max-height: 90vh;
             overflow: hidden;
-            transform: scale(0.95) translateY(10px);
-            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(28px) scale(0.97);
+            transition:
+                opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: opacity, transform;
         }
 
         .modal-backdrop.active .modal-content {
-            transform: scale(1) translateY(0);
+            opacity: 1;
+            transform: translateY(0) scale(1);
         }
 
         .modal-header {
@@ -850,70 +866,243 @@
 
         /* ranking-input / ranking-display styles definidos no bloco sidebar redesign */
 
-        /* NOVO: Estilos para H2H melhorado */
+        /* ===== H2H PLACAR CLARO ===== */
         .h2h-header {
-            background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(59, 130, 246, 0.05));
-            border: 1px solid var(--border-subtle);
-            border-radius: 1rem;
-            padding: 1.5rem;
+            background:
+                radial-gradient(ellipse at 15% 0%, rgba(6, 182, 212, 0.12), transparent 50%),
+                radial-gradient(ellipse at 85% 100%, rgba(239, 68, 68, 0.08), transparent 45%),
+                linear-gradient(160deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 0.92));
+            border: 1px solid rgba(6, 182, 212, 0.22);
+            border-radius: 1.15rem;
+            padding: 1.35rem 1.25rem 1.25rem;
             margin-bottom: 1.5rem;
-            text-align: center;
+            position: relative;
+            overflow: hidden;
         }
 
-        .h2h-score-big {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 2rem;
+        .h2h-series-label {
+            text-align: center;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
             margin-bottom: 1rem;
         }
 
-        .h2h-player {
+        .h2h-scoreboard {
             display: flex;
             flex-direction: column;
+            gap: 0.65rem;
+        }
+
+        .h2h-score-row {
+            display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.9rem;
+            padding: 0.85rem 1rem;
+            border-radius: 0.95rem;
+            background: rgba(15, 23, 42, 0.65);
+            border: 1px solid rgba(51, 65, 85, 0.7);
+            transition: border-color 0.2s ease, background 0.2s ease;
+        }
+
+        .h2h-score-row.leading {
+            border-color: rgba(16, 185, 129, 0.45);
+            background: linear-gradient(90deg, rgba(16, 185, 129, 0.12), rgba(15, 23, 42, 0.55));
+        }
+
+        .h2h-score-row.trailing {
+            border-color: rgba(248, 113, 113, 0.28);
+            background: linear-gradient(90deg, rgba(239, 68, 68, 0.08), rgba(15, 23, 42, 0.55));
+        }
+
+        .h2h-score-row.tied {
+            border-color: rgba(6, 182, 212, 0.3);
         }
 
         .h2h-avatar {
-            width: 64px;
-            height: 64px;
+            width: 56px;
+            height: 56px;
             border-radius: 50%;
-            display: flex;
+            object-fit: cover;
+            flex-shrink: 0;
+            border: 2px solid rgba(148, 163, 184, 0.25);
+            background: rgba(15, 23, 42, 0.9);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+        }
+
+        .h2h-score-row.leading .h2h-avatar {
+            border-color: rgba(16, 185, 129, 0.55);
+        }
+
+        .h2h-score-row.trailing .h2h-avatar {
+            border-color: rgba(248, 113, 113, 0.4);
+        }
+
+        .h2h-player-info {
+            flex: 1;
+            min-width: 0;
+            text-align: left;
+        }
+
+        .h2h-player-name {
+            font-weight: 700;
+            color: var(--text-main);
+            font-size: 1rem;
+            line-height: 1.25;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .h2h-flag-under {
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            font-weight: 800;
-        }
-
-        .h2h-avatar.fl {
-            background: linear-gradient(135deg, var(--primary), #0ea5e9);
-            border: 3px solid var(--primary);
-        }
-
-        .h2h-avatar.opp {
-            background: linear-gradient(135deg, #ef4444, #f97316);
-            border: 3px solid #ef4444;
-        }
-
-        .h2h-vs {
-            font-size: 1.5rem;
-            font-weight: 800;
+            gap: 0.35rem;
+            margin-top: 0.3rem;
+            font-size: 0.75rem;
             color: var(--text-muted);
+            font-weight: 600;
         }
 
-        .h2h-wins {
-            font-size: 3rem;
-            font-weight: 900;
+        .h2h-flag-under img {
+            width: 18px;
+            height: 13px;
+            border-radius: 2px;
+            object-fit: cover;
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.08);
+        }
+
+        .h2h-flag-under .flag-emoji {
+            font-size: 0.95rem;
             line-height: 1;
         }
 
-        .h2h-wins.win {
-            color: var(--secondary);
+        .h2h-player-score {
+            font-size: 2.4rem;
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: -0.03em;
+            min-width: 2.2rem;
+            text-align: right;
+            flex-shrink: 0;
         }
 
-        .h2h-wins.loss {
-            color: var(--danger);
+        .h2h-player-score.win { color: #34d399; }
+        .h2h-player-score.loss { color: #f87171; }
+        .h2h-player-score.tie { color: var(--primary); }
+
+        .h2h-leader-banner {
+            margin-top: 1rem;
+            text-align: center;
+            padding: 0.65rem 1rem;
+            border-radius: 0.75rem;
+            font-size: 0.88rem;
+            font-weight: 700;
+            border: 1px solid transparent;
+        }
+
+        .h2h-leader-banner.fl-leads {
+            background: rgba(16, 185, 129, 0.12);
+            border-color: rgba(16, 185, 129, 0.3);
+            color: #6ee7b7;
+        }
+
+        .h2h-leader-banner.opp-leads {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.28);
+            color: #fca5a5;
+        }
+
+        .h2h-leader-banner.even {
+            background: rgba(6, 182, 212, 0.1);
+            border-color: rgba(6, 182, 212, 0.28);
+            color: #67e8f9;
+        }
+
+        .h2h-stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(51, 65, 85, 0.65);
+        }
+
+        .h2h-stats-row .stat {
+            text-align: center;
+        }
+
+        .h2h-stats-row .stat .num {
+            font-size: 1.35rem;
+            font-weight: 800;
+            line-height: 1.15;
+        }
+
+        .h2h-stats-row .stat .lbl {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 0.2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .h2h-opponent-card {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            padding: 0.9rem 1rem;
+            background: rgba(15, 23, 42, 0.65);
+            border: 1px solid var(--border-subtle);
+            border-radius: 0.9rem;
+            cursor: pointer;
+            transition: border-color 0.2s ease, background 0.2s ease, transform 0.15s ease;
+        }
+
+        .h2h-opponent-card:hover {
+            border-color: rgba(6, 182, 212, 0.4);
+            background: rgba(6, 182, 212, 0.06);
+            transform: translateY(-1px);
+        }
+
+        .h2h-opponent-card img.opp-photo {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(239, 68, 68, 0.35);
+            flex-shrink: 0;
+        }
+
+        .h2h-opponent-card .opp-meta {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .h2h-opponent-card .opp-name {
+            font-weight: 600;
+            color: var(--text-main);
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .h2h-opponent-card .opp-flag-row {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            margin-top: 0.2rem;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        .h2h-opponent-card .opp-flag-row img {
+            width: 16px;
+            height: 12px;
+            border-radius: 2px;
+            object-fit: cover;
         }
 
         .h2h-matches-grid {
@@ -1355,18 +1544,22 @@
                 transform: rotate(90deg);
             }
 
-            .h2h-score-big {
-                gap: 1rem;
-            }
-
-            .h2h-wins {
-                font-size: 2rem;
-            }
-
             .h2h-avatar {
                 width: 48px;
                 height: 48px;
-                font-size: 1.25rem;
+            }
+
+            .h2h-player-score {
+                font-size: 2rem;
+            }
+
+            .h2h-player-name {
+                font-size: 0.9rem;
+            }
+
+            .h2h-score-row {
+                padding: 0.7rem 0.8rem;
+                gap: 0.7rem;
             }
         }
 
@@ -1512,6 +1705,26 @@
         .ranking-player-cell {
             min-width: 0;
         }
+        .ranking-player-wrap {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            min-width: 0;
+        }
+        .ranking-player-photo {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+            border: 2px solid rgba(6, 182, 212, 0.25);
+            background: rgba(15, 23, 42, 0.8);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+        }
+        .ranking-player-photo.fernando {
+            border-color: rgba(6, 182, 212, 0.55);
+            box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.15), 0 2px 10px rgba(6, 182, 212, 0.25);
+        }
         .ranking-player-name {
             overflow: hidden;
             text-overflow: ellipsis;
@@ -1536,6 +1749,13 @@
             background: rgba(255,255,255,.07);
             font-size: 1.05rem;
             box-shadow: inset 0 0 0 1px rgba(255,255,255,.05);
+            overflow: hidden;
+        }
+        .ranking-flag img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
         }
         .ranking-country-name {
             overflow: hidden;
@@ -3431,46 +3651,75 @@
             }).format(value || 0);
         }
 
-        function getFlagEmoji(countryValue) {
+        const COUNTRY_NAME_TO_ISO2 = {
+            'ARGENTINA':'AR','AUSTRALIA':'AU','AUSTRIA':'AT','BELARUS':'BY',
+            'BELGIUM':'BE','BOLIVIA':'BO','BOSNIA AND HERZEGOVINA':'BA',
+            'BRAZIL':'BR','BULGARIA':'BG','CANADA':'CA','CHILE':'CL',
+            'CHINA':'CN','COLOMBIA':'CO','COSTA RICA':'CR','CROATIA':'HR',
+            'CYPRUS':'CY','CZECH REPUBLIC':'CZ','CZECHIA':'CZ','DENMARK':'DK',
+            'DOMINICAN REPUBLIC':'DO','ECUADOR':'EC','EGYPT':'EG',
+            'EL SALVADOR':'SV','ESTONIA':'EE','FINLAND':'FI','FRANCE':'FR',
+            'GEORGIA':'GE','GERMANY':'DE','GREAT BRITAIN':'GB',
+            'UNITED KINGDOM':'GB','GREECE':'GR','GUATEMALA':'GT',
+            'HUNGARY':'HU','INDIA':'IN','INDONESIA':'ID','IRELAND':'IE',
+            'ISRAEL':'IL','ITALY':'IT','JAPAN':'JP','KAZAKHSTAN':'KZ',
+            'LATVIA':'LV','LEBANON':'LB','LITHUANIA':'LT','LUXEMBOURG':'LU',
+            'MEXICO':'MX','MOLDOVA':'MD','MONACO':'MC','MONTENEGRO':'ME',
+            'MOROCCO':'MA','NETHERLANDS':'NL','NEW ZEALAND':'NZ',
+            'NORTH MACEDONIA':'MK','NORWAY':'NO','PARAGUAY':'PY','PERU':'PE',
+            'POLAND':'PL','PORTUGAL':'PT','PUERTO RICO':'PR','ROMANIA':'RO',
+            'RUSSIA':'RU','SERBIA':'RS','SLOVAKIA':'SK','SLOVENIA':'SI',
+            'SOUTH AFRICA':'ZA','SOUTH KOREA':'KR','KOREA':'KR','SPAIN':'ES',
+            'SWEDEN':'SE','SWITZERLAND':'CH','TAIWAN':'TW','THAILAND':'TH',
+            'TUNISIA':'TN','TURKEY':'TR','TÜRKIYE':'TR','UKRAINE':'UA',
+            'UNITED ARAB EMIRATES':'AE','UNITED STATES':'US','USA':'US',
+            'URUGUAY':'UY','UZBEKISTAN':'UZ','VENEZUELA':'VE'
+        };
+
+        function countryToIso2(countryValue) {
             if (!countryValue) return '';
-
-            const COUNTRY_NAME_TO_ISO2 = {
-                'ARGENTINA':'AR','AUSTRALIA':'AU','AUSTRIA':'AT','BELARUS':'BY',
-                'BELGIUM':'BE','BOLIVIA':'BO','BOSNIA AND HERZEGOVINA':'BA',
-                'BRAZIL':'BR','BULGARIA':'BG','CANADA':'CA','CHILE':'CL',
-                'CHINA':'CN','COLOMBIA':'CO','COSTA RICA':'CR','CROATIA':'HR',
-                'CYPRUS':'CY','CZECH REPUBLIC':'CZ','CZECHIA':'CZ','DENMARK':'DK',
-                'DOMINICAN REPUBLIC':'DO','ECUADOR':'EC','EGYPT':'EG',
-                'EL SALVADOR':'SV','ESTONIA':'EE','FINLAND':'FI','FRANCE':'FR',
-                'GEORGIA':'GE','GERMANY':'DE','GREAT BRITAIN':'GB',
-                'UNITED KINGDOM':'GB','GREECE':'GR','GUATEMALA':'GT',
-                'HUNGARY':'HU','INDIA':'IN','INDONESIA':'ID','IRELAND':'IE',
-                'ISRAEL':'IL','ITALY':'IT','JAPAN':'JP','KAZAKHSTAN':'KZ',
-                'LATVIA':'LV','LEBANON':'LB','LITHUANIA':'LT','LUXEMBOURG':'LU',
-                'MEXICO':'MX','MOLDOVA':'MD','MONACO':'MC','MONTENEGRO':'ME',
-                'MOROCCO':'MA','NETHERLANDS':'NL','NEW ZEALAND':'NZ',
-                'NORTH MACEDONIA':'MK','NORWAY':'NO','PARAGUAY':'PY','PERU':'PE',
-                'POLAND':'PL','PORTUGAL':'PT','PUERTO RICO':'PR','ROMANIA':'RO',
-                'RUSSIA':'RU','SERBIA':'RS','SLOVAKIA':'SK','SLOVENIA':'SI',
-                'SOUTH AFRICA':'ZA','SOUTH KOREA':'KR','KOREA':'KR','SPAIN':'ES',
-                'SWEDEN':'SE','SWITZERLAND':'CH','TAIWAN':'TW','THAILAND':'TH',
-                'TUNISIA':'TN','TURKEY':'TR','TÜRKIYE':'TR','UKRAINE':'UA',
-                'UNITED ARAB EMIRATES':'AE','UNITED STATES':'US','USA':'US',
-                'URUGUAY':'UY','UZBEKISTAN':'UZ','VENEZUELA':'VE'
-            };
-
             const raw = String(countryValue).trim();
             const code = raw.toUpperCase();
-            const iso2 =
-                COUNTRY_NAME_TO_ISO2[code] ||
-                IOC_TO_ISO2[code] ||
+            return COUNTRY_NAME_TO_ISO2[code] ||
+                (typeof IOC_TO_ISO2 !== 'undefined' && IOC_TO_ISO2[code]) ||
                 (code.length === 2 ? code : '');
+        }
 
+        function getFlagEmoji(countryValue) {
+            const iso2 = countryToIso2(countryValue);
             if (!iso2) return '🌐';
-
             return iso2.split('').map(char =>
                 String.fromCodePoint(char.charCodeAt(0) + 127397)
             ).join('');
+        }
+
+        function getFlagImgHtml(countryValue, size = 20) {
+            const iso2 = countryToIso2(countryValue);
+            if (!iso2) return `<span class="flag-emoji">🌐</span>`;
+            const lower = iso2.toLowerCase();
+            return `<img src="https://flagcdn.com/w40/${lower}.png" alt="${iso2}" width="${size}" height="${Math.round(size * 0.75)}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'flag-emoji',textContent:'${getFlagEmoji(countryValue)}'}))">`;
+        }
+
+        function getPlayerPhotoUrl(name, options = {}) {
+            const { isFernando = false, size = 128, photo, playerId } = options;
+            if (photo && typeof photo === 'string' && photo.startsWith('http')) return photo;
+            if (playerId) {
+                return `https://www.atptour.com/-/media/alias/player-headshot/${encodeURIComponent(playerId)}`;
+            }
+            if (isFernando || String(name || '').toLowerCase().includes('fernando lapa')) {
+                return `https://ui-avatars.com/api/?name=Fernando+Lapa&background=06b6d4&color=fff&size=${size}&bold=true&rounded=true`;
+            }
+            const safe = encodeURIComponent(String(name || 'Player').trim() || 'Player');
+            // Cores distintas para adversários
+            return `https://ui-avatars.com/api/?name=${safe}&background=1e293b&color=94a3b8&size=${size}&bold=true&rounded=true`;
+        }
+
+        function findRankingPlayerMeta(name) {
+            if (!name || !Array.isArray(atpRanking)) return null;
+            const norm = String(name).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+            return atpRanking.find(p =>
+                String(p.name || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim() === norm
+            ) || null;
         }
 
         function getWeekNumber(date) {
@@ -3645,6 +3894,8 @@
                 name: String(p.name || ''),
                 country: String(p.country || ''),
                 points: Number(p.points) || 0,
+                photo: p.photo || p.image || p.headshot || null,
+                playerId: p.playerId || p.id || p.atpId || null,
                 isFernando: false
             })).filter(p => p.rank > 0 && p.name).sort((a, b) => a.rank - b.rank);
 
@@ -3661,6 +3912,8 @@
                     name: 'Fernando Lapa',
                     country: 'BRA',
                     points: calculatedPoints,
+                    photo: null,
+                    playerId: null,
                     isFernando: true
                 }
             ].sort((a, b) => b.points - a.points || (a.isFernando ? -1 : 1) || a.rank - b.rank)
@@ -3947,21 +4200,36 @@
                 `${atpRanking.length.toLocaleString('pt-BR')} jogadores oficiais carregados`;
 
             body.innerHTML = rows.map(row => {
-                const flag = getFlagEmoji(row.country);
+                const flagHtml = getFlagImgHtml(row.country, 28);
+                const photoUrl = getPlayerPhotoUrl(row.name, {
+                    isFernando: row.isFernando,
+                    size: 72,
+                    photo: row.photo,
+                    playerId: row.playerId
+                });
                 return `
                     <tr class="${row.isFernando ? 'fernando-row' : ''}">
                         <td><span class="ranking-position">${row.displayRank}º</span></td>
                         <td class="ranking-player-cell">
-                            <div class="ranking-player-name font-bold ${row.isFernando ? 'text-primary' : ''}">
-                                ${row.name}
+                            <div class="ranking-player-wrap">
+                                <img class="ranking-player-photo ${row.isFernando ? 'fernando' : ''}"
+                                     src="${photoUrl}"
+                                     alt="${row.name}"
+                                     loading="lazy"
+                                     onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(row.name)}&background=1e293b&color=94a3b8&size=72&bold=true&rounded=true';">
+                                <div style="min-width:0">
+                                    <div class="ranking-player-name font-bold ${row.isFernando ? 'text-primary' : ''}">
+                                        ${row.name}
+                                    </div>
+                                    ${row.isFernando
+                                        ? '<div class="text-[10px] leading-tight mt-1 text-secondary">Projeção pelos pontos</div>'
+                                        : ''}
+                                </div>
                             </div>
-                            ${row.isFernando
-                                ? '<div class="text-[10px] leading-tight mt-1 text-secondary">Projeção pelos pontos</div>'
-                                : ''}
                         </td>
                         <td>
                             <div class="ranking-country" title="${row.country || 'País não informado'}">
-                                <span class="ranking-flag">${flag}</span>
+                                <span class="ranking-flag">${flagHtml}</span>
                                 <span class="ranking-country-name">${row.country || '—'}</span>
                             </div>
                         </td>
@@ -4028,18 +4296,34 @@
             title: document.getElementById('modalTitle'),
             body: document.getElementById('modalBody'),
             footer: document.getElementById('modalFooter'),
+            _closeTimer: null,
             
             open(title, bodyHTML, footerHTML = '') {
+                if (this._closeTimer) {
+                    clearTimeout(this._closeTimer);
+                    this._closeTimer = null;
+                }
                 this.title.innerHTML = title;
                 this.body.innerHTML = bodyHTML;
                 this.footer.innerHTML = footerHTML;
-                this.element.classList.add('active');
+                // Força estado inicial e anima no próximo frame (fade-in suave)
+                this.element.classList.remove('active');
+                void this.element.offsetWidth;
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        this.element.classList.add('active');
+                    });
+                });
                 document.body.style.overflow = 'hidden';
             },
             
             close() {
                 this.element.classList.remove('active');
-                document.body.style.overflow = '';
+                // Aguarda o fade-out (~550ms) terminar antes de liberar o scroll
+                this._closeTimer = setTimeout(() => {
+                    document.body.style.overflow = '';
+                    this._closeTimer = null;
+                }, 560);
             }
         };
 
@@ -5162,14 +5446,28 @@
                 filtered = filtered.slice(0, 5);
                 
                 if (filtered.length > 0) {
-                    h2hSuggestions.innerHTML = filtered.map(o => `
+                    h2hSuggestions.innerHTML = filtered.map(o => {
+                        const meta = findRankingPlayerMeta(o.name);
+                        const photo = getPlayerPhotoUrl(o.name, {
+                            size: 64,
+                            photo: meta?.photo || meta?.image,
+                            playerId: meta?.playerId || meta?.id || meta?.atpId
+                        });
+                        return `
                         <div class="suggestion-item" onclick="selectOpponent('${o.name.replace(/'/g, "\\'")}')">
-                            <div class="flex items-center gap-2">
-                                <span class="text-lg">${getFlagEmoji(o.country)}</span>
-                                <span class="font-medium">${o.name}</span>
+                            <div class="flex items-center gap-3">
+                                <img src="${photo}" alt="" width="32" height="32" style="border-radius:50%;object-fit:cover;border:1px solid rgba(148,163,184,.25);" loading="lazy"
+                                     onerror="this.style.display='none'">
+                                <div style="min-width:0">
+                                    <div class="font-medium">${o.name}</div>
+                                    <div class="text-xs text-text-muted flex items-center gap-1 mt-0.5">
+                                        ${getFlagImgHtml(o.country, 14)}
+                                        <span>${o.country || ''}</span>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    `).join('');
+                        </div>`;
+                    }).join('');
                     h2hSuggestions.classList.add('active');
                 } else {
                     h2hSuggestions.classList.remove('active');
@@ -5209,7 +5507,10 @@
                 }
 
                 container.innerHTML = `
-                    <div class="mb-4 font-bold text-text-main">Jogadores de ${getFlagEmoji(country)} ${country}:</div>
+                    <div class="mb-4 font-bold text-text-main flex items-center gap-2">
+                        ${getFlagImgHtml(country, 22)}
+                        <span>Jogadores de ${country}</span>
+                    </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         ${players.map(p => {
                             let wins = 0, losses = 0;
@@ -5220,16 +5521,29 @@
                                     }
                                 });
                             });
+                            const meta = findRankingPlayerMeta(p.name);
+                            const photo = getPlayerPhotoUrl(p.name, {
+                                size: 88,
+                                photo: meta?.photo || meta?.image,
+                                playerId: meta?.playerId || meta?.id || meta?.atpId
+                            });
                             return `
-                                <div class="p-3 bg-background-deep rounded-lg cursor-pointer hover:bg-card-hover transition-colors"
+                                <div class="h2h-opponent-card"
                                      onclick="selectOpponent('${p.name.replace(/'/g, "\\'")}')">
-                                    <div class="flex justify-between items-center">
-                                        <span class="font-medium">${p.name}</span>
-                                        <span class="text-sm">
-                                            <span class="text-secondary">${wins}</span> - 
-                                            <span class="text-red-400">${losses}</span>
-                                        </span>
+                                    <img class="opp-photo" src="${photo}" alt="${p.name}" loading="lazy"
+                                         onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(p.name)}&background=1e293b&color=94a3b8&size=88&bold=true&rounded=true';">
+                                    <div class="opp-meta">
+                                        <div class="opp-name">${p.name}</div>
+                                        <div class="opp-flag-row">
+                                            ${getFlagImgHtml(p.country || country, 16)}
+                                            <span>${p.country || country}</span>
+                                        </div>
                                     </div>
+                                    <span class="text-sm font-semibold whitespace-nowrap">
+                                        <span class="text-secondary">${wins}</span>
+                                        <span class="text-text-muted">–</span>
+                                        <span class="text-red-400">${losses}</span>
+                                    </span>
                                 </div>
                             `;
                         }).join('')}
@@ -5262,46 +5576,75 @@
 
             matches.sort((a, b) => b.data - a.data);
 
-            // NOVO DESIGN DO H2H
+            const oppMeta = findRankingPlayerMeta(name);
+            const flPhoto = getPlayerPhotoUrl('Fernando Lapa', { isFernando: true, size: 112 });
+            const oppPhoto = getPlayerPhotoUrl(name, {
+                size: 112,
+                photo: oppMeta?.photo || oppMeta?.image,
+                playerId: oppMeta?.playerId || oppMeta?.id || oppMeta?.atpId
+            });
+            const oppCountryLabel = opponentCountry || '—';
+
+            const flLeads = wins > losses;
+            const oppLeads = losses > wins;
+            const isTied = wins === losses;
+            const flRowClass = isTied ? 'tied' : (flLeads ? 'leading' : 'trailing');
+            const oppRowClass = isTied ? 'tied' : (oppLeads ? 'leading' : 'trailing');
+            const flScoreClass = isTied ? 'tie' : (flLeads ? 'win' : 'loss');
+            const oppScoreClass = isTied ? 'tie' : (oppLeads ? 'win' : 'loss');
+
+            let leaderBanner;
+            if (isTied) {
+                leaderBanner = `<div class="h2h-leader-banner even"><i class="fas fa-equals mr-2"></i>Empate ${wins}–${losses} nos confrontos diretos</div>`;
+            } else if (flLeads) {
+                leaderBanner = `<div class="h2h-leader-banner fl-leads"><i class="fas fa-crown mr-2"></i>Fernando Lapa lidera ${wins}–${losses}</div>`;
+            } else {
+                leaderBanner = `<div class="h2h-leader-banner opp-leads"><i class="fas fa-crown mr-2"></i>${name} lidera ${losses}–${wins}</div>`;
+            }
+
+            // Placar H2H: vitórias ao lado de cada jogador
             container.innerHTML = `
-                <!-- Header com placar grande -->
                 <div class="h2h-header">
-                    <div class="h2h-score-big">
-                        <div class="h2h-player">
-                            <div class="h2h-avatar fl">FL</div>
-                            <div class="font-bold text-text-main">Fernando Lapa</div>
-                            <div class="text-xs text-text-muted">Brasil</div>
-                        </div>
-                        
-                        <div class="text-center">
-                            <div class="flex items-center gap-4 mb-2">
-                                <span class="h2h-wins win">${wins}</span>
-                                <span class="h2h-vs">vs</span>
-                                <span class="h2h-wins loss">${losses}</span>
+                    <div class="h2h-series-label">Confrontos diretos</div>
+                    <div class="h2h-scoreboard">
+                        <div class="h2h-score-row ${flRowClass}">
+                            <img class="h2h-avatar" src="${flPhoto}" alt="Fernando Lapa" loading="lazy"
+                                 onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=Fernando+Lapa&background=06b6d4&color=fff&size=112&bold=true&rounded=true';">
+                            <div class="h2h-player-info">
+                                <div class="h2h-player-name">Fernando Lapa</div>
+                                <div class="h2h-flag-under">
+                                    ${getFlagImgHtml('BRA', 18)}
+                                    <span>Brasil</span>
+                                </div>
                             </div>
-                            <div class="text-sm text-text-muted">Confrontos Diretos</div>
+                            <div class="h2h-player-score ${flScoreClass}">${wins}</div>
                         </div>
-                        
-                        <div class="h2h-player">
-                            <div class="h2h-avatar opp">${name.charAt(0)}</div>
-                            <div class="font-bold text-text-main">${name}</div>
-                            <div class="text-xs text-text-muted">${opponentCountry || 'Unknown'}</div>
+                        <div class="h2h-score-row ${oppRowClass}">
+                            <img class="h2h-avatar" src="${oppPhoto}" alt="${name}" loading="lazy"
+                                 onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=1e293b&color=f87171&size=112&bold=true&rounded=true';">
+                            <div class="h2h-player-info">
+                                <div class="h2h-player-name">${name}</div>
+                                <div class="h2h-flag-under">
+                                    ${getFlagImgHtml(oppCountryLabel, 18)}
+                                    <span>${oppCountryLabel}</span>
+                                </div>
+                            </div>
+                            <div class="h2h-player-score ${oppScoreClass}">${losses}</div>
                         </div>
                     </div>
-                    
-                    <!-- Estatísticas rápidas -->
-                    <div class="grid grid-cols-3 gap-4 mt-4 pt-4 border-t border-border-subtle">
-                        <div class="text-center">
-                            <div class="text-2xl font-bold text-secondary">${wins}</div>
-                            <div class="text-xs text-text-muted">Vitórias</div>
+                    ${leaderBanner}
+                    <div class="h2h-stats-row">
+                        <div class="stat">
+                            <div class="num text-secondary">${wins}</div>
+                            <div class="lbl">Vitórias FL</div>
                         </div>
-                        <div class="text-center">
-                            <div class="text-2xl font-bold text-text-main">${matches.length}</div>
-                            <div class="text-xs text-text-muted">Jogos</div>
+                        <div class="stat">
+                            <div class="num text-text-main">${matches.length}</div>
+                            <div class="lbl">Jogos</div>
                         </div>
-                        <div class="text-center">
-                            <div class="text-2xl font-bold text-danger">${losses}</div>
-                            <div class="text-xs text-text-muted">Derrotas</div>
+                        <div class="stat">
+                            <div class="num text-danger">${losses}</div>
+                            <div class="lbl">Vitórias adv.</div>
                         </div>
                     </div>
                 </div>
