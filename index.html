@@ -1712,18 +1712,25 @@
             min-width: 0;
         }
         .ranking-player-photo {
-            width: 36px;
-            height: 36px;
+            width: 36px !important;
+            height: 36px !important;
             border-radius: 50%;
             object-fit: cover;
             flex-shrink: 0;
             border: 2px solid rgba(6, 182, 212, 0.25);
             background: rgba(15, 23, 42, 0.8);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+            display: block;
         }
         .ranking-player-photo.fernando {
             border-color: rgba(6, 182, 212, 0.55);
             box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.15), 0 2px 10px rgba(6, 182, 212, 0.25);
+        }
+        .h2h-avatar {
+            display: block;
+        }
+        .opp-photo {
+            display: block;
         }
         .ranking-player-name {
             overflow: hidden;
@@ -3700,18 +3707,233 @@
             return `<img src="https://flagcdn.com/w40/${lower}.png" alt="${iso2}" width="${size}" height="${Math.round(size * 0.75)}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'flag-emoji',textContent:'${getFlagEmoji(countryValue)}'}))">`;
         }
 
+        function getPlayerInitials(name) {
+            const parts = String(name || '')
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                .trim().split(/\s+/).filter(Boolean);
+            if (!parts.length) return '?';
+            if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+            return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+        }
+
+        function hashString(str) {
+            let h = 0;
+            const s = String(str || '');
+            for (let i = 0; i < s.length; i++) h = ((h << 5) - h) + s.charCodeAt(i) | 0;
+            return Math.abs(h);
+        }
+
+        function getAvatarPalette(name, isFernando = false) {
+            if (isFernando || String(name || '').toLowerCase().includes('fernando lapa')) {
+                return { bg: '#06b6d4', fg: '#ffffff' };
+            }
+            const palettes = [
+                { bg: '#0ea5e9', fg: '#ffffff' },
+                { bg: '#8b5cf6', fg: '#ffffff' },
+                { bg: '#10b981', fg: '#ffffff' },
+                { bg: '#f59e0b', fg: '#0f172a' },
+                { bg: '#ef4444', fg: '#ffffff' },
+                { bg: '#6366f1', fg: '#ffffff' },
+                { bg: '#14b8a6', fg: '#ffffff' },
+                { bg: '#ec4899', fg: '#ffffff' },
+                { bg: '#3b82f6', fg: '#ffffff' },
+                { bg: '#a855f7', fg: '#ffffff' }
+            ];
+            return palettes[hashString(name) % palettes.length];
+        }
+
+        /** Avatar SVG embutido — funciona sempre, sem depender de internet */
+        function getPlayerAvatarDataUri(name, options = {}) {
+            const { isFernando = false, size = 128 } = options;
+            const initials = getPlayerInitials(name)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+            const { bg, fg } = getAvatarPalette(name, isFernando);
+            const fontSize = initials.length > 2 ? 40 : 48;
+            // id único evita conflito se vários SVGs forem inlined no DOM
+            const gid = 'g' + (hashString(name + bg) % 100000);
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 128 128">
+                <defs>
+                    <linearGradient id="${gid}" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="${bg}"/>
+                        <stop offset="100%" stop-color="${bg}"/>
+                    </linearGradient>
+                </defs>
+                <circle cx="64" cy="64" r="64" fill="${bg}"/>
+                <text x="64" y="64" dy=".36em" text-anchor="middle" fill="${fg}"
+                      font-family="Inter,Segoe UI,Arial,sans-serif" font-size="${fontSize}" font-weight="700">${initials}</text>
+            </svg>`;
+            return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+        }
+
+        function isValidAtpPlayerCode(value) {
+            if (value == null || value === '') return false;
+            const s = String(value).trim();
+            // Códigos ATP típicos: a0e2, s0ag, d0co, r975 — letra + alfanumérico
+            if (/^[a-z][a-z0-9]{2,6}$/i.test(s)) return true;
+            // Alguns feeds usam só dígitos longos (player database id)
+            if (/^\d{4,}$/.test(s)) return true;
+            return false;
+        }
+
+        function extractPlayerPhotoMeta(p = {}) {
+            const photo = p.photo || p.image || p.headshot || p.imageUrl || p.img || null;
+            const rawId = p.playerId || p.atpId || p.atp_id || p.player_id || p.code || null;
+            // Evita usar p.id genérico (muitas vezes é só o rank numérico 1,2,3…)
+            const playerId = isValidAtpPlayerCode(rawId)
+                ? String(rawId).trim()
+                : (isValidAtpPlayerCode(p.id) ? String(p.id).trim() : null);
+            return { photo, playerId };
+        }
+
+        const PLAYER_PHOTO_CACHE_KEY = 'fernando_lapa_player_photos_v1';
+        const playerPhotoMemory = new Map();
+        let playerPhotoDisk = null;
+
+        function normalizePlayerKey(name) {
+            return String(name || '')
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase().trim().replace(/\s+/g, ' ');
+        }
+
+        function loadPlayerPhotoDisk() {
+            if (playerPhotoDisk) return playerPhotoDisk;
+            try {
+                playerPhotoDisk = JSON.parse(localStorage.getItem(PLAYER_PHOTO_CACHE_KEY) || '{}') || {};
+            } catch {
+                playerPhotoDisk = {};
+            }
+            return playerPhotoDisk;
+        }
+
+        function savePlayerPhotoDisk() {
+            try {
+                localStorage.setItem(PLAYER_PHOTO_CACHE_KEY, JSON.stringify(playerPhotoDisk || {}));
+            } catch (_) { /* quota */ }
+        }
+
+        function getCachedPlayerPhoto(name) {
+            const key = normalizePlayerKey(name);
+            if (!key) return null;
+            if (playerPhotoMemory.has(key)) return playerPhotoMemory.get(key);
+            const disk = loadPlayerPhotoDisk();
+            if (disk[key]) {
+                playerPhotoMemory.set(key, disk[key]);
+                return disk[key];
+            }
+            return null;
+        }
+
+        function setCachedPlayerPhoto(name, url) {
+            const key = normalizePlayerKey(name);
+            if (!key || !url) return;
+            playerPhotoMemory.set(key, url);
+            const disk = loadPlayerPhotoDisk();
+            disk[key] = url;
+            const keys = Object.keys(disk);
+            if (keys.length > 400) {
+                keys.slice(0, keys.length - 400).forEach(k => delete disk[k]);
+            }
+            playerPhotoDisk = disk;
+            savePlayerPhotoDisk();
+        }
+
+        function wikipediaTitleCandidates(name) {
+            const clean = String(name || '').trim().replace(/\s+/g, ' ');
+            if (!clean) return [];
+            const underscored = clean.replace(/ /g, '_');
+            return [underscored, `${underscored}_(tennis)`, `${underscored}_(tennis_player)`];
+        }
+
+        async function fetchWikipediaThumbnail(name) {
+            for (const title of wikipediaTitleCandidates(name)) {
+                try {
+                    const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
+                    const res = await fetch(url, { headers: { Accept: 'application/json' } });
+                    if (!res.ok) continue;
+                    const data = await res.json();
+                    if (data.type && data.type !== 'standard' && !data.thumbnail) continue;
+                    const thumb = data.thumbnail?.source || data.originalimage?.source;
+                    if (thumb && /^https?:\/\//i.test(thumb)) {
+                        return thumb.replace(/\/(\d+)px-/, '/240px-');
+                    }
+                } catch (_) { /* next */ }
+            }
+            return null;
+        }
+
+        async function resolvePlayerPhoto(name, options = {}) {
+            const { photo = null, playerId = null, isFernando = false } = options;
+            if (isFernando || normalizePlayerKey(name) === 'fernando lapa') return null;
+            if (photo && typeof photo === 'string' && /^https?:\/\//i.test(photo)) {
+                setCachedPlayerPhoto(name, photo);
+                return photo;
+            }
+            const cached = getCachedPlayerPhoto(name);
+            if (cached) return cached;
+            if (isValidAtpPlayerCode(playerId)) {
+                const atpUrl = `https://www.atptour.com/-/media/alias/player-headshot/${encodeURIComponent(String(playerId).trim())}`;
+                setCachedPlayerPhoto(name, atpUrl);
+                return atpUrl;
+            }
+            const wiki = await fetchWikipediaThumbnail(name);
+            if (wiki) {
+                setCachedPlayerPhoto(name, wiki);
+                return wiki;
+            }
+            return null;
+        }
+
         function getPlayerPhotoUrl(name, options = {}) {
             const { isFernando = false, size = 128, photo, playerId } = options;
-            if (photo && typeof photo === 'string' && photo.startsWith('http')) return photo;
-            if (playerId) {
-                return `https://www.atptour.com/-/media/alias/player-headshot/${encodeURIComponent(playerId)}`;
+            if (photo && typeof photo === 'string' && /^https?:\/\//i.test(photo)) return photo;
+            const cached = getCachedPlayerPhoto(name);
+            if (cached) return cached;
+            if (isValidAtpPlayerCode(playerId)) {
+                return `https://www.atptour.com/-/media/alias/player-headshot/${encodeURIComponent(String(playerId).trim())}`;
             }
-            if (isFernando || String(name || '').toLowerCase().includes('fernando lapa')) {
-                return `https://ui-avatars.com/api/?name=Fernando+Lapa&background=06b6d4&color=fff&size=${size}&bold=true&rounded=true`;
+            return getPlayerAvatarDataUri(name, { isFernando, size });
+        }
+
+        function playerPhotoImgHtml({ name, className = '', isFernando = false, size = 128, photo = null, playerId = null, alt = null }) {
+            const fallback = getPlayerAvatarDataUri(name, { isFernando, size });
+            const src = getPlayerPhotoUrl(name, { isFernando, size, photo, playerId });
+            const safeAlt = (alt || name || 'Jogador').replace(/"/g, '&quot;');
+            const safeName = String(name || '').replace(/"/g, '&quot;');
+            const safeFallback = fallback.replace(/'/g, '%27');
+            return `<img class="${className}" src="${src}" alt="${safeAlt}" data-player-photo="${safeName}" width="${size}" height="${size}" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='${safeFallback}'">`;
+        }
+
+        async function hydratePlayerPhotos(names) {
+            const unique = [...new Set((names || []).map(n => String(n || '').trim()).filter(Boolean))];
+            const queue = unique.slice(0, 120);
+
+            for (let i = 0; i < queue.length; i++) {
+                const name = queue[i];
+                if (normalizePlayerKey(name) === 'fernando lapa') continue;
+                const meta = findRankingPlayerMeta(name) || {};
+                const photoMeta = extractPlayerPhotoMeta(meta);
+                try {
+                    const url = await resolvePlayerPhoto(name, {
+                        photo: photoMeta.photo,
+                        playerId: photoMeta.playerId
+                    });
+                    if (!url) continue;
+                    const selectorName = (window.CSS && CSS.escape) ? CSS.escape(name) : name.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+                    document.querySelectorAll(`img[data-player-photo="${selectorName}"]`).forEach(img => {
+                        if (img.dataset.resolved === '1') return;
+                        const test = new Image();
+                        test.onload = () => {
+                            img.src = url;
+                            img.dataset.resolved = '1';
+                        };
+                        test.src = url;
+                    });
+                } catch (_) { /* ignore */ }
+                if (i > 0 && i % 8 === 0) await new Promise(r => setTimeout(r, 120));
             }
-            const safe = encodeURIComponent(String(name || 'Player').trim() || 'Player');
-            // Cores distintas para adversários
-            return `https://ui-avatars.com/api/?name=${safe}&background=1e293b&color=94a3b8&size=${size}&bold=true&rounded=true`;
         }
 
         function findRankingPlayerMeta(name) {
@@ -3889,15 +4111,18 @@
         function mergeFernandoRanking(points) {
             const calculatedPoints = Math.max(0, Number(points) || 0);
             const normalizedName = value => String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
-            const official = atpRanking.map(p => ({
-                rank: Number(p.rank),
-                name: String(p.name || ''),
-                country: String(p.country || ''),
-                points: Number(p.points) || 0,
-                photo: p.photo || p.image || p.headshot || null,
-                playerId: p.playerId || p.id || p.atpId || null,
-                isFernando: false
-            })).filter(p => p.rank > 0 && p.name).sort((a, b) => a.rank - b.rank);
+            const official = atpRanking.map(p => {
+                const meta = extractPlayerPhotoMeta(p);
+                return {
+                    rank: Number(p.rank),
+                    name: String(p.name || ''),
+                    country: String(p.country || ''),
+                    points: Number(p.points) || 0,
+                    photo: meta.photo,
+                    playerId: meta.playerId,
+                    isFernando: false
+                };
+            }).filter(p => p.rank > 0 && p.name).sort((a, b) => a.rank - b.rank);
 
             // Remove eventual entrada oficial do Fernando — a posição e os pontos
             // usados no sistema vêm SEMPRE do ranking rolante calculado (52 semanas),
@@ -4201,7 +4426,9 @@
 
             body.innerHTML = rows.map(row => {
                 const flagHtml = getFlagImgHtml(row.country, 28);
-                const photoUrl = getPlayerPhotoUrl(row.name, {
+                const photoHtml = playerPhotoImgHtml({
+                    name: row.name,
+                    className: `ranking-player-photo ${row.isFernando ? 'fernando' : ''}`,
                     isFernando: row.isFernando,
                     size: 72,
                     photo: row.photo,
@@ -4212,11 +4439,7 @@
                         <td><span class="ranking-position">${row.displayRank}º</span></td>
                         <td class="ranking-player-cell">
                             <div class="ranking-player-wrap">
-                                <img class="ranking-player-photo ${row.isFernando ? 'fernando' : ''}"
-                                     src="${photoUrl}"
-                                     alt="${row.name}"
-                                     loading="lazy"
-                                     onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(row.name)}&background=1e293b&color=94a3b8&size=72&bold=true&rounded=true';">
+                                ${photoHtml}
                                 <div style="min-width:0">
                                     <div class="ranking-player-name font-bold ${row.isFernando ? 'text-primary' : ''}">
                                         ${row.name}
@@ -4242,6 +4465,9 @@
                     </tr>
                 `;
             }).join('');
+
+            // Busca fotos reais em background (Wikipedia / ranking.json / ATP)
+            hydratePlayerPhotos(rows.map(r => r.name));
         }
 
         async function loadAtpRanking(force = false) {
@@ -5448,16 +5674,18 @@
                 if (filtered.length > 0) {
                     h2hSuggestions.innerHTML = filtered.map(o => {
                         const meta = findRankingPlayerMeta(o.name);
-                        const photo = getPlayerPhotoUrl(o.name, {
+                        const photoMeta = extractPlayerPhotoMeta(meta || {});
+                        const photoHtml = playerPhotoImgHtml({
+                            name: o.name,
+                            className: '',
                             size: 64,
-                            photo: meta?.photo || meta?.image,
-                            playerId: meta?.playerId || meta?.id || meta?.atpId
-                        });
+                            photo: photoMeta.photo,
+                            playerId: photoMeta.playerId
+                        }).replace('width="64" height="64"', 'width="32" height="32" style="border-radius:50%;object-fit:cover;border:1px solid rgba(148,163,184,.25);flex-shrink:0;"');
                         return `
                         <div class="suggestion-item" onclick="selectOpponent('${o.name.replace(/'/g, "\\'")}')">
                             <div class="flex items-center gap-3">
-                                <img src="${photo}" alt="" width="32" height="32" style="border-radius:50%;object-fit:cover;border:1px solid rgba(148,163,184,.25);" loading="lazy"
-                                     onerror="this.style.display='none'">
+                                ${photoHtml}
                                 <div style="min-width:0">
                                     <div class="font-medium">${o.name}</div>
                                     <div class="text-xs text-text-muted flex items-center gap-1 mt-0.5">
@@ -5522,16 +5750,18 @@
                                 });
                             });
                             const meta = findRankingPlayerMeta(p.name);
-                            const photo = getPlayerPhotoUrl(p.name, {
+                            const photoMeta = extractPlayerPhotoMeta(meta || {});
+                            const photoHtml = playerPhotoImgHtml({
+                                name: p.name,
+                                className: 'opp-photo',
                                 size: 88,
-                                photo: meta?.photo || meta?.image,
-                                playerId: meta?.playerId || meta?.id || meta?.atpId
+                                photo: photoMeta.photo,
+                                playerId: photoMeta.playerId
                             });
                             return `
                                 <div class="h2h-opponent-card"
                                      onclick="selectOpponent('${p.name.replace(/'/g, "\\'")}')">
-                                    <img class="opp-photo" src="${photo}" alt="${p.name}" loading="lazy"
-                                         onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(p.name)}&background=1e293b&color=94a3b8&size=88&bold=true&rounded=true';">
+                                    ${photoHtml}
                                     <div class="opp-meta">
                                         <div class="opp-name">${p.name}</div>
                                         <div class="opp-flag-row">
@@ -5549,6 +5779,7 @@
                         }).join('')}
                     </div>
                 `;
+                hydratePlayerPhotos(players.map(p => p.name));
                 return;
             }
 
@@ -5577,11 +5808,19 @@
             matches.sort((a, b) => b.data - a.data);
 
             const oppMeta = findRankingPlayerMeta(name);
-            const flPhoto = getPlayerPhotoUrl('Fernando Lapa', { isFernando: true, size: 112 });
-            const oppPhoto = getPlayerPhotoUrl(name, {
+            const oppPhotoMeta = extractPlayerPhotoMeta(oppMeta || {});
+            const flPhotoHtml = playerPhotoImgHtml({
+                name: 'Fernando Lapa',
+                className: 'h2h-avatar',
+                isFernando: true,
+                size: 112
+            });
+            const oppPhotoHtml = playerPhotoImgHtml({
+                name,
+                className: 'h2h-avatar',
                 size: 112,
-                photo: oppMeta?.photo || oppMeta?.image,
-                playerId: oppMeta?.playerId || oppMeta?.id || oppMeta?.atpId
+                photo: oppPhotoMeta.photo,
+                playerId: oppPhotoMeta.playerId
             });
             const oppCountryLabel = opponentCountry || '—';
 
@@ -5608,8 +5847,7 @@
                     <div class="h2h-series-label">Confrontos diretos</div>
                     <div class="h2h-scoreboard">
                         <div class="h2h-score-row ${flRowClass}">
-                            <img class="h2h-avatar" src="${flPhoto}" alt="Fernando Lapa" loading="lazy"
-                                 onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=Fernando+Lapa&background=06b6d4&color=fff&size=112&bold=true&rounded=true';">
+                            ${flPhotoHtml}
                             <div class="h2h-player-info">
                                 <div class="h2h-player-name">Fernando Lapa</div>
                                 <div class="h2h-flag-under">
@@ -5620,8 +5858,7 @@
                             <div class="h2h-player-score ${flScoreClass}">${wins}</div>
                         </div>
                         <div class="h2h-score-row ${oppRowClass}">
-                            <img class="h2h-avatar" src="${oppPhoto}" alt="${name}" loading="lazy"
-                                 onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=1e293b&color=f87171&size=112&bold=true&rounded=true';">
+                            ${oppPhotoHtml}
                             <div class="h2h-player-info">
                                 <div class="h2h-player-name">${name}</div>
                                 <div class="h2h-flag-under">
@@ -5688,6 +5925,9 @@
                     `).join('')}
                 </div>
             `;
+
+            // Foto real do adversário (e lista, se houver)
+            hydratePlayerPhotos([name, ...matches.map(m => m.adversario).filter(Boolean)]);
         }
 
 
