@@ -3094,7 +3094,7 @@
                             </div>
 
                             <div id="rankingStatusMessage" class="mb-4 text-sm text-text-muted">
-                                O ranking será carregado do arquivo atualizado automaticamente pelo GitHub.
+                                O ranking ao vivo é recalculado automaticamente a cada semana ATP.
                             </div>
 
                             <div class="ranking-table-wrap">
@@ -3604,8 +3604,9 @@
         let atpRanking = [];
         let lastCalculatedStats = null;
         const ATP_RANKING_URL = './data/ranking.json';
-        const ATP_RANKING_CACHE = 'fernando_lapa_atp_cache_v1';
-        const ATP_HISTORY_CACHE = 'fernando_lapa_ranking_history_v3';
+        const ATP_RANKING_CACHE = 'fernando_lapa_atp_cache_v2';
+        const ATP_HISTORY_CACHE = 'fernando_lapa_ranking_history_v4';
+        const ATP_WEEK_CACHE_KEY = 'fernando_lapa_last_atp_week_v1';
         const ATP_POINTS_ADJUSTMENTS = [
             {
                 effectiveWeek: '2026-07-13',
@@ -4044,6 +4045,28 @@
             return addDays(awardWeek, 52 * 7);
         }
 
+        // Ranking ao vivo: os pontos já valem na semana do torneio (segunda daquela semana),
+        // sem esperar a publicação oficial da segunda seguinte.
+        function getTournamentLiveWeek(tournament) {
+            return getTournamentWeekStart(tournament);
+        }
+
+        function getActiveAtpWeekStart(now = new Date()) {
+            return startOfAtpWeek(now);
+        }
+
+        function formatAtpWeekLabel(weekStart) {
+            if (!weekStart) return '';
+            return weekStart.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        }
+
+        function isResultActiveInWeek(liveWeek, dropWeek, currentWeekStart) {
+            if (!dropWeek || !currentWeekStart) return false;
+            if (dropWeek.getTime() <= currentWeekStart.getTime()) return false;
+            if (liveWeek && liveWeek.getTime() > currentWeekStart.getTime()) return false;
+            return true;
+        }
+
         function tournamentDateKey(tournament) {
             const d = parseLocalDate(tournament.dataFim || tournament.dataInicio);
             return d ? toDateKey(d) : null;
@@ -4170,12 +4193,14 @@
         }
 
         async function registerRankingSnapshot(payload, result) {
-            const date = String(payload.rankingDate || payload.updatedAt || new Date().toISOString()).slice(0,10);
+            const weekStart = getActiveAtpWeekStart();
+            const date = toDateKey(weekStart) || String(payload?.rankingDate || payload?.updatedAt || new Date().toISOString()).slice(0,10);
             const snapshot = {
                 date,
-                ranking: result.officialMatch ? Number(result.projected) : Number(result.projected),
+                ranking: Number(result.projected) || 0,
                 points: Number(result.playerPoints) || 0,
-                source: result.officialMatch ? 'official' : 'calculated-v3'
+                source: result.officialMatch ? 'official' : 'calculated-v3',
+                weekStart: date
             };
 
             const existing = rankingHistory.findIndex(item => item.date === date);
@@ -4470,6 +4495,57 @@
             hydratePlayerPhotos(rows.map(r => r.name));
         }
 
+        function getCachedAtpWeek() {
+            try { return localStorage.getItem(ATP_WEEK_CACHE_KEY) || ''; }
+            catch { return ''; }
+        }
+
+        function setCachedAtpWeek(weekKey) {
+            try { localStorage.setItem(ATP_WEEK_CACHE_KEY, weekKey); } catch {}
+        }
+
+        async function persistWeeklySnapshot(payload = {}) {
+            const stats = lastCalculatedStats || calculateStats();
+            lastCalculatedStats = stats;
+            const rankingResult = mergeFernandoRanking(stats.pontosRanking || 0);
+            await registerRankingSnapshot(payload, rankingResult);
+            return rankingResult;
+        }
+
+        async function syncWeeklyRanking(force = false) {
+            const weekStart = getActiveAtpWeekStart();
+            const weekKey = toDateKey(weekStart);
+            const lastWeek = getCachedAtpWeek();
+            const weekChanged = Boolean(weekKey && weekKey !== lastWeek);
+
+            if (weekChanged) {
+                showToast(`Nova semana ATP (${formatAtpWeekLabel(weekStart)}). Ranking recalculado automaticamente.`, 'info');
+            }
+
+            if (weekChanged || force || !lastCalculatedStats) {
+                updateUI();
+                await persistWeeklySnapshot({ rankingDate: weekKey });
+                setCachedAtpWeek(weekKey);
+            }
+
+            updateRankingWeekStatus();
+            return weekChanged;
+        }
+
+        function updateRankingWeekStatus() {
+            const weekStart = getActiveAtpWeekStart();
+            const status = document.getElementById('rankingStatusMessage');
+            if (!status) return;
+            const weekLabel = formatAtpWeekLabel(weekStart);
+            status.innerHTML =
+                `<span class="text-secondary font-semibold">Ranking ao vivo da semana ATP ${weekLabel}.</span> ` +
+                `Pontos entram na semana do torneio e caem automaticamente após 52 semanas.`;
+            const lastUpdate = document.getElementById('rankingLastUpdate');
+            if (lastUpdate && (!lastUpdate.textContent || lastUpdate.textContent === '—')) {
+                lastUpdate.textContent = new Date().toLocaleString('pt-BR');
+            }
+        }
+
         async function loadAtpRanking(force = false) {
             const button = document.getElementById('refreshAtpRankingBtn');
             if (button) button.disabled = true;
@@ -4491,28 +4567,33 @@
                 document.getElementById('rankingLastUpdate').textContent =
                     payload.rankingDate || payload.updatedAt
                         ? new Date(payload.rankingDate || payload.updatedAt).toLocaleString('pt-BR')
-                        : 'Não informado';
-                document.getElementById('rankingStatusMessage').innerHTML =
-                    '<span class="text-secondary font-semibold">Ranking carregado.</span> Dados oficiais publicados pelo atualizador automático.';
-                const rankingResult = mergeFernandoRanking(lastCalculatedStats?.pontosRanking || 0);
-                await registerRankingSnapshot(payload, rankingResult);
+                        : new Date().toLocaleString('pt-BR');
+                await persistWeeklySnapshot(payload);
+                await syncWeeklyRanking(true);
                 renderAtpRanking();
                 updateSmartTabIndicators();
             } catch (error) {
                 console.error('Erro ao carregar ranking ATP:', error);
+                await syncWeeklyRanking(true);
                 if (atpRanking.length) {
-                    document.getElementById('rankingStatusMessage').innerHTML =
-                        '<span class="text-accent font-semibold">Modo contingência.</span> Exibindo a última classificação salva.';
                     renderAtpRanking();
                 } else {
-                    document.getElementById('rankingStatusMessage').innerHTML =
-                        '<span class="text-red-400 font-semibold">Ranking indisponível.</span> Execute o workflow de atualização no GitHub.';
                     const rankingBody = document.getElementById('rankingTableBody');
                     if (rankingBody) rankingBody.innerHTML = '<tr><td colspan="5"><div class="empty-state">Aguardando primeira atualização.</div></td></tr>';
                 }
             } finally {
                 if (button) button.disabled = false;
             }
+        }
+
+        function startWeeklyRankingWatcher() {
+            const check = () => { syncWeeklyRanking(false); };
+            check();
+            setInterval(check, 15 * 60 * 1000);
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden) check();
+            });
+            window.addEventListener('focus', check);
         }
 
 
@@ -4739,11 +4820,12 @@
                     }
                 }
 
-                // ===== RANKING ATP ROLANTE (desconto automático até a semana de HOJE) =====
-                // Regra: pontos entram na 2ª seguinte ao fim do torneio e caem 52 semanas depois.
+                // ===== RANKING ATP ROLANTE AO VIVO (atualiza toda semana) =====
+                // Entram na semana do torneio; caem 52 semanas após a segunda oficial de entrada.
                 const points = Math.max(0, Number(t.pontos) || 0);
                 if (!points) return;
 
+                let liveWeek = getTournamentLiveWeek(t);
                 let awardWeek = getTournamentAwardWeek(t);
                 let dropWeek = getTournamentDropWeek(t);
 
@@ -4751,6 +4833,7 @@
                     const yearEnd = new Date(Number(t.ano), 11, 31, 12, 0, 0, 0);
                     const weekStart = startOfAtpWeek(yearEnd);
                     if (weekStart) {
+                        liveWeek = weekStart;
                         awardWeek = addDays(weekStart, 7);
                         dropWeek = addDays(awardWeek, 52 * 7);
                     }
@@ -4767,17 +4850,18 @@
                     ano: t.ano || null,
                     points,
                     dataFim: tournamentDateKey(t),
+                    liveWeek: liveWeek ? toDateKey(liveWeek) : null,
                     awardWeek: awardWeek ? toDateKey(awardWeek) : null,
                     expiryWeek: toDateKey(dropWeek),
                     dropTime: dropWeek.getTime()
                 };
 
-                // dropWeek <= currentWeekStart → já caiu nesta segunda (ou antes) → DESCONTA
-                if (dropWeek.getTime() <= currentWeekStart.getTime()) {
-                    expiredResults.push(result);
-                    // Inclui a própria segunda da semana passada (dropWeek == previousWeekStart)
-                    if (dropWeek.getTime() >= previousWeekStart.getTime()) {
-                        expiredPreviousWeek.push(result);
+                if (!isResultActiveInWeek(liveWeek, dropWeek, currentWeekStart)) {
+                    if (dropWeek.getTime() <= currentWeekStart.getTime()) {
+                        expiredResults.push(result);
+                        if (dropWeek.getTime() >= previousWeekStart.getTime()) {
+                            expiredPreviousWeek.push(result);
+                        }
                     }
                 } else {
                     rankingResults.push(result);
@@ -4864,6 +4948,8 @@
             if (atpRanking.length) renderAtpRanking();
             updateSmartTabIndicators(stats);
             updateCreateTournamentButtonState();
+            updateRankingWeekStatus();
+            persistWeeklySnapshot({ rankingDate: toDateKey(getActiveAtpWeekStart()) }).catch(() => {});
         }
 
         function updateSidebar(stats) {
@@ -7488,6 +7574,7 @@
             loadRankingHistoryCache();
             renderRankingHistory();
             loadAtpRanking(false);
+            startWeeklyRankingWatcher();
 
             document.addEventListener('click', (e) => {
                 if (!e.target.closest('.search-container')) {
