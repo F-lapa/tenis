@@ -475,7 +475,7 @@
             border: 1px solid var(--border-subtle);
             border-radius: 1rem;
             width: 100%;
-            max-width: 700px;
+            max-width: min(560px, 96vw);
             max-height: 90vh;
             overflow: hidden;
             opacity: 0;
@@ -492,26 +492,29 @@
         }
 
         .modal-header {
-            padding: 1.5rem;
+            padding: 0.85rem 1.1rem;
             border-bottom: 1px solid var(--border-subtle);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: var(--background-deep);
+            gap: 0.75rem;
+        }
+        .modal-header h3 {
+            font-size: 1rem !important;
         }
 
         .modal-body {
-            padding: 1.5rem;
+            padding: 1rem 1.1rem;
             overflow-y: auto;
-            max-height: calc(90vh - 200px);
+            max-height: calc(92vh - 140px);
         }
 
         .modal-footer {
-            padding: 1.5rem;
+            padding: 0.75rem 1.1rem;
             border-top: 1px solid var(--border-subtle);
             display: flex;
             justify-content: flex-end;
-            gap: 0.75rem;
+            gap: 0.5rem;
             background: var(--background-deep);
         }
 
@@ -685,37 +688,203 @@
             opacity: 1;
         }
 
+        /* === Campanha do torneio (compacta) === */
         .match-card {
             background: var(--background-deep);
             border: 1px solid var(--border-subtle);
-            border-radius: 0.75rem;
-            padding: 1rem;
-            margin-bottom: 0.75rem;
-            transition: all 0.2s ease;
+            border-radius: 0.65rem;
+            padding: 0.55rem 0.75rem;
+            margin-bottom: 0.45rem;
+            transition: border-color 0.15s ease, background 0.15s ease;
         }
 
         .match-card:hover {
-            border-color: var(--primary);
-            background: rgba(6, 182, 212, 0.05);
+            border-color: rgba(6, 182, 212, 0.45);
+            background: rgba(6, 182, 212, 0.04);
         }
 
+        .match-card.is-win {
+            border-left: 3px solid var(--secondary);
+        }
+
+        .match-card.is-loss {
+            border-left: 3px solid var(--danger);
+        }
+
+        .match-card.is-bye {
+            border-left: 3px solid var(--text-muted);
+            opacity: 0.85;
+        }
+
+        .match-row {
+            display: grid;
+            grid-template-columns: 4.5rem 1fr auto;
+            gap: 0.5rem 0.75rem;
+            align-items: center;
+        }
+
+        @media (max-width: 520px) {
+            .match-row {
+                grid-template-columns: 1fr;
+                gap: 0.35rem;
+            }
+        }
+
+        .match-round-chip {
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            background: var(--card-base);
+            border: 1px solid var(--border-subtle);
+            border-radius: 999px;
+            padding: 0.2rem 0.5rem;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .match-players {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            min-width: 0;
+            flex-wrap: wrap;
+        }
+
+        .match-player {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            min-width: 0;
+            font-size: 0.85rem;
+        }
+
+        .match-player .pname {
+            font-weight: 600;
+            color: var(--text-main);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 11rem;
+        }
+
+        .match-player.winner .pname {
+            color: var(--secondary);
+        }
+
+        .match-player.loser .pname {
+            color: var(--text-muted);
+            text-decoration: line-through;
+            text-decoration-color: rgba(239, 68, 68, 0.45);
+        }
+
+        .match-vs {
+            font-size: 0.65rem;
+            font-weight: 800;
+            color: var(--text-muted);
+            opacity: 0.7;
+            flex-shrink: 0;
+        }
+
+        .match-side {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.25rem;
+        }
+
+        .match-score {
+            font-family: ui-monospace, 'Courier New', monospace;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--text-main);
+            background: var(--card-base);
+            border: 1px solid var(--border-subtle);
+            padding: 0.15rem 0.5rem;
+            border-radius: 0.35rem;
+            white-space: nowrap;
+        }
+
+        .match-result-pill {
+            font-size: 0.65rem;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            border-radius: 999px;
+            padding: 0.12rem 0.45rem;
+        }
+
+        .match-result-pill.win {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--secondary);
+        }
+
+        .match-result-pill.loss {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+        }
+
+        .match-result-pill.bye {
+            background: rgba(148, 163, 184, 0.15);
+            color: var(--text-muted);
+        }
+
+        .match-meta-line {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+            margin-top: 0.35rem;
+            padding-top: 0.35rem;
+            border-top: 1px dashed var(--border-subtle);
+        }
+
+        .seed-badge {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--accent);
+            background: rgba(245, 158, 11, 0.12);
+            padding: 0.05rem 0.3rem;
+            border-radius: 0.25rem;
+        }
+
+        .ranking-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.2rem;
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--primary);
+            background: rgba(6, 182, 212, 0.1);
+            padding: 0.05rem 0.35rem;
+            border-radius: 0.25rem;
+        }
+
+        .ranking-badge.opponent {
+            color: #fb923c;
+            background: rgba(249, 115, 22, 0.1);
+        }
+
+        .ranking-number {
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* legados (formulários ainda usam) */
         .player-vs-layout {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 1rem;
+            gap: 0.75rem;
         }
 
         .player-box {
             flex: 1;
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem;
+            gap: 0.5rem;
+            padding: 0.5rem;
             background: var(--card-base);
             border-radius: 0.5rem;
-            border: 2px solid transparent;
-            transition: all 0.2s ease;
+            border: 1px solid var(--border-subtle);
         }
 
         .player-box.winner {
@@ -725,72 +894,167 @@
 
         .player-box.loser {
             border-color: var(--danger);
-            background: rgba(239, 68, 68, 0.1);
-            opacity: 0.8;
+            background: rgba(239, 68, 68, 0.08);
+            opacity: 0.9;
         }
 
         .player-avatar {
-            width: 40px;
-            height: 40px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             background: linear-gradient(135deg, var(--primary), #0ea5e9);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            font-size: 0.875rem;
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: white;
             flex-shrink: 0;
         }
 
-        .player-info {
-            flex: 1;
-            min-width: 0;
-        }
-
+        .player-info { min-width: 0; }
         .player-name {
+            font-size: 0.8rem;
             font-weight: 600;
             color: var(--text-main);
-            font-size: 0.875rem;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
-
-        .player-flag {
-            font-size: 1.25rem;
+        .player-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            flex-wrap: wrap;
         }
-
+        .player-flag { font-size: 1rem; flex-shrink: 0; }
         .vs-divider {
+            font-size: 0.7rem;
             font-weight: 800;
             color: var(--text-muted);
-            font-size: 0.875rem;
-            flex-shrink: 0;
         }
-
         .match-details {
-            margin-top: 0.75rem;
-            padding-top: 0.75rem;
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
             border-top: 1px solid var(--border-subtle);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.875rem;
+            font-size: 0.8rem;
         }
-
-        .match-score {
-            font-family: 'Courier New', monospace;
-            font-weight: 700;
-            color: var(--text-main);
-            background: var(--card-base);
-            padding: 0.25rem 0.75rem;
-            border-radius: 0.375rem;
-        }
-
         .match-round {
             color: var(--text-muted);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .tournament-detail-header {
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+            margin-bottom: 0.85rem;
+            padding: 0.85rem 1rem;
+            border-radius: 0.75rem;
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.08), rgba(16, 185, 129, 0.05));
+            border: 1px solid var(--border-subtle);
+        }
+
+        .tournament-detail-title {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.65rem;
+        }
+
+        .tournament-detail-title .flag {
+            font-size: 1.6rem;
+            line-height: 1;
+        }
+
+        .tournament-detail-title h4 {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--text-main);
+            line-height: 1.25;
+            margin: 0;
+        }
+
+        .tournament-detail-title .sub {
             font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.15rem;
+        }
+
+        .tournament-detail-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(5.5rem, 1fr));
+            gap: 0.4rem;
+        }
+
+        .td-stat {
+            background: var(--card-base);
+            border: 1px solid var(--border-subtle);
+            border-radius: 0.5rem;
+            padding: 0.4rem 0.5rem;
+            text-align: center;
+        }
+
+        .td-stat .lbl {
+            display: block;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--text-muted);
+            margin-bottom: 0.1rem;
+        }
+
+        .td-stat .val {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .td-stat .val.pts { color: var(--primary); }
+        .td-stat .val.prize { color: var(--secondary); }
+
+        .matches-section-title {
+            font-size: 0.75rem;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin: 0.25rem 0 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .matches-section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border-subtle);
+        }
+
+        .edit-points-box {
+            margin-bottom: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 0.65rem;
+            border: 1px solid rgba(6, 182, 212, 0.25);
+            background: var(--background-deep);
+        }
+
+        .edit-points-box .title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 0.25rem;
+        }
+
+        .edit-points-box .hint {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-bottom: 0.55rem;
         }
 
         .tournament-header {
@@ -3609,6 +3873,12 @@
         const ATP_RANKING_CACHE = 'fernando_lapa_atp_cache_v2';
         const ATP_HISTORY_CACHE = 'fernando_lapa_ranking_history_v4';
         const ATP_WEEK_CACHE_KEY = 'fernando_lapa_last_atp_week_v1';
+        // Bônus de ranking (ajuste manual). Já inicia com +200 a pedido do usuário.
+        // Para zerar: localStorage.removeItem('fernando_lapa_ranking_bonus')
+        // Para mudar: localStorage.setItem('fernando_lapa_ranking_bonus', '400')
+        if (localStorage.getItem('fernando_lapa_ranking_bonus') === null) {
+            localStorage.setItem('fernando_lapa_ranking_bonus', '200');
+        }
         const ATP_POINTS_ADJUSTMENTS = [
             {
                 effectiveWeek: '2026-07-13',
@@ -4063,9 +4333,10 @@
         }
 
         function isResultActiveInWeek(liveWeek, dropWeek, currentWeekStart) {
+            // Ranking ao vivo: conta assim que ha pontos e ainda nao expirou (52 semanas).
+            // (Antes, torneios com dataFim na proxima semana ATP eram ignorados.)
             if (!dropWeek || !currentWeekStart) return false;
             if (dropWeek.getTime() <= currentWeekStart.getTime()) return false;
-            if (liveWeek && liveWeek.getTime() > currentWeekStart.getTime()) return false;
             return true;
         }
 
@@ -4718,31 +4989,38 @@
 
         async function updateTournament(id, data) {
             showLoading(true);
-            try {
-                // Remove campos que não devem ir para o Firestore
-                const payload = { ...data };
-                delete payload.id;
-                // Garante números em pontos/premiação
-                if ('pontos' in payload) payload.pontos = Number(payload.pontos) || 0;
-                if ('premiacao' in payload) payload.premiacao = Number(payload.premiacao) || 0;
+            const payload = { ...data };
+            delete payload.id;
+            if ('pontos' in payload) {
+                payload.pontos = Math.max(0, Number(String(payload.pontos).replace(/[^\d.-]/g, '')) || 0);
+            }
+            if ('premiacao' in payload) {
+                payload.premiacao = Math.max(0, Number(String(payload.premiacao).replace(/[^\d.-]/g, '')) || 0);
+            }
 
+            // Atualiza memória local NA HORA (mesmo se o Firestore falhar depois)
+            const index = allTournaments.findIndex(t => t.id === id);
+            if (index > -1) {
+                allTournaments[index] = { ...allTournaments[index], ...payload };
+            }
+
+            try {
                 await updateDoc(doc(db, 'torneios', id), payload);
-                const index = allTournaments.findIndex(t => t.id === id);
-                if (index > -1) {
-                    allTournaments[index] = { ...allTournaments[index], ...payload };
-                }
+            } catch (error) {
+                console.error('Erro ao atualizar no Firestore:', error);
+                showToast('Salvo localmente; falha ao sincronizar na nuvem', 'warning');
+            }
+
+            try {
                 updateUI();
                 if (atpRanking.length) renderAtpRanking();
                 const pts = Number(payload.pontos);
+                const total = Number(lastCalculatedStats?.pontosRanking) || 0;
                 if (!Number.isNaN(pts) && pts > 0) {
-                    showToast(`Torneio atualizado! +${pts.toLocaleString('pt-BR')} pts no ranking`, 'success');
+                    showToast(`+${pts.toLocaleString('pt-BR')} pts salvos · Ranking: ${total.toLocaleString('pt-BR')} pts`, 'success');
                 } else {
                     showToast('Torneio atualizado!', 'success');
                 }
-            } catch (error) {
-                console.error('Erro ao atualizar:', error);
-                showToast('Erro ao atualizar', 'error');
-                throw error;
             } finally {
                 showLoading(false);
             }
@@ -4867,7 +5145,7 @@
 
                 // ===== RANKING ATP ROLANTE AO VIVO (atualiza toda semana) =====
                 // Entram na semana do torneio; caem 52 semanas após a segunda oficial de entrada.
-                const points = Math.max(0, Number(t.pontos) || 0);
+                const points = Math.max(0, Number(String(t.pontos ?? '').toString().replace(/[^\d.-]/g, '')) || 0);
                 if (!points) return;
 
                 let liveWeek = getTournamentLiveWeek(t);
@@ -4936,7 +5214,10 @@
             stats.pontosExpiradosTotal = expiredResults.reduce((t, i) => t + (Number(i.points) || 0), 0);
             stats.pontosBrutosSemExpiracao = pontosSemDesconto;
             stats.pontosDescontados = Math.max(0, pontosSemDesconto - pontosComDesconto);
-            stats.pontosRanking = pontosComDesconto;
+            const rankingBonus = Math.max(0, Number(localStorage.getItem('fernando_lapa_ranking_bonus') || 0) || 0);
+            stats.ajusteManualAplicado = rankingBonus;
+            stats.pontosCampanhas = pontosComDesconto;
+            stats.pontosRanking = pontosComDesconto + rankingBonus;
             stats.rankingReferenciaData = toDateKey(currentWeekStart);
             stats.detalheExpirados = expiredResults
                 .slice()
@@ -5015,6 +5296,7 @@
                 `Atualizado até ${stats.rankingReferenciaData || 'hoje'}. ` +
                 (expirados > 0 ? `Expirados: ${expirados.toLocaleString('pt-BR')} pts. ` : '') +
                 (descontados > 0 ? `Desconto no top 18: ${descontados.toLocaleString('pt-BR')} pts. ` : '') +
+                ((Number(stats.ajusteManualAplicado) || 0) > 0 ? `Bônus manual: +${Number(stats.ajusteManualAplicado).toLocaleString('pt-BR')} pts. ` : '') +
                 (officialPoints != null ? `Oficial ATP: ${officialPoints.toLocaleString('pt-BR')} pts` : 'Cálculo automático');
             document.getElementById('premiacao').textContent = formatCurrency(stats.premiacao);
             document.getElementById('titulosTotal').textContent = stats.titulosATP;
@@ -5469,63 +5751,54 @@
             const isWin = j.resultado === 'V';
             const isLoss = j.resultado === 'D';
             const isBye = j.resultado === 'Bye';
-            
-            // Informações do adversário - RANKING BONITO SEM #
-            const opponentRankingHtml = j.adversarioRanking ? 
-                `<span class="ranking-badge opponent"><i class="fas fa-chart-line text-xs"></i> <span class="ranking-number">${j.adversarioRanking}</span></span>` : '';
-            const opponentSeed = j.adversarioSeed ? `<span class="seed-badge ml-1">(${j.adversarioSeed})</span>` : '';
-            
-            // Informações do Fernando - usa o seed do primeiro jogo se disponível
-            const flRankingHtml = j.flRanking ? 
-                `<span class="ranking-badge"><i class="fas fa-chart-line text-xs"></i> <span class="ranking-number">${j.flRanking}</span></span>` : 
-                (currentRanking ? `<span class="ranking-badge"><i class="fas fa-chart-line text-xs"></i> <span class="ranking-number">${currentRanking}</span></span>` : '');
-            const flSeed = j.flSeed ? `<span class="seed-badge ml-1">(${j.flSeed})</span>` : (flSeedFromFirstMatch ? `<span class="seed-badge ml-1">(${flSeedFromFirstMatch})</span>` : '');
-            
+            const cardClass = isWin ? 'is-win' : isLoss ? 'is-loss' : isBye ? 'is-bye' : '';
+            const pillClass = isWin ? 'win' : isLoss ? 'loss' : 'bye';
+            const pillText = isWin ? 'V' : isLoss ? 'D' : isBye ? 'BYE' : '—';
+
+            const flSeedVal = j.flSeed || flSeedFromFirstMatch || '';
+            const flSeedHtml = flSeedVal ? `<span class="seed-badge">#${flSeedVal}</span>` : '';
+            const flRank = j.flRanking || currentRanking || '';
+            const flRankHtml = flRank ? `<span class="ranking-badge"><i class="fas fa-chart-line"></i><span class="ranking-number">${flRank}</span></span>` : '';
+
+            const oppSeedHtml = j.adversarioSeed ? `<span class="seed-badge">#${j.adversarioSeed}</span>` : '';
+            const oppRankHtml = j.adversarioRanking
+                ? `<span class="ranking-badge opponent"><i class="fas fa-chart-line"></i><span class="ranking-number">${j.adversarioRanking}</span></span>`
+                : '';
+            const oppFlag = !isBye && j.nacionalidade ? getFlagEmoji(j.nacionalidade) : '';
+            const oppName = isBye ? 'Bye' : (j.adversario || 'Adversário');
+
+            const metaBits = [];
+            if (flSeedHtml || flRankHtml) metaBits.push(`<span class="match-player">FL ${flSeedHtml}${flRankHtml}</span>`);
+            if (!isBye && (oppSeedHtml || oppRankHtml || j.nacionalidade)) {
+                metaBits.push(`<span class="match-player">${oppFlag} ${j.nacionalidade || ''} ${oppSeedHtml}${oppRankHtml}</span>`);
+            }
+            const metaHtml = metaBits.length
+                ? `<div class="match-meta-line">${metaBits.join('')}</div>`
+                : '';
+
             return `
-                <div class="match-card">
-                    <div class="match-round mb-2 flex justify-between items-center">
-                        <span>${j.rodada}</span>
-                    </div>
-                    <div class="player-vs-layout">
-                        <div class="player-box ${isWin ? 'winner' : isLoss ? 'loser' : ''}">
-                            <div class="player-avatar">FL</div>
-                            <div class="player-info">
-                                <div class="player-name">Fernando Lapa ${flSeed}</div>
-                                <div class="player-meta">
-                                    <span class="text-xs text-text-muted">Brasil</span>
-                                    ${flRankingHtml}
-                                </div>
+                <div class="match-card ${cardClass}">
+                    <div class="match-row">
+                        <span class="match-round-chip">${j.rodada || '—'}</span>
+                        <div class="match-players">
+                            <div class="match-player ${isWin ? 'winner' : isLoss ? 'loser' : ''}">
+                                <span class="pname">Fernando Lapa</span>
                             </div>
-                            <span class="player-flag">${getFlagEmoji('BRA')}</span>
+                            <span class="match-vs">vs</span>
+                            <div class="match-player ${isLoss ? 'winner' : isWin ? 'loser' : ''}">
+                                <span class="pname">${oppFlag ? oppFlag + ' ' : ''}${oppName}</span>
+                            </div>
                         </div>
-                        
-                        <div class="vs-divider">VS</div>
-                        
-                        <div class="player-box ${isLoss ? 'winner' : isWin ? 'loser' : ''}">
-                            <div class="player-avatar" style="background: ${isBye ? 'var(--text-muted)' : 'linear-gradient(135deg, #ef4444, #f97316)'}">
-                                ${isBye ? 'B' : j.adversario.charAt(0)}
-                            </div>
-                            <div class="player-info">
-                                <div class="player-name">${j.adversario} ${opponentSeed}</div>
-                                <div class="player-meta">
-                                    <span class="text-xs text-text-muted">${isBye ? 'Bye' : j.nacionalidade}</span>
-                                    ${opponentRankingHtml}
-                                </div>
-                            </div>
-                            ${!isBye ? `<span class="player-flag">${getFlagEmoji(j.nacionalidade)}</span>` : ''}
+                        <div class="match-side">
+                            <span class="match-score">${isBye ? '—' : (j.placar || '—')}</span>
+                            <span class="match-result-pill ${pillClass}">${pillText}</span>
                         </div>
                     </div>
-                    
-                    <div class="match-details">
-                        <span class="match-round">Placar</span>
-                        <span class="match-score">${j.placar}</span>
-                        <span class="badge ${isWin ? 'badge-success' : isLoss ? 'badge-danger' : 'badge-info'}">
-                            ${isWin ? 'Vitória' : isLoss ? 'Derrota' : 'Bye'}
-                        </span>
-                    </div>
+                    ${metaHtml}
                 </div>
             `;
         }
+
 
         window.showDetails = function(filterType, filterValue, viewType) {
             let filtered = [];
@@ -7099,8 +7372,8 @@
                 
                 if (nextRounds.length > 0) {
                     addMatchForm = `
-                        <div class="border-t border-border-subtle pt-4 mt-4">
-                            <h4 class="font-semibold text-text-main mb-3">Adicionar Próxima Partida</h4>
+                        <div class="border-t border-border-subtle pt-3 mt-3">
+                            <h4 class="text-sm font-semibold text-text-main mb-2">Adicionar partida</h4>
                             
                             <!-- Dados do Fernando Lapa - HERDADO DO PRIMEIRO JOGO -->
                             <div class="player-form-section mb-3">
@@ -7193,54 +7466,59 @@
             }
 
             const body = `
-                <div class="tournament-header">
-                    <div class="tournament-title">
-                        <span class="text-3xl">${getFlagEmoji(t.paisTorneio)}</span>
-                        <div>
-                            ${t.nome}
-                            <div class="text-sm text-text-muted font-normal mt-1">${t.tipo} • ${t.superficie}</div>
+                <div class="tournament-detail-header">
+                    <div class="tournament-detail-title">
+                        <span class="flag">${getFlagEmoji(t.paisTorneio)}</span>
+                        <div class="min-w-0">
+                            <h4>${t.nome}</h4>
+                            <div class="sub">${t.tipo || ''} · ${t.superficie || ''} · ${t.ano || ''}</div>
                         </div>
                     </div>
-                    <div class="tournament-meta">
-                        <span><i class="fas fa-calendar"></i> ${new Date(t.dataInicio).toLocaleDateString('pt-BR')} - ${new Date(t.dataFim).toLocaleDateString('pt-BR')}</span>
-                        <span><i class="fas fa-trophy"></i> ${t.ano}</span>
-                        ${t.status === 'Finalizado' ? `
-                            <span class="badge badge-success">Finalizado</span>
-                            <span class="text-accent font-bold">${t.faseFinal || ''}</span>
-                            <span class="text-primary">${Number(t.pontos) || 0} pts</span>
-                            <span class="text-secondary">${formatCurrency(t.premiacao)}</span>
-                        ` : '<span class="badge badge-warning">Em Andamento</span>'}
+                    <div class="tournament-detail-stats">
+                        <div class="td-stat">
+                            <span class="lbl">Período</span>
+                            <span class="val">${new Date(t.dataInicio).toLocaleDateString('pt-BR', {day:'2-digit',month:'2-digit'})} – ${new Date(t.dataFim).toLocaleDateString('pt-BR', {day:'2-digit',month:'2-digit'})}</span>
+                        </div>
+                        <div class="td-stat">
+                            <span class="lbl">Status</span>
+                            <span class="val">${t.status === 'Finalizado' ? (t.faseFinal || 'Finalizado') : 'Em andamento'}</span>
+                        </div>
+                        <div class="td-stat">
+                            <span class="lbl">Pontos</span>
+                            <span class="val pts">${Number(t.pontos) || 0}</span>
+                        </div>
+                        <div class="td-stat">
+                            <span class="lbl">Prêmio</span>
+                            <span class="val prize">${formatCurrency(t.premiacao)}</span>
+                        </div>
                     </div>
                 </div>
 
                 ${t.status === 'Finalizado' ? `
-                <div class="mb-4 p-4 rounded-xl border border-primary/25 bg-background-deep">
-                    <div class="text-sm font-bold text-text-main mb-2">
-                        <i class="fas fa-pen-to-square text-primary mr-2"></i>Corrigir pontos / premiação
-                    </div>
-                    <p class="text-xs text-text-muted mb-3">
-                        Se os pontos não entraram no ranking, ajuste aqui e salve. O total é recalculado na hora.
-                    </p>
-                    <div class="grid grid-cols-2 gap-3">
+                <div class="edit-points-box">
+                    <div class="title"><i class="fas fa-pen-to-square text-primary mr-1"></i>Corrigir pontos / premiação</div>
+                    <p class="hint">Se os pontos não entraram no ranking, ajuste e salve. O total recalcula na hora.</p>
+                    <div class="grid grid-cols-2 gap-2">
                         <div>
-                            <label class="block text-xs font-medium text-text-muted mb-1">Pontos ATP</label>
+                            <label class="block text-xs text-text-muted mb-1">Pontos ATP</label>
                             <input type="number" id="editPontos" class="form-input" min="0" value="${Number(t.pontos) || 0}">
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-text-muted mb-1">Prêmio ($)</label>
+                            <label class="block text-xs text-text-muted mb-1">Prêmio ($)</label>
                             <input type="number" id="editPremiacao" class="form-input" min="0" value="${Number(t.premiacao) || 0}">
                         </div>
                     </div>
-                    <button type="button" onclick="saveTournamentPoints('${id}')" class="btn btn-primary w-full mt-3">
-                        <i class="fas fa-save mr-2"></i>Salvar pontos no ranking
+                    <button type="button" onclick="saveTournamentPoints('${id}')" class="btn btn-primary w-full mt-2 text-sm py-2">
+                        <i class="fas fa-save mr-1"></i>Salvar no ranking
                     </button>
                 </div>
                 ` : ''}
 
-                <div class="space-y-3 mb-4">
-                    ${matchesHtml}
+                <div class="matches-section-title">Partidas (${(t.jogos || []).length})</div>
+                <div class="space-y-0 mb-2">
+                    ${matchesHtml || '<p class="text-sm text-text-muted py-2">Nenhuma partida cadastrada.</p>'}
                 </div>
-                
+
                 ${addMatchForm}
             `;
 
@@ -7310,9 +7588,14 @@
         };
 
         window.saveTournamentPoints = async function(id) {
-            const pontos = Number(document.getElementById('editPontos')?.value) || 0;
-            const premiacao = Number(document.getElementById('editPremiacao')?.value) || 0;
+            const pontos = Math.max(0, Number(String(document.getElementById('editPontos')?.value ?? '').replace(/[^\d.-]/g, '')) || 0);
+            const premiacao = Math.max(0, Number(String(document.getElementById('editPremiacao')?.value ?? '').replace(/[^\d.-]/g, '')) || 0);
+            if (pontos <= 0) {
+                const ok = confirm('Pontos estão 0. Salvar mesmo assim?');
+                if (!ok) return;
+            }
             await updateTournament(id, { pontos, premiacao, status: 'Finalizado' });
+            // Reabre com dados frescos da memória
             openTournamentModal(id);
         };
 
