@@ -949,7 +949,81 @@
             letter-spacing: 0.04em;
         }
 
-        .tournament-detail-header {
+        
+        .match-meta-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.35rem 0.75rem;
+            margin-top: 0.4rem;
+            padding-top: 0.4rem;
+            border-top: 1px dashed var(--border-subtle);
+        }
+
+        .match-meta-col {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            min-width: 0;
+        }
+
+        .match-meta-col.right {
+            align-items: flex-end;
+            text-align: right;
+        }
+
+        .match-meta-who {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.02em;
+        }
+
+        .match-meta-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+        }
+
+        .match-meta-col.right .match-meta-chips {
+            justify-content: flex-end;
+        }
+
+        .info-chip {
+            display: inline-flex;
+            align-items: center;
+            font-size: 0.65rem;
+            font-weight: 700;
+            line-height: 1;
+            padding: 0.22rem 0.45rem;
+            border-radius: 0.3rem;
+            white-space: nowrap;
+        }
+
+        .info-chip.seed {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.35);
+        }
+
+        .info-chip.rank {
+            background: rgba(6, 182, 212, 0.12);
+            color: var(--primary);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+        }
+
+        .info-chip.rank.opp {
+            background: rgba(249, 115, 22, 0.12);
+            color: #fb923c;
+            border: 1px solid rgba(249, 115, 22, 0.3);
+        }
+
+        .info-chip.muted {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px dashed var(--border-subtle);
+        }
+
+.tournament-detail-header {
             display: flex;
             flex-direction: column;
             gap: 0.65rem;
@@ -5763,25 +5837,42 @@
             const pillText = isWin ? 'V' : isLoss ? 'D' : isBye ? 'BYE' : '—';
 
             const flSeedVal = j.flSeed || flSeedFromFirstMatch || '';
-            const flSeedHtml = flSeedVal ? `<span class="seed-badge">#${flSeedVal}</span>` : '';
             const flRank = j.flRanking || currentRanking || '';
-            const flRankHtml = flRank ? `<span class="ranking-badge"><i class="fas fa-chart-line"></i><span class="ranking-number">${flRank}</span></span>` : '';
-
-            const oppSeedHtml = j.adversarioSeed ? `<span class="seed-badge">#${j.adversarioSeed}</span>` : '';
-            const oppRankHtml = j.adversarioRanking
-                ? `<span class="ranking-badge opponent"><i class="fas fa-chart-line"></i><span class="ranking-number">${j.adversarioRanking}</span></span>`
-                : '';
+            const oppSeedVal = j.adversarioSeed || '';
+            const oppRank = j.adversarioRanking || '';
             const oppFlag = !isBye && j.nacionalidade ? getFlagEmoji(j.nacionalidade) : '';
             const oppName = isBye ? 'Bye' : (j.adversario || 'Adversário');
 
-            const metaBits = [];
-            if (flSeedHtml || flRankHtml) metaBits.push(`<span class="match-player">FL ${flSeedHtml}${flRankHtml}</span>`);
-            if (!isBye && (oppSeedHtml || oppRankHtml || j.nacionalidade)) {
-                metaBits.push(`<span class="match-player">${oppFlag} ${j.nacionalidade || ''} ${oppSeedHtml}${oppRankHtml}</span>`);
+            // Linha limpa: Seed e Ranking separados por jogador
+            const flBits = [];
+            if (flSeedVal) flBits.push(`<span class="info-chip seed">Seed ${flSeedVal}</span>`);
+            if (flRank) flBits.push(`<span class="info-chip rank">Rank ${flRank}</span>`);
+            const oppBits = [];
+            if (oppSeedVal) oppBits.push(`<span class="info-chip seed">Seed ${oppSeedVal}</span>`);
+            if (oppRank) oppBits.push(`<span class="info-chip rank opp">Rank ${oppRank}</span>`);
+
+            let metaHtml = '';
+            if (!isBye && (flBits.length || oppBits.length)) {
+                metaHtml = `
+                    <div class="match-meta-grid">
+                        <div class="match-meta-col">
+                            <span class="match-meta-who">${getFlagEmoji('BRA')} FL</span>
+                            <div class="match-meta-chips">${flBits.join('') || '<span class="info-chip muted">—</span>'}</div>
+                        </div>
+                        <div class="match-meta-col right">
+                            <span class="match-meta-who">${oppFlag} ${j.nacionalidade || 'ADV'}</span>
+                            <div class="match-meta-chips">${oppBits.join('') || '<span class="info-chip muted">—</span>'}</div>
+                        </div>
+                    </div>`;
+            } else if (flBits.length) {
+                metaHtml = `
+                    <div class="match-meta-grid">
+                        <div class="match-meta-col">
+                            <span class="match-meta-who">${getFlagEmoji('BRA')} FL</span>
+                            <div class="match-meta-chips">${flBits.join('')}</div>
+                        </div>
+                    </div>`;
             }
-            const metaHtml = metaBits.length
-                ? `<div class="match-meta-line">${metaBits.join('')}</div>`
-                : '';
 
             return `
                 <div class="match-card ${cardClass}">
