@@ -3094,7 +3094,9 @@
                             </div>
 
                             <div id="rankingStatusMessage" class="mb-4 text-sm text-text-muted">
-                                O ranking ao vivo é recalculado automaticamente a cada semana ATP.
+                                Lista ATP oficial dos demais jogadores + posição do Fernando projetada pelos
+                                <strong class="text-primary">pontos das suas campanhas</strong> (melhores 18 resultados em 52 semanas).
+                                Os pontos entram na hora em que o torneio é finalizado.
                             </div>
 
                             <div class="ranking-table-wrap">
@@ -4116,6 +4118,13 @@
             try {
                 const cache = JSON.parse(localStorage.getItem(ATP_RANKING_CACHE) || 'null');
                 if (!cache || !Array.isArray(cache.players) || !cache.players.length) return false;
+                // Cache local no máximo 12h — depois força buscar data/ranking.json de novo
+                const updated = Date.parse(cache.updatedAt || cache.rankingDate || 0);
+                const maxAgeMs = 12 * 60 * 60 * 1000;
+                if (updated && (Date.now() - updated) > maxAgeMs) {
+                    console.info('[Ranking] Cache local expirado, buscando ranking.json atualizado');
+                    return false;
+                }
                 atpRanking = cache.players;
                 return true;
             } catch {
@@ -4137,7 +4146,7 @@
             const official = atpRanking.map(p => {
                 const meta = extractPlayerPhotoMeta(p);
                 return {
-                    rank: Number(p.rank),
+                    rank: Number(p.rank) || Number(p.position) || 0,
                     name: String(p.name || ''),
                     country: String(p.country || ''),
                     points: Number(p.points) || 0,
@@ -4145,13 +4154,17 @@
                     playerId: meta.playerId,
                     isFernando: false
                 };
-            }).filter(p => p.rank > 0 && p.name).sort((a, b) => a.rank - b.rank);
+            }).filter(p => p.name).sort((a, b) => {
+                // Mantém ordem oficial ATP quando houver rank; senão por pontos
+                if (a.rank > 0 && b.rank > 0 && a.rank !== b.rank) return a.rank - b.rank;
+                return b.points - a.points || a.rank - b.rank;
+            });
 
-            // Remove eventual entrada oficial do Fernando — a posição e os pontos
-            // usados no sistema vêm SEMPRE do ranking rolante calculado (52 semanas),
-            // para que resultados da temporada passada já expirados sejam descontados.
+            // Remove eventual entrada oficial do Fernando — posição/pontos do sistema
+            // vêm do ranking rolante (melhores 18 em 52 semanas) calculado nas campanhas.
             const withoutFernando = official.filter(p => normalizedName(p.name) !== 'fernando lapa');
-            const byPoints = [...withoutFernando].sort((a, b) => b.points - a.points || a.rank - b.rank);
+            // Ordena o restante estritamente por pontos (como a ATP faz na prática)
+            const byPoints = [...withoutFernando].sort((a, b) => b.points - a.points || a.rank - b.rank || a.name.localeCompare(b.name));
             const projected = byPoints.filter(p => p.points > calculatedPoints).length + 1;
             const rows = [
                 ...byPoints,
@@ -4164,7 +4177,7 @@
                     playerId: null,
                     isFernando: true
                 }
-            ].sort((a, b) => b.points - a.points || (a.isFernando ? -1 : 1) || a.rank - b.rank)
+            ].sort((a, b) => b.points - a.points || (a.isFernando === b.isFernando ? 0 : a.isFernando ? -1 : 1) || a.rank - b.rank || a.name.localeCompare(b.name))
              .map((p, index) => ({ ...p, displayRank: index + 1 }));
 
             const officialEntry = official.find(p => normalizedName(p.name) === 'fernando lapa');
@@ -4172,6 +4185,7 @@
                 projected: rows.find(r => r.isFernando)?.displayRank || projected,
                 rows,
                 officialMatch: Boolean(officialEntry),
+                officialRank: officialEntry ? (Number(officialEntry.rank) || null) : null,
                 officialPoints: officialEntry ? Number(officialEntry.points) || 0 : null,
                 playerPoints: calculatedPoints
             };
@@ -4564,10 +4578,16 @@
 
                 atpRanking = payload.players;
                 saveAtpCache(payload);
-                document.getElementById('rankingLastUpdate').textContent =
-                    payload.rankingDate || payload.updatedAt
-                        ? new Date(payload.rankingDate || payload.updatedAt).toLocaleString('pt-BR')
-                        : new Date().toLocaleString('pt-BR');
+                const when = payload.updatedAt || payload.rankingDate;
+                document.getElementById('rankingLastUpdate').textContent = when
+                    ? new Date(when).toLocaleString('pt-BR')
+                    : new Date().toLocaleString('pt-BR');
+                const statusEl = document.getElementById('rankingStatusMessage');
+                if (statusEl) {
+                    statusEl.innerHTML = `Lista ATP oficial carregada: <strong class="text-primary">${payload.players.length}</strong> jogadores` +
+                        (when ? ` · atualizado em <strong>${new Date(when).toLocaleString('pt-BR')}</strong>` : '') +
+                        `. A posição do Fernando continua sendo projetada pelos pontos das suas campanhas.`;
+                }
                 await persistWeeklySnapshot(payload);
                 await syncWeeklyRanking(true);
                 renderAtpRanking();
@@ -4672,11 +4692,22 @@
 
             showLoading(true);
             try {
-                const docRef = await addDoc(collection(db, 'torneios'), data);
-                allTournaments.unshift({ id: docRef.id, ...data });
+                const payload = { ...data };
+                if ('pontos' in payload) payload.pontos = Number(payload.pontos) || 0;
+                if ('premiacao' in payload) payload.premiacao = Number(payload.premiacao) || 0;
+                delete payload.id;
+
+                const docRef = await addDoc(collection(db, 'torneios'), payload);
+                allTournaments.unshift({ id: docRef.id, ...payload });
                 updateUI();
+                if (atpRanking.length) renderAtpRanking();
                 modal.close();
-                showToast('Torneio criado com sucesso!', 'success');
+                const pts = Number(payload.pontos) || 0;
+                if (pts > 0) {
+                    showToast(`Torneio criado! +${pts.toLocaleString('pt-BR')} pts somados ao ranking`, 'success');
+                } else {
+                    showToast('Torneio criado com sucesso!', 'success');
+                }
             } catch (error) {
                 console.error('Erro ao salvar:', error);
                 showToast('Erro ao salvar torneio', 'error');
@@ -4688,16 +4719,30 @@
         async function updateTournament(id, data) {
             showLoading(true);
             try {
-                await updateDoc(doc(db, 'torneios', id), data);
+                // Remove campos que não devem ir para o Firestore
+                const payload = { ...data };
+                delete payload.id;
+                // Garante números em pontos/premiação
+                if ('pontos' in payload) payload.pontos = Number(payload.pontos) || 0;
+                if ('premiacao' in payload) payload.premiacao = Number(payload.premiacao) || 0;
+
+                await updateDoc(doc(db, 'torneios', id), payload);
                 const index = allTournaments.findIndex(t => t.id === id);
                 if (index > -1) {
-                    allTournaments[index] = { ...allTournaments[index], ...data };
+                    allTournaments[index] = { ...allTournaments[index], ...payload };
                 }
                 updateUI();
-                showToast('Torneio atualizado!', 'success');
+                if (atpRanking.length) renderAtpRanking();
+                const pts = Number(payload.pontos);
+                if (!Number.isNaN(pts) && pts > 0) {
+                    showToast(`Torneio atualizado! +${pts.toLocaleString('pt-BR')} pts no ranking`, 'success');
+                } else {
+                    showToast('Torneio atualizado!', 'success');
+                }
             } catch (error) {
                 console.error('Erro ao atualizar:', error);
                 showToast('Erro ao atualizar', 'error');
+                throw error;
             } finally {
                 showLoading(false);
             }
@@ -6890,15 +6935,19 @@
                     </div>
                     
                     <div id="finalFields" class="hidden border-t border-border-subtle pt-4 mt-4">
-                        <h4 class="font-semibold text-red-400 mb-3">Finalizar Campanha</h4>
+                        <h4 class="font-semibold text-primary mb-2">Finalizar Campanha</h4>
+                        <p class="text-xs text-text-muted mb-3">
+                            Informe os <strong>pontos ATP</strong> e a premiação. Os pontos entram no ranking na hora
+                            (semana do torneio) e contam nos melhores 18 resultados das últimas 52 semanas.
+                        </p>
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm font-medium text-text-muted mb-1">Pontos</label>
-                                <input type="number" id="tPontos" class="form-input" min="0" value="0">
+                                <label class="block text-sm font-medium text-text-muted mb-1">Pontos ATP *</label>
+                                <input type="number" id="tPontos" class="form-input" min="0" value="0" placeholder="Ex: 250">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-text-muted mb-1">Prêmio ($)</label>
-                                <input type="number" id="tPremiacao" class="form-input" min="0" value="0">
+                                <input type="number" id="tPremiacao" class="form-input" min="0" value="0" placeholder="Ex: 10000">
                             </div>
                         </div>
                     </div>
@@ -6932,11 +6981,19 @@
             select.innerHTML = rounds.slice(0, maxRound + 1).map((r, i) => 
                 `<option value="${r}">${r}</option>`
             ).join('');
+            if (typeof window.toggleFinalFields === 'function') window.toggleFinalFields();
         };
 
         window.toggleFinalFields = function() {
-            const isLoss = document.getElementById('jResultado').value === 'D';
-            document.getElementById('finalFields').classList.toggle('hidden', !isLoss);
+            const resultadoEl = document.getElementById('jResultado');
+            const roundEl = document.getElementById('tRodadaInicio');
+            const fields = document.getElementById('finalFields');
+            if (!resultadoEl || !fields) return;
+            const resultado = resultadoEl.value;
+            const startRound = roundEl ? roundEl.value : '';
+            // Finaliza com derrota OU título (vitória na final)
+            const willFinish = resultado === 'D' || (resultado === 'V' && startRound === 'F');
+            fields.classList.toggle('hidden', !willFinish);
         };
 
         window.saveNewTournament = async function() {
@@ -7007,8 +7064,14 @@
                 jogos: jogos,
                 status: (isLoss || (isFinal && !isLoss)) ? 'Finalizado' : 'Em Andamento',
                 faseFinal: isLoss ? startRound : (isFinal ? 'Campeão' : ''),
-                pontos: isLoss ? Number(document.getElementById('tPontos').value) || 0 : 0,
-                premiacao: isLoss ? Number(document.getElementById('tPremiacao').value) || 0 : 0
+                // BUGFIX: pontos e premiação devem ser salvos sempre que a campanha for finalizada
+                // (derrota em qualquer rodada OU título na final) — antes só entravam na derrota.
+                pontos: (isLoss || (isFinal && !isLoss))
+                    ? (Number(document.getElementById('tPontos')?.value) || 0)
+                    : 0,
+                premiacao: (isLoss || (isFinal && !isLoss))
+                    ? (Number(document.getElementById('tPremiacao')?.value) || 0)
+                    : 0
             };
 
             await saveTournament(data);
@@ -7105,13 +7168,23 @@
                                     <i class="fas fa-times mr-2"></i>Derrota
                                 </button>
                             </div>
-                            <div id="finalizeFields" class="hidden mt-4 p-4 bg-background-deep rounded-lg">
+                            <div id="finalizeFields" class="hidden mt-4 p-4 bg-background-deep rounded-lg border border-primary/25">
+                                <p class="text-xs text-text-muted mb-3">
+                                    Preencha os <strong class="text-primary">pontos ATP</strong> ganhos nesta campanha.
+                                    Eles entram no ranking imediatamente após salvar.
+                                </p>
                                 <div class="grid grid-cols-2 gap-3">
-                                    <input type="number" id="finalPontos" class="form-input" placeholder="Pontos" min="0">
-                                    <input type="number" id="finalPremiacao" class="form-input" placeholder="Prêmio $" min="0">
+                                    <div>
+                                        <label class="block text-xs font-medium text-text-muted mb-1">Pontos ATP *</label>
+                                        <input type="number" id="finalPontos" class="form-input" placeholder="Ex: 90" min="0">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-text-muted mb-1">Prêmio ($)</label>
+                                        <input type="number" id="finalPremiacao" class="form-input" placeholder="Ex: 5000" min="0">
+                                    </div>
                                 </div>
                                 <button onclick="finalizeTournament('${id}')" class="btn btn-primary w-full mt-3">
-                                    Finalizar Campanha
+                                    <i class="fas fa-flag-checkered mr-2"></i>Finalizar e somar pontos
                                 </button>
                             </div>
                         </div>
@@ -7133,12 +7206,36 @@
                         <span><i class="fas fa-trophy"></i> ${t.ano}</span>
                         ${t.status === 'Finalizado' ? `
                             <span class="badge badge-success">Finalizado</span>
-                            <span class="text-accent font-bold">${t.faseFinal}</span>
-                            <span class="text-primary">${t.pontos} pts</span>
+                            <span class="text-accent font-bold">${t.faseFinal || ''}</span>
+                            <span class="text-primary">${Number(t.pontos) || 0} pts</span>
                             <span class="text-secondary">${formatCurrency(t.premiacao)}</span>
                         ` : '<span class="badge badge-warning">Em Andamento</span>'}
                     </div>
                 </div>
+
+                ${t.status === 'Finalizado' ? `
+                <div class="mb-4 p-4 rounded-xl border border-primary/25 bg-background-deep">
+                    <div class="text-sm font-bold text-text-main mb-2">
+                        <i class="fas fa-pen-to-square text-primary mr-2"></i>Corrigir pontos / premiação
+                    </div>
+                    <p class="text-xs text-text-muted mb-3">
+                        Se os pontos não entraram no ranking, ajuste aqui e salve. O total é recalculado na hora.
+                    </p>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-medium text-text-muted mb-1">Pontos ATP</label>
+                            <input type="number" id="editPontos" class="form-input" min="0" value="${Number(t.pontos) || 0}">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-text-muted mb-1">Prêmio ($)</label>
+                            <input type="number" id="editPremiacao" class="form-input" min="0" value="${Number(t.premiacao) || 0}">
+                        </div>
+                    </div>
+                    <button type="button" onclick="saveTournamentPoints('${id}')" class="btn btn-primary w-full mt-3">
+                        <i class="fas fa-save mr-2"></i>Salvar pontos no ranking
+                    </button>
+                </div>
+                ` : ''}
 
                 <div class="space-y-3 mb-4">
                     ${matchesHtml}
@@ -7212,18 +7309,42 @@
             }
         };
 
+        window.saveTournamentPoints = async function(id) {
+            const pontos = Number(document.getElementById('editPontos')?.value) || 0;
+            const premiacao = Number(document.getElementById('editPremiacao')?.value) || 0;
+            await updateTournament(id, { pontos, premiacao, status: 'Finalizado' });
+            openTournamentModal(id);
+        };
+
         window.finalizeTournament = function(id) {
-            const pontos = Number(document.getElementById('finalPontos').value) || 0;
-            const premiacao = Number(document.getElementById('finalPremiacao').value) || 0;
-            
+            const pontosEl = document.getElementById('finalPontos');
+            const premiacaoEl = document.getElementById('finalPremiacao');
+            const pontos = Number(pontosEl && pontosEl.value !== '' ? pontosEl.value : 0) || 0;
+            const premiacao = Number(premiacaoEl && premiacaoEl.value !== '' ? premiacaoEl.value : 0) || 0;
+
+            if (pontos <= 0 && premiacao <= 0) {
+                const ok = confirm('Pontos e premiação estão zerados. Finalizar mesmo assim?');
+                if (!ok) return;
+            } else if (pontos <= 0) {
+                const ok = confirm('Atenção: pontuação está 0. Sem pontos o ranking não sobe. Finalizar mesmo assim?');
+                if (!ok) return;
+            }
+
+            const temp = window.tempMatchData || {};
+            // Não envia o campo id para o Firestore (evita sujeira no documento)
+            const { id: _ignoreId, ...tempRest } = temp;
             const data = {
-                ...window.tempMatchData,
+                ...tempRest,
                 status: 'Finalizado',
-                pontos,
-                premiacao
+                pontos: pontos,
+                premiacao: premiacao,
+                faseFinal: temp.faseFinal || ''
             };
-            
-            updateTournament(id, data);
+
+            updateTournament(id, data).then(() => {
+                // Garante recálculo imediato do ranking após gravar pontos
+                if (typeof updateUI === 'function') updateUI();
+            }).catch(() => {});
             modal.close();
         };
 
@@ -7599,6 +7720,7 @@
             saveNewTournament: window.saveNewTournament,
             addMatch: window.addMatch,
             finalizeTournament: window.finalizeTournament,
+            saveTournamentPoints: window.saveTournamentPoints,
             selectOpponent: window.selectOpponent,
             exportData: window.exportData,
             importData: window.importData,

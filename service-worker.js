@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fernando-lapa-dashboard-v4';
+const CACHE_NAME = 'fernando-lapa-dashboard-v5';
 const CORE_FILES = [
   './',
   './index.html',
@@ -26,9 +26,18 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
 
-  if (event.request.url.includes('/data/ranking.json')) {
+  const url = event.request.url;
+
+  // Ranking ATP e o HTML principal: sempre tenta rede primeiro (evita cache velho)
+  if (url.includes('/data/ranking.json') || url.endsWith('/') || url.endsWith('/index.html')) {
     event.respondWith(
-      fetch(event.request).catch(() => caches.match(event.request))
+      fetch(event.request)
+        .then(response => {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
+          return response;
+        })
+        .catch(() => caches.match(event.request))
     );
     return;
   }
