@@ -688,194 +688,237 @@
             opacity: 1;
         }
 
-        /* === Campanha do torneio (compacta) === */
+        /* === Cards de partida (estilo placar) === */
         .match-card {
-            background: var(--background-deep);
+            position: relative;
+            background: linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.7));
             border: 1px solid var(--border-subtle);
-            border-radius: 0.65rem;
-            padding: 0.55rem 0.75rem;
-            margin-bottom: 0.45rem;
-            transition: border-color 0.15s ease, background 0.15s ease;
+            border-radius: 0.85rem;
+            padding: 0.7rem 0.8rem 0.65rem;
+            margin-bottom: 0.55rem;
+            overflow: hidden;
+            transition: border-color 0.15s ease, transform 0.15s ease;
         }
 
-        .match-card:hover {
-            border-color: rgba(6, 182, 212, 0.45);
-            background: rgba(6, 182, 212, 0.04);
+        .match-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--text-muted);
+            opacity: 0.5;
         }
 
-        .match-card.is-win {
-            border-left: 3px solid var(--secondary);
+        .match-card.is-win::before {
+            background: var(--secondary);
+            opacity: 1;
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.45);
         }
 
-        .match-card.is-loss {
-            border-left: 3px solid var(--danger);
+        .match-card.is-loss::before {
+            background: var(--danger);
+            opacity: 1;
         }
 
         .match-card.is-bye {
-            border-left: 3px solid var(--text-muted);
-            opacity: 0.85;
+            opacity: 0.75;
         }
 
-        .match-row {
-            display: grid;
-            grid-template-columns: 4.5rem 1fr auto;
-            gap: 0.5rem 0.75rem;
+        .match-card:hover {
+            border-color: rgba(6, 182, 212, 0.35);
+        }
+
+        .match-top {
+            display: flex;
             align-items: center;
-        }
-
-        @media (max-width: 520px) {
-            .match-row {
-                grid-template-columns: 1fr;
-                gap: 0.35rem;
-            }
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.55rem;
         }
 
         .match-round-chip {
-            font-size: 0.65rem;
-            font-weight: 700;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            background: var(--card-base);
-            border: 1px solid var(--border-subtle);
-            border-radius: 999px;
-            padding: 0.2rem 0.5rem;
-            text-align: center;
-            white-space: nowrap;
-        }
-
-        .match-players {
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            min-width: 0;
-            flex-wrap: wrap;
-        }
-
-        .match-player {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            min-width: 0;
-            font-size: 0.85rem;
-        }
-
-        .match-player .pname {
-            font-weight: 600;
-            color: var(--text-main);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 11rem;
-        }
-
-        .match-player.winner .pname {
-            color: var(--secondary);
-        }
-
-        .match-player.loser .pname {
-            color: var(--text-muted);
-            text-decoration: line-through;
-            text-decoration-color: rgba(239, 68, 68, 0.45);
-        }
-
-        .match-vs {
-            font-size: 0.65rem;
+            font-size: 0.62rem;
             font-weight: 800;
-            color: var(--text-muted);
-            opacity: 0.7;
-            flex-shrink: 0;
-        }
-
-        .match-side {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 0.25rem;
-        }
-
-        .match-score {
-            font-family: ui-monospace, 'Courier New', monospace;
-            font-weight: 700;
-            font-size: 0.85rem;
-            color: var(--text-main);
-            background: var(--card-base);
-            border: 1px solid var(--border-subtle);
-            padding: 0.15rem 0.5rem;
-            border-radius: 0.35rem;
-            white-space: nowrap;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--primary);
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid rgba(6, 182, 212, 0.25);
+            border-radius: 999px;
+            padding: 0.18rem 0.55rem;
         }
 
         .match-result-pill {
             font-size: 0.65rem;
             font-weight: 800;
-            letter-spacing: 0.04em;
+            letter-spacing: 0.06em;
             border-radius: 999px;
-            padding: 0.12rem 0.45rem;
+            padding: 0.18rem 0.55rem;
         }
 
         .match-result-pill.win {
-            background: rgba(16, 185, 129, 0.15);
-            color: var(--secondary);
+            background: rgba(16, 185, 129, 0.18);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.35);
         }
 
         .match-result-pill.loss {
             background: rgba(239, 68, 68, 0.15);
             color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
         }
 
         .match-result-pill.bye {
-            background: rgba(148, 163, 184, 0.15);
+            background: rgba(148, 163, 184, 0.12);
             color: var(--text-muted);
+            border: 1px solid var(--border-subtle);
         }
 
-        .match-meta-line {
+        .match-scoreboard {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 0.4rem;
+            align-items: center;
+        }
+
+        .sb-player {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+            min-width: 0;
+        }
+
+        .sb-player.home { align-items: flex-start; text-align: left; }
+        .sb-player.away { align-items: flex-end; text-align: right; }
+
+        .sb-name-row {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            min-width: 0;
+            max-width: 100%;
+        }
+
+        .sb-player.away .sb-name-row {
+            flex-direction: row-reverse;
+        }
+
+        .sb-flag { font-size: 1rem; flex-shrink: 0; line-height: 1; }
+
+        .sb-name {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--text-main);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.2;
+        }
+
+        .sb-player.winner .sb-name {
+            color: #34d399;
+        }
+
+        .sb-player.loser .sb-name {
+            color: var(--text-muted);
+            opacity: 0.85;
+        }
+
+        .sb-tags {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.35rem;
-            margin-top: 0.35rem;
-            padding-top: 0.35rem;
-            border-top: 1px dashed var(--border-subtle);
-        }
-
-        .seed-badge {
-            font-size: 0.65rem;
-            font-weight: 700;
-            color: var(--accent);
-            background: rgba(245, 158, 11, 0.12);
-            padding: 0.05rem 0.3rem;
-            border-radius: 0.25rem;
-        }
-
-        .ranking-badge {
-            display: inline-flex;
-            align-items: center;
             gap: 0.2rem;
-            font-size: 0.65rem;
-            font-weight: 600;
-            color: var(--primary);
-            background: rgba(6, 182, 212, 0.1);
-            padding: 0.05rem 0.35rem;
+            margin-top: 0.1rem;
+        }
+
+        .sb-player.away .sb-tags {
+            justify-content: flex-end;
+        }
+
+        .sb-tag {
+            font-size: 0.58rem;
+            font-weight: 800;
+            letter-spacing: 0.03em;
+            padding: 0.15rem 0.35rem;
             border-radius: 0.25rem;
+            line-height: 1;
         }
 
-        .ranking-badge.opponent {
+        
+        .rank-label {
+            font-size: 0.68rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            letter-spacing: 0.02em;
+        }
+        .rank-label b {
+            color: #22d3ee;
+            font-weight: 800;
+        }
+        .rank-label.opp b {
             color: #fb923c;
-            background: rgba(249, 115, 22, 0.1);
         }
 
-        .ranking-number {
-            font-variant-numeric: tabular-nums;
+        .sb-tag.seed {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(245, 158, 11, 0.08));
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.4);
         }
 
-        /* legados (formulários ainda usam) */
+        .sb-tag.rank {
+            background: rgba(6, 182, 212, 0.12);
+            color: #22d3ee;
+            border: 1px solid rgba(6, 182, 212, 0.3);
+        }
+
+        .sb-tag.rank.opp {
+            background: rgba(249, 115, 22, 0.12);
+            color: #fb923c;
+            border: 1px solid rgba(249, 115, 22, 0.3);
+        }
+
+        .sb-center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.2rem;
+            padding: 0 0.15rem;
+            min-width: 4.2rem;
+        }
+
+        .sb-score {
+            font-family: ui-monospace, 'SF Mono', 'Courier New', monospace;
+            font-weight: 800;
+            font-size: 0.78rem;
+            color: var(--text-main);
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid var(--border-subtle);
+            border-radius: 0.4rem;
+            padding: 0.28rem 0.45rem;
+            text-align: center;
+            line-height: 1.25;
+            max-width: 7.5rem;
+            word-break: break-word;
+        }
+
+        .sb-vs {
+            font-size: 0.55rem;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            color: var(--text-muted);
+            opacity: 0.7;
+        }
+
+        /* legados usados em formulários */
         .player-vs-layout {
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 0.75rem;
         }
-
         .player-box {
             flex: 1;
             display: flex;
@@ -886,142 +929,32 @@
             border-radius: 0.5rem;
             border: 1px solid var(--border-subtle);
         }
-
-        .player-box.winner {
-            border-color: var(--secondary);
-            background: rgba(16, 185, 129, 0.1);
-        }
-
-        .player-box.loser {
-            border-color: var(--danger);
-            background: rgba(239, 68, 68, 0.08);
-            opacity: 0.9;
-        }
-
+        .player-box.winner { border-color: var(--secondary); background: rgba(16, 185, 129, 0.1); }
+        .player-box.loser { border-color: var(--danger); background: rgba(239, 68, 68, 0.08); }
         .player-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
+            width: 32px; height: 32px; border-radius: 50%;
             background: linear-gradient(135deg, var(--primary), #0ea5e9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.7rem;
-            font-weight: 800;
-            color: white;
-            flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.7rem; font-weight: 800; color: white; flex-shrink: 0;
         }
-
         .player-info { min-width: 0; }
         .player-name {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--text-main);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            font-size: 0.8rem; font-weight: 600; color: var(--text-main);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
-        .player-meta {
-            display: flex;
-            align-items: center;
-            gap: 0.35rem;
-            flex-wrap: wrap;
-        }
+        .player-meta { display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap; }
         .player-flag { font-size: 1rem; flex-shrink: 0; }
-        .vs-divider {
-            font-size: 0.7rem;
-            font-weight: 800;
-            color: var(--text-muted);
-        }
+        .vs-divider { font-size: 0.7rem; font-weight: 800; color: var(--text-muted); }
         .match-details {
-            margin-top: 0.5rem;
-            padding-top: 0.5rem;
+            margin-top: 0.5rem; padding-top: 0.5rem;
             border-top: 1px solid var(--border-subtle);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.8rem;
+            display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem;
         }
         .match-round {
-            color: var(--text-muted);
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
+            color: var(--text-muted); font-size: 0.7rem;
+            text-transform: uppercase; letter-spacing: 0.04em;
         }
-
-        
-        .match-meta-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.35rem 0.75rem;
-            margin-top: 0.4rem;
-            padding-top: 0.4rem;
-            border-top: 1px dashed var(--border-subtle);
-        }
-
-        .match-meta-col {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-            min-width: 0;
-        }
-
-        .match-meta-col.right {
-            align-items: flex-end;
-            text-align: right;
-        }
-
-        .match-meta-who {
-            font-size: 0.65rem;
-            font-weight: 700;
-            color: var(--text-muted);
-            letter-spacing: 0.02em;
-        }
-
-        .match-meta-chips {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.25rem;
-        }
-
-        .match-meta-col.right .match-meta-chips {
-            justify-content: flex-end;
-        }
-
-        .info-chip {
-            display: inline-flex;
-            align-items: center;
-            font-size: 0.65rem;
-            font-weight: 700;
-            line-height: 1;
-            padding: 0.22rem 0.45rem;
-            border-radius: 0.3rem;
-            white-space: nowrap;
-        }
-
-        .info-chip.seed {
-            background: rgba(245, 158, 11, 0.15);
-            color: #fbbf24;
-            border: 1px solid rgba(245, 158, 11, 0.35);
-        }
-
-        .info-chip.rank {
-            background: rgba(6, 182, 212, 0.12);
-            color: var(--primary);
-            border: 1px solid rgba(6, 182, 212, 0.3);
-        }
-
-        .info-chip.rank.opp {
-            background: rgba(249, 115, 22, 0.12);
-            color: #fb923c;
-            border: 1px solid rgba(249, 115, 22, 0.3);
-        }
-
-        .info-chip.muted {
-            background: transparent;
-            color: var(--text-muted);
-            border: 1px dashed var(--border-subtle);
-        }
+        .seed-badge, .ranking-badge, .ranking-number { display: none; }
 
 .tournament-detail-header {
             display: flex;
@@ -5836,63 +5769,54 @@
             const pillClass = isWin ? 'win' : isLoss ? 'loss' : 'bye';
             const pillText = isWin ? 'V' : isLoss ? 'D' : isBye ? 'BYE' : '—';
 
-            const flSeedVal = j.flSeed || flSeedFromFirstMatch || '';
+            const flSeed = j.flSeed || flSeedFromFirstMatch || '';
             const flRank = j.flRanking || currentRanking || '';
-            const oppSeedVal = j.adversarioSeed || '';
+            const oppSeed = j.adversarioSeed || '';
             const oppRank = j.adversarioRanking || '';
             const oppFlag = !isBye && j.nacionalidade ? getFlagEmoji(j.nacionalidade) : '';
             const oppName = isBye ? 'Bye' : (j.adversario || 'Adversário');
 
-            // Linha limpa: Seed e Ranking separados por jogador
-            const flBits = [];
-            if (flSeedVal) flBits.push(`<span class="info-chip seed">Seed ${flSeedVal}</span>`);
-            if (flRank) flBits.push(`<span class="info-chip rank">Rank ${flRank}</span>`);
-            const oppBits = [];
-            if (oppSeedVal) oppBits.push(`<span class="info-chip seed">Seed ${oppSeedVal}</span>`);
-            if (oppRank) oppBits.push(`<span class="info-chip rank opp">Rank ${oppRank}</span>`);
+            // Cabeça de chave entre parênteses ao lado do nome — padrão ATP
+            const flName = flSeed
+                ? `Fernando Lapa (${flSeed})`
+                : 'Fernando Lapa';
+            const oppNameDisplay = isBye
+                ? 'Bye'
+                : (oppSeed ? `${oppName} (${oppSeed})` : oppName);
 
-            let metaHtml = '';
-            if (!isBye && (flBits.length || oppBits.length)) {
-                metaHtml = `
-                    <div class="match-meta-grid">
-                        <div class="match-meta-col">
-                            <span class="match-meta-who">${getFlagEmoji('BRA')} FL</span>
-                            <div class="match-meta-chips">${flBits.join('') || '<span class="info-chip muted">—</span>'}</div>
-                        </div>
-                        <div class="match-meta-col right">
-                            <span class="match-meta-who">${oppFlag} ${j.nacionalidade || 'ADV'}</span>
-                            <div class="match-meta-chips">${oppBits.join('') || '<span class="info-chip muted">—</span>'}</div>
-                        </div>
-                    </div>`;
-            } else if (flBits.length) {
-                metaHtml = `
-                    <div class="match-meta-grid">
-                        <div class="match-meta-col">
-                            <span class="match-meta-who">${getFlagEmoji('BRA')} FL</span>
-                            <div class="match-meta-chips">${flBits.join('')}</div>
-                        </div>
-                    </div>`;
-            }
+            const flRankHtml = flRank
+                ? `<span class="rank-label">Ranking <b>${flRank}</b></span>`
+                : '';
+            const oppRankHtml = (!isBye && oppRank)
+                ? `<span class="rank-label opp">Ranking <b>${oppRank}</b></span>`
+                : '';
 
             return `
                 <div class="match-card ${cardClass}">
-                    <div class="match-row">
+                    <div class="match-top">
                         <span class="match-round-chip">${j.rodada || '—'}</span>
-                        <div class="match-players">
-                            <div class="match-player ${isWin ? 'winner' : isLoss ? 'loser' : ''}">
-                                <span class="pname">${getFlagEmoji('BRA')} Fernando Lapa</span>
+                        <span class="match-result-pill ${pillClass}">${pillText}</span>
+                    </div>
+                    <div class="match-scoreboard">
+                        <div class="sb-player home ${isWin ? 'winner' : isLoss ? 'loser' : ''}">
+                            <div class="sb-name-row">
+                                <span class="sb-flag">${getFlagEmoji('BRA')}</span>
+                                <span class="sb-name">${flName}</span>
                             </div>
-                            <span class="match-vs">vs</span>
-                            <div class="match-player ${isLoss ? 'winner' : isWin ? 'loser' : ''}">
-                                <span class="pname">${oppFlag ? oppFlag + ' ' : ''}${oppName}</span>
-                            </div>
+                            ${flRankHtml ? `<div class="sb-tags">${flRankHtml}</div>` : ''}
                         </div>
-                        <div class="match-side">
-                            <span class="match-score">${isBye ? '—' : (j.placar || '—')}</span>
-                            <span class="match-result-pill ${pillClass}">${pillText}</span>
+                        <div class="sb-center">
+                            <span class="sb-vs">VS</span>
+                            <span class="sb-score">${isBye ? '—' : (j.placar || '—')}</span>
+                        </div>
+                        <div class="sb-player away ${isLoss ? 'winner' : isWin ? 'loser' : ''}">
+                            <div class="sb-name-row">
+                                ${!isBye ? `<span class="sb-flag">${oppFlag}</span>` : ''}
+                                <span class="sb-name">${oppNameDisplay}</span>
+                            </div>
+                            ${oppRankHtml ? `<div class="sb-tags">${oppRankHtml}</div>` : ''}
                         </div>
                     </div>
-                    ${metaHtml}
                 </div>
             `;
         }
