@@ -3,8 +3,8 @@ name: Atualizar ranking ATP
 on:
   workflow_dispatch:
   schedule:
-    # Toda segunda-feira 07:15 UTC (logo após a publicação semanal da ATP)
-    - cron: "15 7 * * 1"
+    # Toda segunda-feira 08:00 UTC (após publicação ATP)
+    - cron: "0 8 * * 1"
 
 permissions:
   contents: write
@@ -12,7 +12,7 @@ permissions:
 jobs:
   atualizar-ranking:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 10
 
     steps:
       - name: Baixar repositório
@@ -21,21 +21,9 @@ jobs:
       - name: Configurar Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
 
-      - name: Verificar secret
-        env:
-          API_TENNIS_KEY: ${{ secrets.API_TENNIS_KEY }}
-        run: |
-          if [ -z "$API_TENNIS_KEY" ]; then
-            echo "::error::Secret API_TENNIS_KEY não configurado. Vá em Settings → Secrets and variables → Actions e crie API_TENNIS_KEY com a chave de api-tennis.com"
-            exit 1
-          fi
-          echo "Secret API_TENNIS_KEY encontrado."
-
-      - name: Atualizar ranking
-        env:
-          API_TENNIS_KEY: ${{ secrets.API_TENNIS_KEY }}
+      - name: Atualizar ranking (gratuito)
         run: npm run update-ranking
 
       - name: Salvar ranking no repositório
