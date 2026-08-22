@@ -1,168 +1,176 @@
-import fs from "node:fs/promises";
-import path from "node:path";
+/**
+ * Atualiza data/ranking.json com o ranking ATP oficial (api-tennis.com).
+ *
+ * Uso local:
+ *   API_TENNIS_KEY=sua_chave node scripts/update-ranking.mjs
+ *
+ * GitHub Actions:
+ *   secret API_TENNIS_KEY + workflow .github/workflows/update-ranking.yml
+ */
 
-const OUTPUT = path.resolve("data/ranking.json");
-const API_KEY = process.env.API_TENNIS_KEY;
+import { writeFile, mkdir, readFile } from 'node:fs/promises';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const API_URL =
-  "https://api.api-tennis.com/tennis/?method=get_standings&event_type=ATP";
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const ROOT = join(__dirname, '..');
+const OUT_FILE = join(ROOT, 'data', 'ranking.json');
 
-function toNumber(value) {
-  return Number(String(value ?? "").replace(/[^\d]/g, "")) || 0;
+const API_KEY = process.env.API_TENNIS_KEY || process.env.APITENNIS_KEY || '';
+const API_URL = 'https://api.api-tennis.com/tennis/';
+
+/** Nome de país (EN) → código IOC de 3 letras usado no dashboard */
+const COUNTRY_TO_IOC = {
+  Argentina: 'ARG', Australia: 'AUS', Austria: 'AUT', Belarus: 'BLR', Belgium: 'BEL',
+  Bolivia: 'BOL', 'Bosnia and Herzegovina': 'BIH', Brazil: 'BRA', Bulgaria: 'BUL',
+  Canada: 'CAN', Chile: 'CHI', China: 'CHN', Colombia: 'COL', Croatia: 'CRO',
+  Cyprus: 'CYP', 'Czech Republic': 'CZE', Czechia: 'CZE', Denmark: 'DEN',
+  Ecuador: 'ECU', Egypt: 'EGY', Estonia: 'EST', Finland: 'FIN', France: 'FRA',
+  Georgia: 'GEO', Germany: 'GER', 'Great Britain': 'GBR', Greece: 'GRE',
+  Hungary: 'HUN', India: 'IND', Indonesia: 'INA', Ireland: 'IRL', Israel: 'ISR',
+  Italy: 'ITA', Japan: 'JPN', Kazakhstan: 'KAZ', Latvia: 'LAT', Lithuania: 'LTU',
+  Luxembourg: 'LUX', Mexico: 'MEX', Moldova: 'MDA', Monaco: 'MON', Montenegro: 'MNE',
+  Morocco: 'MAR', Netherlands: 'NED', 'New Zealand': 'NZL', Norway: 'NOR',
+  Peru: 'PER', Poland: 'POL', Portugal: 'POR', Romania: 'ROU', Russia: 'RUS',
+  Serbia: 'SRB', Slovakia: 'SVK', Slovenia: 'SLO', 'South Africa': 'RSA',
+  'South Korea': 'KOR', Korea: 'KOR', Spain: 'ESP', Sweden: 'SWE',
+  Switzerland: 'SUI', Taiwan: 'TPE', 'Chinese Taipei': 'TPE', Tunisia: 'TUN',
+  Turkey: 'TUR', Türkiye: 'TUR', Ukraine: 'UKR', 'United Kingdom': 'GBR',
+  'United States': 'USA', USA: 'USA', Uruguay: 'URU', Uzbekistan: 'UZB',
+  Venezuela: 'VEN', 'Hong Kong': 'HKG', 'Puerto Rico': 'PUR'
+};
+
+function toIoc(country) {
+  if (!country) return '';
+  const raw = String(country).trim();
+  if (/^[A-Za-z]{3}$/.test(raw)) return raw.toUpperCase();
+  if (COUNTRY_TO_IOC[raw]) return COUNTRY_TO_IOC[raw];
+  const found = Object.entries(COUNTRY_TO_IOC).find(
+    ([name]) => name.toLowerCase() === raw.toLowerCase()
+  );
+  return found ? found[1] : raw.slice(0, 3).toUpperCase();
 }
 
-function normalizeCountry(value) {
-  return String(value ?? "")
-    .trim()
-    .replace(/\s+/g, " ");
-}
-
-function normalizePlayer(item) {
-  return {
-    rank: toNumber(item.place),
-    name: String(item.player ?? "").trim(),
-    country: normalizeCountry(item.country),
-    points: toNumber(item.points),
-    movement: String(item.movement ?? "").trim(),
-    playerKey: String(item.player_key ?? "").trim()
-  };
-}
-
-function validateRanking(players) {
-  if (!Array.isArray(players) || players.length < 50) {
-    throw new Error(
-      `Ranking incompleto: somente ${players?.length || 0} jogadores recebidos.`
-    );
-  }
-
-  const ordered = [...players].sort((a, b) => a.rank - b.rank);
-
-  for (let index = 0; index < 10; index++) {
-    const player = ordered[index];
-
-    if (!player) {
-      throw new Error(`Falta jogador na posição ${index + 1}.`);
-    }
-
-    if (player.rank !== index + 1) {
-      throw new Error(
-        `Top 10 inválido: esperado ${index + 1}, recebido ${player.rank}.`
-      );
-    }
-
-    if (!player.name || player.points <= 0) {
-      throw new Error(
-        `Dados inválidos na posição ${player.rank}.`
-      );
-    }
-  }
-}
-
-async function readPreviousRanking() {
-  try {
-    return JSON.parse(await fs.readFile(OUTPUT, "utf8"));
-  } catch {
-    return null;
-  }
-}
-
-async function fetchRanking() {
+async function fetchStandings(eventType = 'ATP') {
   if (!API_KEY) {
     throw new Error(
-      "O segredo API_TENNIS_KEY não foi encontrado no GitHub."
+      'API_TENNIS_KEY não definida. Configure o secret no GitHub ou exporte a variável localmente.'
     );
   }
 
-  const response = await fetch(
-    `${API_URL}&APIkey=${encodeURIComponent(API_KEY)}`,
-    {
-      cache: "no-store",
-      headers: {
-        Accept: "application/json",
-        "User-Agent": "Fernando-Lapa-Tennis-Dashboard/1.0"
-      }
-    }
-  );
+  const url = new URL(API_URL);
+  url.searchParams.set('method', 'get_standings');
+  url.searchParams.set('event_type', eventType);
+  url.searchParams.set('APIkey', API_KEY);
 
-  if (!response.ok) {
-    throw new Error(`Falha na API-Tennis: HTTP ${response.status}`);
+  const res = await fetch(url, {
+    headers: { Accept: 'application/json' },
+    signal: AbortSignal.timeout(25000)
+  });
+
+  if (!res.ok) {
+    throw new Error(`HTTP ${res.status} ao chamar api-tennis (${eventType})`);
   }
 
-  const payload = await response.json();
-
-  if (
-    !payload ||
-    String(payload.success) !== "1" ||
-    !Array.isArray(payload.result)
-  ) {
-    const message =
-      payload?.result?.[0]?.msg ||
-      payload?.message ||
-      "Resposta inválida da API-Tennis.";
-
-    throw new Error(message);
+  const json = await res.json();
+  if (!json || Number(json.success) !== 1 || !Array.isArray(json.result)) {
+    const msg = json?.error || json?.message || JSON.stringify(json).slice(0, 200);
+    throw new Error(`Resposta inválida da API: ${msg}`);
   }
 
-  const players = payload.result
-    .map(normalizePlayer)
-    .filter(
-      player =>
-        player.rank > 0 &&
-        player.name &&
-        player.points >= 0
-    )
-    .sort((a, b) => a.rank - b.rank);
+  return json.result;
+}
 
-  validateRanking(players);
+function mapPlayers(rows) {
+  const players = [];
+  const seen = new Set();
 
+  for (const row of rows) {
+    const name = String(row.player || row.player_name || '').trim();
+    if (!name) continue;
+
+    const rank = Number(row.place || row.rank || row.position) || 0;
+    if (rank <= 0) continue;
+
+    const key = name.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+
+    players.push({
+      rank,
+      name,
+      country: toIoc(row.country || row.country_name || ''),
+      points: Number(String(row.points || '0').replace(/[^\d.-]/g, '')) || 0,
+      playerId: row.player_key ? String(row.player_key) : null,
+      movement: row.movement || null,
+      league: row.league || 'ATP'
+    });
+  }
+
+  players.sort((a, b) => a.rank - b.rank || b.points - a.points);
   return players;
 }
 
-try {
-  console.log("Consultando ranking ATP pela API-Tennis...");
+async function main() {
+  console.log('[update-ranking] Buscando standings ATP...');
+  const rows = await fetchStandings('ATP');
+  const players = mapPlayers(rows);
 
-  const players = await fetchRanking();
+  if (players.length < 50) {
+    throw new Error(
+      `Ranking incompleto (${players.length} jogadores). Abortando para não sobrescrever data/ranking.json.`
+    );
+  }
 
-  const output = {
-    source: "API-Tennis",
-    sourceUrl:
-      "https://api.api-tennis.com/tennis/?method=get_standings&event_type=ATP",
-    updatedAt: new Date().toISOString(),
-    rankingDate: new Date().toISOString(),
+  const now = new Date();
+  const payload = {
+    source: 'api-tennis.com',
+    method: 'get_standings',
+    eventType: 'ATP',
+    rankingDate: now.toISOString().slice(0, 10),
+    updatedAt: now.toISOString(),
     count: players.length,
     players
   };
 
-  await fs.mkdir(path.dirname(OUTPUT), {
-    recursive: true
-  });
+  await mkdir(dirname(OUT_FILE), { recursive: true });
 
-  await fs.writeFile(
-    OUTPUT,
-    JSON.stringify(output, null, 2) + "\n",
-    "utf8"
-  );
-
-  console.log(
-    `Ranking ATP atualizado com ${players.length} jogadores.`
-  );
-
-  console.log(
-    `Número 1: ${players[0].name} — ${players[0].points} pontos.`
-  );
-} catch (error) {
-  const previous = await readPreviousRanking();
-
-  if (previous?.players?.length) {
-    console.error(
-      "A atualização falhou, mas o ranking anterior foi preservado."
-    );
-  } else {
-    console.error(
-      "A atualização falhou e ainda não existe ranking anterior."
-    );
+  // Evita commit inútil se o conteúdo relevante for idêntico
+  let previous = null;
+  try {
+    previous = JSON.parse(await readFile(OUT_FILE, 'utf8'));
+  } catch {
+    previous = null;
   }
 
-  console.error(error);
-  process.exitCode = 1;
+  const same =
+    previous &&
+    Array.isArray(previous.players) &&
+    previous.players.length === players.length &&
+    previous.players.every((p, i) =>
+      p.rank === players[i].rank &&
+      p.name === players[i].name &&
+      Number(p.points) === Number(players[i].points)
+    );
+
+  await writeFile(OUT_FILE, JSON.stringify(payload, null, 2) + '\n', 'utf8');
+
+  if (same) {
+    console.log(
+      `[update-ranking] ranking.json regravado sem mudanças de posição/pontos (${players.length} jogadores).`
+    );
+  } else {
+    console.log(
+      `[update-ranking] OK → ${OUT_FILE} (${players.length} jogadores). Top 3: ` +
+        players
+          .slice(0, 3)
+          .map(p => `${p.rank}. ${p.name} (${p.points})`)
+          .join(' | ')
+    );
+  }
 }
+
+main().catch(err => {
+  console.error('[update-ranking] ERRO:', err.message || err);
+  process.exit(1);
+});
