@@ -3,6 +3,7 @@ name: Atualizar ranking ATP
 on:
   workflow_dispatch:
   schedule:
+    # Toda segunda-feira 07:15 UTC (logo após a publicação semanal da ATP)
     - cron: "15 7 * * 1"
 
 permissions:
@@ -11,7 +12,7 @@ permissions:
 jobs:
   atualizar-ranking:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 8
 
     steps:
       - name: Baixar repositório
@@ -22,21 +23,38 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Verificar secret
+        env:
+          API_TENNIS_KEY: ${{ secrets.API_TENNIS_KEY }}
+        run: |
+          if [ -z "$API_TENNIS_KEY" ]; then
+            echo "::error::Secret API_TENNIS_KEY não configurado. Vá em Settings → Secrets and variables → Actions e crie API_TENNIS_KEY com a chave de api-tennis.com"
+            exit 1
+          fi
+          echo "Secret API_TENNIS_KEY encontrado."
+
       - name: Atualizar ranking
         env:
           API_TENNIS_KEY: ${{ secrets.API_TENNIS_KEY }}
         run: npm run update-ranking
 
-      - name: Salvar ranking
+      - name: Salvar ranking no repositório
         run: |
-          if git diff --quiet -- data/ranking.json; then
-            echo "Sem alteração válida."
-            exit 0
+          if [ ! -f data/ranking.json ]; then
+            echo "::error::data/ranking.json não foi gerado"
+            exit 1
           fi
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           git add data/ranking.json
-          git commit -m "Atualiza ranking ATP"
+
+          if git diff --cached --quiet; then
+            echo "Sem alteração no ranking."
+            exit 0
+          fi
+
+          git commit -m "Atualiza ranking ATP ($(date -u +%Y-%m-%d))"
           git push
+          echo "Ranking publicado com sucesso."
