@@ -3873,12 +3873,19 @@
         const ATP_RANKING_CACHE = 'fernando_lapa_atp_cache_v2';
         const ATP_HISTORY_CACHE = 'fernando_lapa_ranking_history_v4';
         const ATP_WEEK_CACHE_KEY = 'fernando_lapa_last_atp_week_v1';
-        // Bônus de ranking (ajuste manual). Já inicia com +200 a pedido do usuário.
-        // Para zerar: localStorage.removeItem('fernando_lapa_ranking_bonus')
-        // Para mudar: localStorage.setItem('fernando_lapa_ranking_bonus', '400')
-        if (localStorage.getItem('fernando_lapa_ranking_bonus') === null) {
-            localStorage.setItem('fernando_lapa_ranking_bonus', '200');
-        }
+        // Remove bônus automático indevido (era 200 sem ser pedido como extra)
+        (function clearBadBonus() {
+            try {
+                if (localStorage.getItem('fernando_lapa_bonus_cleared_v1') === '1') return;
+                const b = localStorage.getItem('fernando_lapa_ranking_bonus');
+                if (b === '200') localStorage.removeItem('fernando_lapa_ranking_bonus');
+                localStorage.setItem('fernando_lapa_bonus_cleared_v1', '1');
+            } catch (e) {}
+        })();
+
+        // Bônus manual opcional (só se o usuário definir):
+        // localStorage.setItem('fernando_lapa_ranking_bonus', '0')
+        // Por padrão NÃO adiciona nada.
         const ATP_POINTS_ADJUSTMENTS = [
             {
                 effectiveWeek: '2026-07-13',
@@ -5782,7 +5789,7 @@
                         <span class="match-round-chip">${j.rodada || '—'}</span>
                         <div class="match-players">
                             <div class="match-player ${isWin ? 'winner' : isLoss ? 'loser' : ''}">
-                                <span class="pname">Fernando Lapa</span>
+                                <span class="pname">${getFlagEmoji('BRA')} Fernando Lapa</span>
                             </div>
                             <span class="match-vs">vs</span>
                             <div class="match-player ${isLoss ? 'winner' : isWin ? 'loser' : ''}">
