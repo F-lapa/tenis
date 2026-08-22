@@ -795,10 +795,11 @@
 
         .sb-name-row {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 0.3rem;
             min-width: 0;
             max-width: 100%;
+            flex-wrap: wrap;
         }
 
         .sb-player.away .sb-name-row {
@@ -808,13 +809,14 @@
         .sb-flag { font-size: 1rem; flex-shrink: 0; line-height: 1; }
 
         .sb-name {
-            font-size: 0.82rem;
+            font-size: 0.78rem;
             font-weight: 700;
             color: var(--text-main);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            line-height: 1.2;
+            white-space: normal;
+            overflow: visible;
+            text-overflow: unset;
+            line-height: 1.25;
+            word-break: break-word;
         }
 
         .sb-player.winner .sb-name {
@@ -885,8 +887,9 @@
             align-items: center;
             justify-content: center;
             gap: 0.2rem;
-            padding: 0 0.15rem;
-            min-width: 4.2rem;
+            padding: 0 0.1rem;
+            min-width: 3.4rem;
+            max-width: 5.5rem;
         }
 
         .sb-score {
@@ -5703,7 +5706,10 @@
                 const categoryRate = (categoryWins / categoryTotal) * 100;
 
                 return `
-                    <div class="analytics-row">
+                    <div class="analytics-row analytics-row-clickable"
+                         role="button" tabindex="0"
+                         onclick="showDetails('category', '${type}', 'wins')"
+                         title="Ver estatísticas em ${type}">
                         <div>
                             <div class="flex items-center justify-between gap-3">
                                 <span class="analytics-row-name">${type}</span>
@@ -5717,15 +5723,16 @@
                                 <span style="width:${categoryRate}%"></span>
                             </div>
                         </div>
-                        <button class="analytics-value-badge"
-                                onclick="showDetails('category', '${type}', 'wins')"
-                                title="Ver partidas">${categoryRate.toFixed(0)}%</button>
+                        <span class="analytics-value-badge">${categoryRate.toFixed(0)}%</span>
                     </div>
                 `;
             }).join('') || '<div class="smart-empty-hint">Ainda não há partidas ATP cadastradas.</div>';
 
             document.getElementById('vitoriasSurfaceList').innerHTML = surfaceData.map(item => `
-                <li class="analytics-row">
+                <li class="analytics-row analytics-row-clickable"
+                    role="button" tabindex="0"
+                    onclick="showDetails('surface', '${item.surface}', 'wins')"
+                    title="Ver estatísticas em ${item.surface}">
                     <div>
                         <div class="flex items-center justify-between gap-3">
                             <span class="analytics-row-name">${item.surface}</span>
@@ -5739,9 +5746,7 @@
                             <span style="width:${item.rate}%"></span>
                         </div>
                     </div>
-                    <button class="analytics-value-badge"
-                            onclick="showDetails('surface', '${item.surface}', 'wins')"
-                            title="Ver partidas">${item.rate.toFixed(0)}%</button>
+                    <span class="analytics-value-badge">${item.rate.toFixed(0)}%</span>
                 </li>
             `).join('');
         }
@@ -5778,11 +5783,11 @@
 
             // Cabeça de chave entre parênteses ao lado do nome — padrão ATP
             const flName = flSeed
-                ? `Fernando Lapa (${flSeed})`
+                ? `(${flSeed}) Fernando Lapa`
                 : 'Fernando Lapa';
             const oppNameDisplay = isBye
                 ? 'Bye'
-                : (oppSeed ? `${oppName} (${oppSeed})` : oppName);
+                : (oppSeed ? `(${oppSeed}) ${oppName}` : oppName);
 
             const flRankHtml = flRank
                 ? `<span class="rank-label">Ranking <b>${flRank}</b></span>`
