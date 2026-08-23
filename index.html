@@ -1482,6 +1482,225 @@
             color: var(--accent);
         }
 
+        
+        /* ===== Rank Hero (aba Ranking) ===== */
+        .rank-hero {
+            position: relative;
+            border-radius: 1.15rem;
+            border: 1px solid rgba(6, 182, 212, 0.28);
+            background:
+                radial-gradient(ellipse 80% 60% at 0% 0%, rgba(6, 182, 212, 0.16), transparent 55%),
+                radial-gradient(ellipse 50% 40% at 100% 100%, rgba(16, 185, 129, 0.1), transparent 50%),
+                linear-gradient(160deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.92));
+            padding: 1.15rem 1.2rem 1rem;
+            overflow: hidden;
+        }
+        .rank-hero-glow {
+            pointer-events: none;
+            position: absolute;
+            inset: -40% -20% auto auto;
+            width: 280px;
+            height: 280px;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.2), transparent 70%);
+            filter: blur(8px);
+        }
+        .rank-hero-top {
+            position: relative;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .rank-hero-identity {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            min-width: 0;
+        }
+        .rank-hero-avatar {
+            width: 3.25rem;
+            height: 3.25rem;
+            border-radius: 1rem;
+            display: grid;
+            place-items: center;
+            font-size: 1.55rem;
+            background: linear-gradient(145deg, rgba(6, 182, 212, 0.25), rgba(15, 23, 42, 0.9));
+            border: 1px solid rgba(6, 182, 212, 0.35);
+            flex-shrink: 0;
+        }
+        .rank-hero-kicker {
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--primary);
+            margin: 0 0 0.15rem;
+        }
+        .rank-hero-name {
+            font-size: 1.35rem;
+            font-weight: 900;
+            color: var(--text-main);
+            margin: 0;
+            line-height: 1.15;
+        }
+        .rank-hero-sub {
+            margin: 0.25rem 0 0;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            max-width: 22rem;
+            line-height: 1.35;
+        }
+        .rank-hero-position {
+            text-align: right;
+            background: rgba(0, 0, 0, 0.28);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            border-radius: 1rem;
+            padding: 0.65rem 1rem 0.55rem;
+            min-width: 5.5rem;
+        }
+        .rank-hero-pos-label {
+            display: block;
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 0.15rem;
+        }
+        .rank-hero-pos-value {
+            display: flex;
+            align-items: baseline;
+            justify-content: flex-end;
+            gap: 0.3rem;
+        }
+        .rank-hero-pos-value span {
+            font-size: 2.35rem;
+            font-weight: 900;
+            line-height: 1;
+            color: #22d3ee;
+            font-variant-numeric: tabular-nums;
+        }
+        .rank-hero-pos-value small {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+        .rank-hero-metrics {
+            position: relative;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.55rem;
+        }
+        @media (min-width: 520px) {
+            .rank-hero-metrics {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        @media (min-width: 900px) {
+            .rank-hero-metrics {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        .rank-metric {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.65rem;
+            padding: 0.7rem 0.75rem;
+            border-radius: 0.85rem;
+            background: rgba(15, 23, 42, 0.65);
+            border: 1px solid rgba(148, 163, 184, 0.14);
+            min-width: 0;
+        }
+        .rank-metric.primary { border-color: rgba(6, 182, 212, 0.35); }
+        .rank-metric.danger { border-color: rgba(248, 113, 113, 0.35); }
+        .rank-metric.warn { border-color: rgba(251, 146, 60, 0.35); }
+        .rank-metric.sky { border-color: rgba(56, 189, 248, 0.3); }
+        .rank-metric-icon {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 0.55rem;
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            font-size: 0.85rem;
+        }
+        .rank-metric.primary .rank-metric-icon {
+            background: rgba(6, 182, 212, 0.15);
+            color: #22d3ee;
+        }
+        .rank-metric.danger .rank-metric-icon {
+            background: rgba(248, 113, 113, 0.15);
+            color: #f87171;
+        }
+        .rank-metric.warn .rank-metric-icon {
+            background: rgba(251, 146, 60, 0.15);
+            color: #fb923c;
+        }
+        .rank-metric.sky .rank-metric-icon {
+            background: rgba(56, 189, 248, 0.12);
+            color: #38bdf8;
+        }
+        .rank-metric-body {
+            display: flex;
+            flex-direction: column;
+            gap: 0.12rem;
+            min-width: 0;
+        }
+        .rank-metric-label {
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--text-muted);
+        }
+        .rank-metric-value {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--text-main);
+            font-variant-numeric: tabular-nums;
+            line-height: 1.2;
+        }
+        .rank-metric.primary .rank-metric-value { color: #22d3ee; }
+        .rank-metric.danger .rank-metric-value { color: #f87171; }
+        .rank-metric.warn .rank-metric-value { color: #fb923c; }
+        .rank-metric.sky .rank-metric-value { color: #38bdf8; }
+        .rank-metric-hint {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            line-height: 1.3;
+        }
+        .rank-hero-foot {
+            position: relative;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.65rem;
+            margin-top: 0.85rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid rgba(148, 163, 184, 0.12);
+        }
+        .rank-week-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--primary);
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid rgba(6, 182, 212, 0.25);
+            border-radius: 999px;
+            padding: 0.3rem 0.7rem;
+        }
+        .rank-hero-foot-note {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            flex: 1;
+            min-width: 12rem;
+        }
+
+
         /* ===== SIDEBAR STATS – redesign limpo ===== */
         .sidebar-stats-card {
             background: var(--card-base);
@@ -3158,71 +3377,6 @@
                 </div>
             </div>
 
-            <!-- Ranking Analysis Card -->
-            <div class="sidebar-stats-card">
-                <div class="sidebar-stats-header">
-                    <h2><i class="fas fa-ranking-star"></i> Análise de Ranking</h2>
-                </div>
-                
-                <div class="sidebar-stats-body">
-                    <div class="ranking-highlight">
-                        <div class="flex items-center justify-between gap-3">
-                            <div class="stat-row-left">
-                                <div class="stat-icon crown"><i class="fas fa-crown"></i></div>
-                                <div>
-                                    <div class="stat-label-text">Posição no Ranking</div>
-                                    <div class="text-[0.7rem] text-text-muted mt-0.5">Classificação ATP</div>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <span class="ranking-number" id="analysisRanking">1</span>
-                                <span class="text-text-muted text-xs font-semibold ml-1">ATP</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="stat-row">
-                        <div class="stat-row-left">
-                            <div class="stat-icon star"><i class="fas fa-star"></i></div>
-                            <span class="stat-label-text">Pontos Atuais</span>
-                        </div>
-                        <div class="stat-value-wrap">
-                            <span id="currentRankingPoints" class="stat-value-main primary">0 pts</span>
-                        </div>
-                    </div>
-                    
-                    <div class="stat-row" style="border-left: 3px solid #f87171;">
-                        <div class="stat-row-left">
-                            <div class="stat-icon shield"><i class="fas fa-shield-alt"></i></div>
-                            <span class="stat-label-text">Pontos a Defender</span>
-                        </div>
-                        <div class="stat-value-wrap">
-                            <span id="pointsToDefend" class="stat-value-main red">0 pts</span>
-                        </div>
-                    </div>
-                    
-                    <div class="stat-row" style="border-left: 3px solid #fb923c;">
-                        <div class="stat-row-left">
-                            <div class="stat-icon hourglass"><i class="fas fa-hourglass-end"></i></div>
-                            <span class="stat-label-text">Pontos já expirados</span>
-                        </div>
-                        <div class="stat-value-wrap">
-                            <span id="pointsExpiredTotal" class="stat-value-main orange">0 pts</span>
-                        </div>
-                    </div>
-                    
-                    <div class="stat-row" style="border-left: 3px solid #38bdf8;">
-                        <div class="stat-row-left">
-                            <div class="stat-icon chart"><i class="fas fa-chart-line"></i></div>
-                            <span class="stat-label-text">Projeção de Pontos</span>
-                        </div>
-                        <div class="stat-value-wrap">
-                            <span id="projectedPoints" class="stat-value-main sky">0 pts</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <!-- Quick Actions -->
             <div class="space-y-3">
                 <button id="createTournamentBtn" class="btn btn-primary w-full text-lg py-4">
@@ -3345,6 +3499,71 @@
                 <!-- Ranking ATP -->
                 <div id="ranking" class="tab-content" role="tabpanel">
                     <div class="space-y-6">
+                        <!-- Análise de Ranking — só nesta aba -->
+                        <section class="rank-hero" id="rankAnalysisHero">
+                            <div class="rank-hero-glow"></div>
+                            <div class="rank-hero-top">
+                                <div class="rank-hero-identity">
+                                    <div class="rank-hero-avatar" aria-hidden="true">🇧🇷</div>
+                                    <div>
+                                        <p class="rank-hero-kicker">Análise de Ranking · ATP</p>
+                                        <h2 class="rank-hero-name">Fernando Lapa</h2>
+                                        <p class="rank-hero-sub">Posição projetada pelos pontos das campanhas (top 18 · 52 semanas)</p>
+                                    </div>
+                                </div>
+                                <div class="rank-hero-position">
+                                    <span class="rank-hero-pos-label">Posição</span>
+                                    <div class="rank-hero-pos-value">
+                                        <span id="analysisRanking">—</span>
+                                        <small>ATP</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="rank-hero-metrics">
+                                <article class="rank-metric primary">
+                                    <div class="rank-metric-icon"><i class="fas fa-star"></i></div>
+                                    <div class="rank-metric-body">
+                                        <span class="rank-metric-label">Pontos atuais</span>
+                                        <span class="rank-metric-value" id="currentRankingPoints">0 pts</span>
+                                    </div>
+                                </article>
+                                <article class="rank-metric danger">
+                                    <div class="rank-metric-icon"><i class="fas fa-shield-halved"></i></div>
+                                    <div class="rank-metric-body">
+                                        <span class="rank-metric-label">A defender esta semana</span>
+                                        <span class="rank-metric-value" id="pointsToDefend">0 pts</span>
+                                        <span class="rank-metric-hint" id="pointsToDefendHint">Nenhum resultado cai nesta semana ATP</span>
+                                    </div>
+                                </article>
+                                <article class="rank-metric warn">
+                                    <div class="rank-metric-icon"><i class="fas fa-hourglass-half"></i></div>
+                                    <div class="rank-metric-body">
+                                        <span class="rank-metric-label">Já expirados</span>
+                                        <span class="rank-metric-value" id="pointsExpired">0 pts</span>
+                                    </div>
+                                </article>
+                                <article class="rank-metric sky">
+                                    <div class="rank-metric-icon"><i class="fas fa-chart-line"></i></div>
+                                    <div class="rank-metric-body">
+                                        <span class="rank-metric-label">Projeção</span>
+                                        <span class="rank-metric-value" id="projectedPoints">0 pts</span>
+                                        <span class="rank-metric-hint" id="projectionHint">Se nada cair esta semana</span>
+                                    </div>
+                                </article>
+                            </div>
+
+                            <div class="rank-hero-foot">
+                                <div class="rank-week-pill">
+                                    <i class="fas fa-calendar-week"></i>
+                                    <span id="rankingWeekLabel">Semana ATP</span>
+                                </div>
+                                <div class="rank-hero-foot-note" id="rankingAnalysisNote">
+                                    Atualiza ao salvar campanhas e toda segunda-feira com o ranking oficial.
+                                </div>
+                            </div>
+                        </section>
+
                         <div class="ranking-panel">
                             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                                 <div>
@@ -5331,35 +5550,60 @@
             document.getElementById('titulosTotal').textContent = stats.titulosATP;
             document.getElementById('vitoriasDerrotas').textContent = `${stats.vitoriasATP} / ${stats.derrotasATP}`;
             
-            // Análise de ranking
-            document.getElementById('currentRankingPoints').textContent = `${displayedPoints.toLocaleString('pt-BR')} pts`;
+            // Análise de ranking (aba Ranking)
+            const curPtsEl = document.getElementById('currentRankingPoints');
+            if (curPtsEl) curPtsEl.textContent = `${displayedPoints.toLocaleString('pt-BR')} pts`;
+
+            const defendPts = Number(stats.pontosDefender) || 0;
             const defendEl = document.getElementById('pointsToDefend');
             if (defendEl) {
-                defendEl.textContent = `${(Number(stats.pontosDefender) || 0).toLocaleString('pt-BR')} pts`;
+                defendEl.textContent = `${defendPts.toLocaleString('pt-BR')} pts`;
                 const detDef = Array.isArray(stats.detalheDefender) && stats.detalheDefender.length
-                    ? stats.detalheDefender.join(' | ')
-                    : 'Nenhum resultado cai na próxima atualização de segunda-feira';
-                defendEl.title = detDef +
-                    (stats.pontosDefenderNoRanking
-                        ? ` | Impacto no ranking (top 18): ${stats.pontosDefenderNoRanking} pts`
-                        : ' | Impacto no top 18: 0 pts');
+                    ? stats.detalheDefender.join(' · ')
+                    : '';
+                defendEl.title = detDef || 'Nenhum resultado cai nesta semana ATP';
+            }
+            const defendHint = document.getElementById('pointsToDefendHint');
+            if (defendHint) {
+                if (defendPts > 0 && Array.isArray(stats.detalheDefender) && stats.detalheDefender.length) {
+                    defendHint.textContent = stats.detalheDefender.slice(0, 2).join(' · ') +
+                        (stats.detalheDefender.length > 2 ? '…' : '');
+                } else if (defendPts > 0) {
+                    defendHint.textContent = 'Resultados que caem na próxima segunda';
+                } else {
+                    defendHint.textContent = 'Nenhum resultado cai nesta semana ATP';
+                }
             }
 
-            // Atualiza linha "Pontos já expirados" na análise de ranking
-            const expiredLine = document.getElementById('pointsExpiredTotal');
+            const totalExp = Number(stats.pontosExpiradosTotal) || 0;
+            const expiredLine = document.getElementById('pointsExpired') || document.getElementById('pointsExpiredTotal');
             if (expiredLine) {
-                const totalExp = Number(stats.pontosExpiradosTotal) || 0;
                 expiredLine.textContent = `${totalExp.toLocaleString('pt-BR')} pts`;
                 const detalhe = Array.isArray(stats.detalheExpirados) && stats.detalheExpirados.length
-                    ? stats.detalheExpirados.join(' | ')
+                    ? stats.detalheExpirados.join(' · ')
                     : '';
                 expiredLine.title = detalhe
                     ? `Total ${totalExp} pts → ${detalhe}`
                     : 'Resultados com mais de 52 semanas (fora do ranking)';
             }
-            
-            const projected = Math.max(0, displayedPoints - stats.pontosDefender);
-            document.getElementById('projectedPoints').textContent = `${projected.toLocaleString('pt-BR')} pts`;
+
+            const projected = Math.max(0, displayedPoints - defendPts);
+            const projEl = document.getElementById('projectedPoints');
+            if (projEl) projEl.textContent = `${projected.toLocaleString('pt-BR')} pts`;
+            const projHint = document.getElementById('projectionHint');
+            if (projHint) {
+                projHint.textContent = defendPts > 0
+                    ? `Se os ${defendPts.toLocaleString('pt-BR')} pts caírem: ${projected.toLocaleString('pt-BR')} pts`
+                    : 'Estável se nada cair esta semana';
+            }
+
+            const weekLabel = document.getElementById('rankingWeekLabel');
+            if (weekLabel && typeof formatAtpWeekLabel === 'function' && typeof getActiveAtpWeekStart === 'function') {
+                const ws = getActiveAtpWeekStart();
+                weekLabel.textContent = ws
+                    ? `Semana ATP · ${formatAtpWeekLabel(ws)}`
+                    : 'Semana ATP';
+            }
 
             const weeklyPoints = document.getElementById('rankingWeeklyPoints');
             if (weeklyPoints) {
