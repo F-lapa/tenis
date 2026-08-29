@@ -3,8 +3,8 @@ name: Atualizar ranking ATP
 on:
   workflow_dispatch:
   schedule:
-    # Toda segunda-feira 08:00 UTC (após publicação ATP)
-    - cron: "0 8 * * 1"
+    # Segunda 16:00 UTC — depois da ATP e do TennisExplorer publicarem
+    - cron: "0 16 * * 1"
 
 permissions:
   contents: write
@@ -12,7 +12,7 @@ permissions:
 jobs:
   atualizar-ranking:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 12
 
     steps:
       - name: Baixar repositório
