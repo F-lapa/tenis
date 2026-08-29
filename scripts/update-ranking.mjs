@@ -7,8 +7,6 @@
  *
  * Uso:
  *   node scripts/update-ranking.mjs
- *
- * GitHub Actions: não precisa de secret.
  */
 
 import { writeFile, mkdir, readFile } from 'node:fs/promises';
@@ -70,7 +68,6 @@ function normalizeName(raw) {
     .split(' ')
     .filter(Boolean);
   if (parts.length < 2) return parts.join(' ');
-  // Último token como primeiro nome (padrão TennisExplorer: sobrenome + nome)
   const first = parts[parts.length - 1];
   const last = parts.slice(0, -1).join(' ');
   return `${first} ${last}`.replace(/\s+/g, ' ').trim();
@@ -84,75 +81,104 @@ function slugToIoc(slug) {
   return COUNTRY_SLUG_TO_IOC[s] || s.slice(0, 3).toUpperCase();
 }
 
+/** Extrai datas disponíveis no seletor do TennisExplorer (mais recente primeiro). */
+function parseAvailableDates(html) {
+  const dates = [];
+  const re = /<option value="(\d{4}-\d{2}-\d{2})"/gi;
+  let m;
+  while ((m = re.exec(html)) !== null) {
+    if (!dates.includes(m[1])) dates.push(m[1]);
+  }
+  // Já costumam vir do mais novo para o mais antigo
+  return dates;
+}
+
+function parseRankingDateLabel(html) {
+  const dm = html.match(/rankings on\s*[-–]\s*(\d{1,2})\.(\d{1,2})\.(\d{4})/i);
+  if (!dm) return null;
+  return `${dm[3]}-${dm[2].padStart(2, '0')}-${dm[1].padStart(2, '0')}`;
+}
+
+function extractPlayersFromHtml(html, seen) {
+  const players = [];
+  const rowRe =
+    /<td class="rank first">(\d+)\.<\/td>\s*<td class="prevrank">[\s\S]*?<\/td>\s*<td class="t-name"><a href="([^"]+)">([^<]+)<\/a><\/td>\s*<td class="tl"><a href="[^"]*country=([^"&]+)[^"]*">[\s\S]*?<\/a><\/td>\s*<td class="long-point">([\d\s]+)<\/td>/gi;
+
+  let match;
+  while ((match = rowRe.exec(html)) !== null) {
+    const rank = Number(match[1]);
+    const href = match[2];
+    const rawName = match[3].trim();
+    const countrySlug = match[4].trim();
+    const points = Number(String(match[5]).replace(/\s/g, '')) || 0;
+    const name = normalizeName(rawName);
+    const key = name.toLowerCase();
+    if (!name || seen.has(key)) continue;
+    seen.add(key);
+
+    const playerId = (href.match(/\/player\/([^/]+)/) || [])[1] || null;
+
+    players.push({
+      rank,
+      name,
+      country: slugToIoc(countrySlug),
+      countryName: countrySlug.replace(/-/g, ' '),
+      points,
+      movement: null,
+      playerKey: playerId,
+      playerId,
+      league: 'ATP'
+    });
+  }
+  return players;
+}
+
 // ─── Fonte 1: TennisExplorer ───────────────────────────────────────────────
 async function fetchFromTennisExplorer() {
-  const players = [];
   const seen = new Set();
-  let rankingDate = null;
+  const allPlayers = [];
 
+  // 1) Página base → descobre a data MAIS RECENTE do ranking
+  console.log('[TE] Lendo seletor de datas…');
+  const baseHtml = await fetchText('https://www.tennisexplorer.com/ranking/atp-men/');
+  const dates = parseAvailableDates(baseHtml);
+  if (!dates.length) {
+    throw new Error('TennisExplorer: nenhuma data de ranking encontrada no seletor');
+  }
+
+  const rankingDate = dates[0]; // mais recente
+  console.log(`[TE] Datas disponíveis: ${dates.slice(0, 5).join(', ')}…`);
+  console.log(`[TE] Usando ranking de ${rankingDate}`);
+
+  // 2) Páginas 1–10 com ?date=YYYY-MM-DD (garante a semana certa)
   for (let page = 1; page <= 10; page++) {
     const url =
       page === 1
-        ? 'https://www.tennisexplorer.com/ranking/atp-men/'
-        : `https://www.tennisexplorer.com/ranking/atp-men/?page=${page}`;
+        ? `https://www.tennisexplorer.com/ranking/atp-men/?date=${rankingDate}`
+        : `https://www.tennisexplorer.com/ranking/atp-men/?date=${rankingDate}&page=${page}`;
 
-    console.log(`[TE] página ${page}…`);
+    console.log(`[TE] página ${page} (${rankingDate})…`);
     const html = await fetchText(url);
-
-    if (!rankingDate) {
-      const dm = html.match(/rankings on\s*[-–]\s*(\d{1,2})\.(\d{1,2})\.(\d{4})/i);
-      if (dm) {
-        rankingDate = `${dm[3]}-${dm[2].padStart(2, '0')}-${dm[1].padStart(2, '0')}`;
-      }
-    }
-
-    const rowRe =
-      /<td class="rank first">(\d+)\.<\/td>\s*<td class="prevrank">[\s\S]*?<\/td>\s*<td class="t-name"><a href="([^"]+)">([^<]+)<\/a><\/td>\s*<td class="tl"><a href="[^"]*country=([^"&]+)[^"]*">[\s\S]*?<\/a><\/td>\s*<td class="long-point">([\d\s]+)<\/td>/gi;
-
-    let match;
-    let found = 0;
-    while ((match = rowRe.exec(html)) !== null) {
-      const rank = Number(match[1]);
-      const href = match[2];
-      const rawName = match[3].trim();
-      const countrySlug = match[4].trim();
-      const points = Number(String(match[5]).replace(/\s/g, '')) || 0;
-      const name = normalizeName(rawName);
-      const key = name.toLowerCase();
-      if (!name || seen.has(key)) continue;
-      seen.add(key);
-      found++;
-
-      const playerId = (href.match(/\/player\/([^/]+)/) || [])[1] || null;
-
-      players.push({
-        rank,
-        name,
-        country: slugToIoc(countrySlug),
-        countryName: countrySlug.replace(/-/g, ' '),
-        points,
-        movement: null,
-        playerKey: playerId,
-        playerId,
-        league: 'ATP'
-      });
-    }
-
-    console.log(`[TE] página ${page}: +${found} (total ${players.length})`);
-    if (found === 0) break;
-    // Pausa leve entre páginas
-    await new Promise(r => setTimeout(r, 400));
+    const batch = extractPlayersFromHtml(html, seen);
+    console.log(`[TE] página ${page}: +${batch.length} (total ${allPlayers.length + batch.length})`);
+    allPlayers.push(...batch);
+    if (batch.length === 0) break;
+    await new Promise(r => setTimeout(r, 350));
   }
 
-  if (players.length < 40) {
-    throw new Error(`TennisExplorer retornou só ${players.length} jogadores`);
+  if (allPlayers.length < 40) {
+    throw new Error(`TennisExplorer retornou só ${allPlayers.length} jogadores`);
   }
 
-  players.sort((a, b) => a.rank - b.rank || b.points - a.points);
+  allPlayers.sort((a, b) => a.rank - b.rank || b.points - a.points);
+
+  // Confirma label da página
+  const labelDate = parseRankingDateLabel(baseHtml) || rankingDate;
+
   return {
     source: 'tennisexplorer.com',
-    rankingDate: rankingDate || new Date().toISOString().slice(0, 10),
-    players
+    rankingDate: rankingDate || labelDate,
+    players: allPlayers
   };
 }
 
@@ -179,7 +205,6 @@ async function fetchFromWikipedia() {
     for (const row of list) {
       const rawName = String(row.name || '').trim();
       if (!rawName) continue;
-      // Wiki: "Sinner, Jannik" → "Jannik Sinner"
       let name = rawName;
       if (rawName.includes(',')) {
         const [last, first] = rawName.split(',').map(s => s.trim());
@@ -206,7 +231,6 @@ async function fetchFromWikipedia() {
     throw new Error(`Wikipedia retornou só ${players.length} jogadores`);
   }
 
-  // Converte "Aug 13, 2026" → ISO se possível
   let rankingDate = new Date().toISOString().slice(0, 10);
   if (asOf) {
     const d = new Date(asOf);
@@ -239,7 +263,7 @@ async function main() {
     source,
     sourceUrl:
       source.includes('tennisexplorer')
-        ? 'https://www.tennisexplorer.com/ranking/atp-men/'
+        ? `https://www.tennisexplorer.com/ranking/atp-men/?date=${rankingDate}`
         : 'https://en.wikipedia.org/wiki/Module:ATP_rankings/data/singles.json',
     rankingDate,
     updatedAt: now.toISOString(),
@@ -251,7 +275,7 @@ async function main() {
   await writeFile(OUT_FILE, JSON.stringify(payload, null, 2) + '\n', 'utf8');
 
   console.log(
-    `[update-ranking] OK → ${OUT_FILE} (${players.length} jogadores, fonte: ${source})`
+    `[update-ranking] OK → ${OUT_FILE} (${players.length} jogadores, fonte: ${source}, data: ${rankingDate})`
   );
   console.log(
     'Top 5: ' +
