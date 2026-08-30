@@ -4329,7 +4329,24 @@
                 return j;
             });
 
-            return { fixed, jogos: repaired };
+            // faseFinal = última partida real (ignora Bye)
+            const lastReal = [...repaired].reverse().find(j =>
+                j.resultado && j.resultado !== 'Bye' && String(j.adversario || '').toLowerCase() !== 'bye'
+            );
+            let faseFinal = t.faseFinal || '';
+            if (lastReal) {
+                if (lastReal.resultado === 'V' && normalizeRoundLabel(lastReal.rodada) === 'F') {
+                    faseFinal = 'Campeão';
+                } else if (lastReal.resultado === 'D') {
+                    faseFinal = normalizeRoundLabel(lastReal.rodada) || lastReal.rodada;
+                } else {
+                    // ainda em andamento: última rodada jogada
+                    faseFinal = normalizeRoundLabel(lastReal.rodada) || lastReal.rodada || faseFinal;
+                }
+            }
+            if (String(t.faseFinal || '') !== String(faseFinal || '')) fixed = true;
+
+            return { fixed, jogos: repaired, faseFinal };
         }
 
 const ROUNDS_BY_TYPE = {
@@ -5502,21 +5519,21 @@ const ROUNDS_BY_TYPE = {
                 // Corrige rodadas duplicadas (ex.: R32 duas vezes) e grava no Firestore
                 const repairs = [];
                 allTournaments = allTournaments.map(t => {
-                    const { fixed, jogos } = repairTournamentRounds(t);
-                    if (fixed) {
-                        repairs.push({ id: t.id, jogos });
-                        return { ...t, jogos };
+                    const result = repairTournamentRounds(t);
+                    if (result.fixed) {
+                        repairs.push({ id: t.id, jogos: result.jogos, faseFinal: result.faseFinal });
+                        return { ...t, jogos: result.jogos, faseFinal: result.faseFinal };
                     }
                     return t;
                 });
                 if (repairs.length) {
-                    Promise.all(repairs.map(({ id, jogos }) =>
-                        updateDoc(doc(db, 'torneios', id), { jogos }).catch(err =>
+                    Promise.all(repairs.map(({ id, jogos, faseFinal }) =>
+                        updateDoc(doc(db, 'torneios', id), { jogos, faseFinal }).catch(err =>
                             console.warn('Falha ao corrigir rodadas de', id, err)
                         )
                     )).then(() => {
                         if (repairs.length) {
-                            showToast(`${repairs.length} torneio(s) com rodada duplicada corrigido(s)`, 'success');
+                            showToast(`${repairs.length} torneio(s) com rodada/fase corrigido(s)`, 'success');
                         }
                     });
                 }
