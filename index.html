@@ -4231,7 +4231,108 @@
         
         const SURFACES = ['Saibro', 'Rápida', 'Grama'];
         
-        const ROUNDS_BY_TYPE = {
+        
+        /** Normaliza rótulo de rodada para o padrão do sistema (R32, QF, …). */
+        function normalizeRoundLabel(raw) {
+            let s = String(raw || '').trim();
+            if (!s) return '';
+            const upper = s.toUpperCase().replace(/\s+/g, ' ');
+            const aliases = {
+                'R128': 'R128', '128': 'R128', '1R': 'R128', 'ROUND OF 128': 'R128',
+                'R64': 'R64', '64': 'R64', '2R': 'R64', 'ROUND OF 64': 'R64',
+                'R32': 'R32', '32': 'R32', '3R': 'R32', 'ROUND OF 32': 'R32',
+                'R16': 'R16', '16': 'R16', '4R': 'R16', 'ROUND OF 16': 'R16', 'OITAVAS': 'R16', 'OITAVAS DE FINAL': 'R16',
+                'QF': 'QF', 'QUARTAS': 'QF', 'QUARTAS DE FINAL': 'QF', 'QUARTERFINAL': 'QF', 'QUARTER-FINAL': 'QF',
+                'SF': 'SF', 'SEMI': 'SF', 'SEMIFINAL': 'SF', 'SEMI-FINAL': 'SF', 'SEMIFINAIS': 'SF',
+                'F': 'F', 'FINAL': 'F', 'FINAIS': 'F',
+                'BRONZE': 'Bronze', '3RD': 'Bronze', '3RD PLACE': 'Bronze',
+                'RR1': 'RR1', 'RR2': 'RR2', 'RR3': 'RR3', 'RR4': 'RR4'
+            };
+            if (aliases[upper]) return aliases[upper];
+            // já no padrão
+            if (/^R(128|64|32|16)$/i.test(s)) return s.toUpperCase();
+            if (/^RR[1-4]$/i.test(s)) return s.toUpperCase();
+            if (/^(QF|SF|F)$/i.test(s)) return s.toUpperCase();
+            return s;
+        }
+
+        function isRoundRobinRound(r) {
+            return /^RR[1-4]$/i.test(String(r || ''));
+        }
+
+        /**
+         * Próximas rodadas permitidas: só depois da última usada e sem repetir
+         * (RR permite várias partidas na mesma fase).
+         */
+        function getAvailableRounds(tipo, jogos) {
+            const rounds = ROUNDS_BY_TYPE[tipo] || ROUNDS_BY_TYPE['Default'] || [];
+            const list = Array.isArray(jogos) ? jogos : [];
+            const usedNorm = list.map(j => normalizeRoundLabel(j.rodada)).filter(Boolean);
+
+            const usedIndexes = usedNorm
+                .map(r => rounds.findIndex(x => x === r))
+                .filter(i => i >= 0);
+            const maxIdx = usedIndexes.length ? Math.max(...usedIndexes) : -1;
+
+            // Contagem por rodada (para RR)
+            const countBy = {};
+            usedNorm.forEach(r => { countBy[r] = (countBy[r] || 0) + 1; });
+
+            return rounds.filter((r, i) => {
+                if (i <= maxIdx && !isRoundRobinRound(r)) return false;
+                if (isRoundRobinRound(r)) return true; // RR pode repetir fase
+                if (countBy[r]) return false; // já usada
+                return i > maxIdx;
+            });
+        }
+
+        /**
+         * Corrige rodadas duplicadas em sequência (ex.: dois R32).
+         * RR (chave de grupos) não é alterado.
+         */
+        function repairTournamentRounds(t) {
+            const rounds = ROUNDS_BY_TYPE[t.tipo] || ROUNDS_BY_TYPE['Default'] || [];
+            const jogos = Array.isArray(t.jogos) ? t.jogos : [];
+            if (!jogos.length || !rounds.length) return { fixed: false, jogos };
+
+            const used = new Set();
+            let lastIdx = -1;
+            let fixed = false;
+
+            const repaired = jogos.map(j => {
+                let r = normalizeRoundLabel(j.rodada);
+                if (isRoundRobinRound(r)) {
+                    return r === j.rodada ? j : { ...j, rodada: r };
+                }
+
+                let idx = r ? rounds.indexOf(r) : -1;
+                const isDup = r && used.has(r);
+                const isOutOfOrder = idx >= 0 && idx <= lastIdx && !isRoundRobinRound(r);
+
+                if (!r || isDup || isOutOfOrder) {
+                    let next = lastIdx + 1;
+                    while (next < rounds.length && used.has(rounds[next])) next++;
+                    if (next < rounds.length) {
+                        r = rounds[next];
+                        idx = next;
+                        fixed = true;
+                    }
+                }
+
+                if (r) used.add(r);
+                if (idx > lastIdx) lastIdx = idx;
+
+                if (normalizeRoundLabel(j.rodada) !== r) {
+                    fixed = true;
+                    return { ...j, rodada: r };
+                }
+                return j;
+            });
+
+            return { fixed, jogos: repaired };
+        }
+
+const ROUNDS_BY_TYPE = {
             'Grand Slam': ['R128', 'R64', 'R32', 'R16', 'QF', 'SF', 'F'],
             'ATP Masters 1000': ['R128', 'R64', 'R32', 'R16', 'QF', 'SF', 'F'],
             'ATP 500': ['R32', 'R16', 'QF', 'SF', 'F'],
@@ -5397,6 +5498,28 @@
                     id: doc.id,
                     ...doc.data()
                 }));
+
+                // Corrige rodadas duplicadas (ex.: R32 duas vezes) e grava no Firestore
+                const repairs = [];
+                allTournaments = allTournaments.map(t => {
+                    const { fixed, jogos } = repairTournamentRounds(t);
+                    if (fixed) {
+                        repairs.push({ id: t.id, jogos });
+                        return { ...t, jogos };
+                    }
+                    return t;
+                });
+                if (repairs.length) {
+                    Promise.all(repairs.map(({ id, jogos }) =>
+                        updateDoc(doc(db, 'torneios', id), { jogos }).catch(err =>
+                            console.warn('Falha ao corrigir rodadas de', id, err)
+                        )
+                    )).then(() => {
+                        if (repairs.length) {
+                            showToast(`${repairs.length} torneio(s) com rodada duplicada corrigido(s)`, 'success');
+                        }
+                    });
+                }
                 
                 updateUI();
                 showToast(`${allTournaments.length} torneios carregados`, 'success');
@@ -6269,7 +6392,7 @@
             return `
                 <div class="match-card ${cardClass}">
                     <div class="match-top">
-                        <span class="match-round-chip">${j.rodada || '—'}</span>
+                        <span class="match-round-chip">${normalizeRoundLabel(j.rodada) || j.rodada || '—'}</span>
                         <span class="match-result-pill ${pillClass}">${pillText}</span>
                     </div>
                     <div class="match-scoreboard">
@@ -7891,10 +8014,8 @@
             
             let addMatchForm = '';
             if (canAddMatch) {
-                const lastRound = t.jogos?.[t.jogos.length - 1]?.rodada;
-                const rounds = ROUNDS_BY_TYPE[t.tipo] || ROUNDS_BY_TYPE['Default'];
-                const lastIndex = rounds.indexOf(lastRound);
-                const nextRounds = rounds.slice(lastIndex + 1);
+                // Próximas rodadas sem repetir (corrige bug de R32/R16 duplicados)
+                const nextRounds = getAvailableRounds(t.tipo, t.jogos);
                 
                 if (nextRounds.length > 0) {
                     addMatchForm = `
@@ -8063,7 +8184,8 @@
         };
 
         window.addMatch = function(id, result) {
-            const round = document.getElementById('nextRound').value;
+            const roundRaw = document.getElementById('nextRound').value;
+            const round = normalizeRoundLabel(roundRaw);
             const adversario = document.getElementById('nextAdversario').value.trim();
             const nacionalidade = document.getElementById('nextNacionalidade').value.trim().toUpperCase();
             const placar = document.getElementById('nextPlacar').value.trim();
@@ -8072,8 +8194,26 @@
                 showToast('Preencha todos os campos', 'warning');
                 return;
             }
+            if (!round) {
+                showToast('Selecione a rodada', 'warning');
+                return;
+            }
 
             const t = allTournaments.find(x => x.id === id);
+            if (!t) return;
+
+            // Impede rodada repetida (exceto RR de chave de grupos)
+            const used = (t.jogos || []).map(j => normalizeRoundLabel(j.rodada));
+            if (!isRoundRobinRound(round) && used.includes(round)) {
+                showToast(`A rodada ${round} já existe neste torneio. Use a próxima (ex.: R16 após R32).`, 'warning');
+                return;
+            }
+            // Só permite rodadas da sequência disponível
+            const allowed = getAvailableRounds(t.tipo, t.jogos);
+            if (!isRoundRobinRound(round) && allowed.length && !allowed.includes(round)) {
+                showToast(`Rodada inválida. Próximas permitidas: ${allowed.join(', ')}`, 'warning');
+                return;
+            }
             
             // Coletar dados do Fernando Lapa - RANKING AUTOMÁTICO DO SISTEMA
             const flSeed = document.getElementById('nextFlSeed').value; // Herdado do primeiro jogo
