@@ -4384,7 +4384,7 @@ const ROUNDS_BY_TYPE = {
             'FIJ':'FJ','FIN':'FI','FRA':'FR','GAB':'GA','GAM':'GM','GEO':'GE','GER':'DE','GHA':'GH','GBR':'GB',
             'GRE':'GR','GRN':'GD','GUM':'GU','GUA':'GT','GUI':'GN','GBS':'GW','GUY':'GY','HAI':'HT','HON':'HN',
             'HKG':'HK','HUN':'HU','ISL':'IS','IND':'IN','INA':'ID','IRI':'IR','IRQ':'IQ','IRL':'IE','ISR':'IL',
-            'ITA':'IT','JAM':'JM','JOR':'JO','KAZ':'KZ','KEN':'KE','KIR':'KI','PRK':'KP','KOR':'KR','KUW':'KW',
+            'ITA':'IT','JPN':'JP','JAM':'JM','JOR':'JO','KAZ':'KZ','KEN':'KE','KIR':'KI','PRK':'KP','KOR':'KR','KUW':'KW',
             'KGZ':'KG','LAO':'LA','LAT':'LV','LIB':'LB','LES':'LS','LBR':'LR','LBA':'LY','LIE':'LI','LTU':'LT',
             'LUX':'LU','MAD':'MG','MAW':'MW','MAS':'MY','MDV':'MV','MLI':'ML','MLT':'MT','MHL':'MH','MTN':'MR',
             'MRI':'MU','MEX':'MX','FSM':'FM','MDA':'MD','MON':'MC','MGL':'MN','MNE':'ME','MAR':'MA','MOZ':'MZ',
@@ -4396,7 +4396,9 @@ const ROUNDS_BY_TYPE = {
             'SRI':'LK','SUD':'SD','SUR':'SR','SWE':'SE','SUI':'CH','SYR':'SY','TAN':'TZ','THA':'TH','TLS':'TL',
             'TOG':'TG','TGA':'TO','TTO':'TT','TUN':'TN','TUR':'TR','TKM':'TM','TUV':'TV','UGA':'UG','UKR':'UA',
             'UAE':'AE','USA':'US','URU':'UY','UZB':'UZ','VAN':'VU','VEN':'VE','VIE':'VN','ISV':'VI','YEM':'YE',
-            'ZAM':'ZM','ZIM':'ZW'
+            'ZAM':'ZM','ZIM':'ZW',
+            // Aliases de fontes (TennisExplorer etc.)
+            'BOS':'BA','IVO':'CI','MOL':'MD','ROM':'RO','SLO':'SI','LAT':'LV','GRE':'GR','CRO':'HR'
         };
 
         const WORLD_RECORDS = [
@@ -4507,6 +4509,7 @@ const ROUNDS_BY_TYPE = {
         const COUNTRY_NAME_TO_ISO2 = {
             'ARGENTINA':'AR','AUSTRALIA':'AU','AUSTRIA':'AT','BELARUS':'BY',
             'BELGIUM':'BE','BOLIVIA':'BO','BOSNIA AND HERZEGOVINA':'BA',
+            'BOSNIA AND HERZEG':'BA','BOSNIA':'BA','HERZEGOVINA':'BA',
             'BRAZIL':'BR','BULGARIA':'BG','CANADA':'CA','CHILE':'CL',
             'CHINA':'CN','COLOMBIA':'CO','COSTA RICA':'CR','CROATIA':'HR',
             'CYPRUS':'CY','CZECH REPUBLIC':'CZ','CZECHIA':'CZ','DENMARK':'DK',
@@ -4517,25 +4520,47 @@ const ROUNDS_BY_TYPE = {
             'HUNGARY':'HU','INDIA':'IN','INDONESIA':'ID','IRELAND':'IE',
             'ISRAEL':'IL','ITALY':'IT','JAPAN':'JP','KAZAKHSTAN':'KZ',
             'LATVIA':'LV','LEBANON':'LB','LITHUANIA':'LT','LUXEMBOURG':'LU',
-            'MEXICO':'MX','MOLDOVA':'MD','MONACO':'MC','MONTENEGRO':'ME',
+            'MEXICO':'MX','MOLDOVA':'MD','MOLDAVSKO':'MD','MONACO':'MC','MONTENEGRO':'ME',
             'MOROCCO':'MA','NETHERLANDS':'NL','NEW ZEALAND':'NZ',
             'NORTH MACEDONIA':'MK','NORWAY':'NO','PARAGUAY':'PY','PERU':'PE',
             'POLAND':'PL','PORTUGAL':'PT','PUERTO RICO':'PR','ROMANIA':'RO',
             'RUSSIA':'RU','SERBIA':'RS','SLOVAKIA':'SK','SLOVENIA':'SI',
             'SOUTH AFRICA':'ZA','SOUTH KOREA':'KR','KOREA':'KR','SPAIN':'ES',
             'SWEDEN':'SE','SWITZERLAND':'CH','TAIWAN':'TW','THAILAND':'TH',
-            'TUNISIA':'TN','TURKEY':'TR','TÜRKIYE':'TR','UKRAINE':'UA',
+            'TUNISIA':'TN','TURKEY':'TR','TURKIYE':'TR','TÜRKIYE':'TR','UKRAINE':'UA',
             'UNITED ARAB EMIRATES':'AE','UNITED STATES':'US','USA':'US',
-            'URUGUAY':'UY','UZBEKISTAN':'UZ','VENEZUELA':'VE'
+            'URUGUAY':'UY','UZBEKISTAN':'UZ','VENEZUELA':'VE',
+            'IVORY COAST':'CI','COTE DIVOIRE':'CI','COTE D IVOIRE':'CI',
+            'HONG KONG':'HK','CHINESE TAIPEI':'TW','TAIPEI':'TW',
+            'KOREA REPUBLIC':'KR','REPUBLIC OF KOREA':'KR'
         };
 
         function countryToIso2(countryValue) {
             if (!countryValue) return '';
             const raw = String(countryValue).trim();
-            const code = raw.toUpperCase();
-            return COUNTRY_NAME_TO_ISO2[code] ||
-                (typeof IOC_TO_ISO2 !== 'undefined' && IOC_TO_ISO2[code]) ||
-                (code.length === 2 ? code : '');
+            if (!raw) return '';
+
+            // Já é ISO-2
+            if (/^[A-Za-z]{2}$/.test(raw)) return raw.toUpperCase();
+
+            const code = raw.toUpperCase().replace(/\s+/g, ' ');
+            if (IOC_TO_ISO2[code]) return IOC_TO_ISO2[code];
+            if (COUNTRY_NAME_TO_ISO2[code]) return COUNTRY_NAME_TO_ISO2[code];
+
+            // Nome completo / slug: "japan", "bosnia and herzeg", "ivory coast"
+            const nameKey = code
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                .replace(/[^A-Z0-9 ]+/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+            if (COUNTRY_NAME_TO_ISO2[nameKey]) return COUNTRY_NAME_TO_ISO2[nameKey];
+
+            // Prefixo parcial (ex.: "BOSNIA AND HERZEG" → BOSNIA AND HERZEGOVINA)
+            for (const [k, v] of Object.entries(COUNTRY_NAME_TO_ISO2)) {
+                if (nameKey.startsWith(k) || k.startsWith(nameKey)) return v;
+            }
+
+            return '';
         }
 
         function getFlagEmoji(countryValue) {
