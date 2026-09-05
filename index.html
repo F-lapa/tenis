@@ -7134,6 +7134,18 @@ const ROUNDS_BY_TYPE = {
                 ? Math.min(142, ...officialHistory.map(h => Number(h.ranking)))
                 : 142;
 
+            const countWinsByType = (...types) => {
+                const set = new Set(types);
+                let n = 0;
+                tournaments.forEach(t => {
+                    if (!set.has(t.tipo)) return;
+                    (t.jogos || []).forEach(j => {
+                        if (j.resultado === 'V' && j.adversario && String(j.adversario).toLowerCase() !== 'bye') n++;
+                    });
+                });
+                return n;
+            };
+
             return {
                 wins, losses, totalGames, winRate, bestStreak, finals, bestRanking,
                 totalTitles: Number(stats.titulosATP || 0),
@@ -7144,6 +7156,12 @@ const ROUNDS_BY_TYPE = {
                 nextGen: titleCount('Next Gen Finals'),
                 atp500: titleCount('ATP 500'),
                 atp250: titleCount('ATP 250'),
+                // Vitórias em partidas por categoria
+                winsGrandSlam: countWinsByType('Grand Slam'),
+                winsMasters1000: countWinsByType('ATP Masters 1000'),
+                winsAtp250500: countWinsByType('ATP 250', 'ATP 500'),
+                winsAtpFinals: countWinsByType('ATP Finals'),
+                winsOlympics: countWinsByType('Jogos Olímpicos'),
                 australianOpen: tournamentTitleCount('Australian Open'),
                 rolandGarros: tournamentTitleCount('Roland Garros'),
                 wimbledon: tournamentTitleCount('Wimbledon'),
@@ -7159,6 +7177,11 @@ const ROUNDS_BY_TYPE = {
             {title:'Títulos de Grand Slam',holder:'Novak Djokovic',record:24,key:'grandSlams',unit:'títulos',source:'ATP'},
             {title:'Títulos na carreira',holder:'Jimmy Connors',record:109,key:'totalTitles',unit:'títulos',source:'ATP'},
             {title:'Vitórias na carreira',holder:'Jimmy Connors',record:1274,key:'wins',unit:'vitórias',source:'ATP'},
+            {title:'Vitórias em Grand Slam',holder:'Novak Djokovic',record:392,key:'winsGrandSlam',unit:'vitórias',source:'ATP'},
+            {title:'Vitórias em Masters 1000',holder:'Novak Djokovic',record:418,key:'winsMasters1000',unit:'vitórias',source:'ATP'},
+            {title:'Vitórias em ATP 250 e 500',holder:'Roger Federer',record:550,key:'winsAtp250500',unit:'vitórias',source:'ATP'},
+            {title:'Vitórias em ATP Finals',holder:'Novak Djokovic',record:50,key:'winsAtpFinals',unit:'vitórias',source:'ATP'},
+            {title:'Vitórias em Olimpíadas',holder:'Andy Murray',record:18,key:'winsOlympics',unit:'vitórias',source:'ITF'},
             {title:'Semanas como nº 1',holder:'Novak Djokovic',record:428,value:()=>0,unit:'semanas',source:'ATP'},
             {title:'Semanas consecutivas como nº 1',holder:'Roger Federer',record:237,value:()=>0,unit:'semanas',source:'ATP'},
             {title:'Anos terminados como nº 1',holder:'Novak Djokovic',record:8,value:()=>0,unit:'temporadas',source:'ATP'},
