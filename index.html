@@ -1724,6 +1724,125 @@
 
 
         /* ===== Rank Hero (aba Ranking) ===== */
+        
+        /* Modal de recorde v2 */
+        .rd2 { display: flex; flex-direction: column; gap: 0.9rem; }
+        .rd2-hero {
+            border-radius: 1rem; padding: 1.15rem 1.2rem;
+            border: 1px solid rgba(252, 211, 77, 0.25);
+            background:
+                radial-gradient(ellipse 80% 70% at 100% 0%, rgba(252,211,77,0.12), transparent 50%),
+                linear-gradient(160deg, rgba(30,41,59,0.98), rgba(15,23,42,0.92));
+        }
+        .rd2-hero-top { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.55rem; }
+        .rd2-pill {
+            font-size: 0.62rem; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase;
+            padding: 0.22rem 0.55rem; border-radius: 999px;
+            background: rgba(6,182,212,0.12); color: #22d3ee; border: 1px solid rgba(6,182,212,0.28);
+        }
+        .rd2-pill.ok { background: rgba(16,185,129,0.15); color: #34d399; border-color: rgba(16,185,129,0.35); }
+        .rd2-pill.muted { background: rgba(148,163,184,0.1); color: var(--text-muted); border-color: rgba(148,163,184,0.2); }
+        .rd2-title { margin: 0; font-size: 1.35rem; font-weight: 900; color: var(--text-main); line-height: 1.2; }
+        .rd2-desc { margin: 0.4rem 0 0; font-size: 0.82rem; color: var(--text-muted); line-height: 1.45; }
+        .rd2-compare {
+            display: grid; grid-template-columns: 1fr auto 1fr; gap: 0.5rem; align-items: center;
+            margin-top: 1rem;
+        }
+        .rd2-you, .rd2-them {
+            background: rgba(0,0,0,0.3); border-radius: 0.85rem; padding: 0.7rem 0.75rem;
+            border: 1px solid rgba(148,163,184,0.14); text-align: center;
+        }
+        .rd2-compare-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.2rem; }
+        .rd2-compare-value { font-size: 1.2rem; font-weight: 900; color: #22d3ee; }
+        .rd2-compare-value.gold { color: #fcd34d; }
+        .rd2-vs { font-size: 0.7rem; font-weight: 800; color: var(--text-muted); letter-spacing: 0.08em; }
+        .rd2-progress-wrap { margin-top: 0.9rem; }
+        .rd2-progress-labels { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--text-muted); margin-bottom: 0.3rem; font-weight: 600; }
+        .rd2-progress-bar { height: 0.45rem; border-radius: 999px; background: rgba(148,163,184,0.15); overflow: hidden; }
+        .rd2-progress-bar > span { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, #06b6d4, #34d399); }
+        .rd2-gap { margin-top: 0.45rem; font-size: 0.75rem; color: var(--text-muted); }
+        .rd2-gap strong { color: #fbbf24; }
+        .rd2-section-title { font-size: 0.78rem; font-weight: 800; color: var(--text-main); letter-spacing: 0.02em; }
+        .rd2-list { display: flex; flex-direction: column; gap: 0.45rem; max-height: min(48vh, 400px); overflow-y: auto; }
+        .rd2-row {
+            display: flex; align-items: center; justify-content: space-between; gap: 0.65rem;
+            padding: 0.65rem 0.75rem; border-radius: 0.75rem;
+            background: rgba(15,23,42,0.65); border: 1px solid rgba(148,163,184,0.12);
+            animation: titleCardIn 0.3s ease both;
+        }
+        .rd2-row-left { display: flex; align-items: flex-start; gap: 0.55rem; min-width: 0; }
+        .rd2-flag { font-size: 1.15rem; line-height: 1; }
+        .rd2-name { font-size: 0.88rem; font-weight: 800; color: var(--text-main); }
+        .rd2-meta { font-size: 0.68rem; color: var(--text-muted); margin-top: 0.15rem; }
+        .rd2-badge { font-size: 0.75rem; font-weight: 900; color: #22d3ee; flex-shrink: 0; }
+        .rd2-empty { text-align: center; padding: 2rem 1rem; color: var(--text-muted); }
+        .rd2-empty i { display: block; font-size: 1.5rem; opacity: 0.35; margin-bottom: 0.5rem; }
+
+        /* Modal vitórias / derrotas */
+        .mr-modal { display: flex; flex-direction: column; gap: 0.85rem; }
+        .mr-hero {
+            display: flex; align-items: center; gap: 0.85rem; flex-wrap: wrap;
+            padding: 1rem 1.1rem; border-radius: 1rem;
+            border: 1px solid rgba(148,163,184,0.16);
+        }
+        .mr-hero.win {
+            border-color: rgba(16,185,129,0.35);
+            background: radial-gradient(ellipse 70% 80% at 0% 0%, rgba(16,185,129,0.14), transparent 55%),
+                linear-gradient(145deg, rgba(30,41,59,0.95), rgba(15,23,42,0.9));
+        }
+        .mr-hero.loss {
+            border-color: rgba(248,113,113,0.35);
+            background: radial-gradient(ellipse 70% 80% at 0% 0%, rgba(248,113,113,0.12), transparent 55%),
+                linear-gradient(145deg, rgba(30,41,59,0.95), rgba(15,23,42,0.9));
+        }
+        .mr-hero-icon {
+            width: 2.75rem; height: 2.75rem; border-radius: 0.85rem; display: grid; place-items: center;
+            font-size: 1.2rem; background: rgba(0,0,0,0.25); flex-shrink: 0;
+        }
+        .mr-hero.win .mr-hero-icon { color: #34d399; }
+        .mr-hero.loss .mr-hero-icon { color: #f87171; }
+        .mr-hero-kicker { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); }
+        .mr-hero-title { margin: 0.1rem 0 0; font-size: 1.35rem; font-weight: 900; }
+        .mr-hero-sub { margin: 0.2rem 0 0; font-size: 0.75rem; color: var(--text-muted); }
+        .mr-hero-count { margin-left: auto; text-align: center; background: rgba(0,0,0,0.28); border-radius: 0.75rem; padding: 0.5rem 0.85rem; border: 1px solid rgba(148,163,184,0.14); }
+        .mr-hero-count b { display: block; font-size: 1.25rem; font-weight: 900; color: var(--text-main); }
+        .mr-hero-count span { font-size: 0.6rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; }
+        .mr-filters { display: flex; flex-direction: column; gap: 0.45rem; }
+        .mr-filters-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.4rem; }
+        @media (max-width: 520px) { .mr-filters-row { grid-template-columns: 1fr; } }
+        .mr-list { display: flex; flex-direction: column; gap: 0.45rem; max-height: min(52vh, 440px); overflow-y: auto; }
+        .mr-row {
+            display: flex; align-items: stretch; justify-content: space-between; gap: 0.65rem;
+            padding: 0.7rem 0.75rem; border-radius: 0.8rem;
+            background: rgba(15,23,42,0.7); border: 1px solid rgba(148,163,184,0.12);
+            border-left-width: 3px; animation: titleCardIn 0.28s ease both;
+        }
+        .mr-row.win { border-left-color: #34d399; }
+        .mr-row.loss { border-left-color: #f87171; }
+        .mr-row-main { min-width: 0; flex: 1; }
+        .mr-top { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 0.55rem; margin-bottom: 0.3rem; }
+        .mr-round {
+            font-size: 0.62rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase;
+            color: #22d3ee; background: rgba(6,182,212,0.12); border: 1px solid rgba(6,182,212,0.25);
+            border-radius: 999px; padding: 0.12rem 0.45rem;
+        }
+        .mr-tour { font-size: 0.72rem; color: var(--text-muted); font-weight: 600; }
+        .mr-vs { display: flex; align-items: center; gap: 0.4rem; }
+        .mr-flag { font-size: 1.1rem; }
+        .mr-opp { font-size: 0.92rem; font-weight: 800; color: var(--text-main); }
+        .mr-meta { font-size: 0.68rem; color: var(--text-muted); margin-top: 0.25rem; }
+        .mr-side { display: flex; flex-direction: column; align-items: flex-end; justify-content: center; gap: 0.3rem; flex-shrink: 0; }
+        .mr-score {
+            font-family: ui-monospace, monospace; font-size: 0.72rem; font-weight: 700;
+            background: rgba(0,0,0,0.35); border: 1px solid rgba(148,163,184,0.14);
+            border-radius: 0.4rem; padding: 0.25rem 0.4rem; white-space: nowrap;
+        }
+        .mr-pill {
+            font-size: 0.65rem; font-weight: 900; border-radius: 999px; padding: 0.15rem 0.45rem;
+        }
+        .mr-pill.win { background: rgba(16,185,129,0.18); color: #34d399; }
+        .mr-pill.loss { background: rgba(248,113,113,0.18); color: #f87171; }
+
         .rank-hero {
             position: relative;
             border-radius: 1.15rem;
@@ -3611,7 +3730,11 @@
                             <span class="stat-label-text">V/D na Carreira</span>
                         </div>
                         <div class="stat-value-wrap">
-                            <span id="vitoriasDerrotas" class="stat-value-main">0 / 0</span>
+                            <span id="vitoriasDerrotas" class="stat-value-main cursor-pointer hover:opacity-80" title="Clique nas vitórias ou derrotas">
+                            <span class="text-secondary hover:underline" onclick="event.stopPropagation(); openMatchResultsModal('V')">0</span>
+                            <span class="text-text-muted"> / </span>
+                            <span class="text-red-400 hover:underline" onclick="event.stopPropagation(); openMatchResultsModal('D')">0</span>
+                        </span>
                         </div>
                     </div>
                 </div>
@@ -3706,11 +3829,11 @@
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                             <div class="bg-gradient-to-br from-secondary/20 to-secondary/5 p-4 rounded-xl border border-secondary/20 text-center">
                                 <p class="text-xs text-text-muted uppercase tracking-wider mb-1">Vitórias</p>
-                                <p id="temporadasVitorias" class="text-2xl font-extrabold text-secondary">0</p>
+                                <p id="temporadasVitorias" class="text-2xl font-extrabold text-secondary cursor-pointer hover:opacity-80" onclick="openMatchResultsModal('V')" title="Ver vitórias">0</p>
                             </div>
                             <div class="bg-gradient-to-br from-red-500/20 to-red-500/5 p-4 rounded-xl border border-red-500/20 text-center">
                                 <p class="text-xs text-text-muted uppercase tracking-wider mb-1">Derrotas</p>
-                                <p id="temporadasDerrotas" class="text-2xl font-extrabold text-red-400">0</p>
+                                <p id="temporadasDerrotas" class="text-2xl font-extrabold text-red-400 cursor-pointer hover:opacity-80" onclick="openMatchResultsModal('D')" title="Ver derrotas">0</p>
                             </div>
                             <div class="bg-gradient-to-br from-accent/20 to-accent/5 p-4 rounded-xl border border-accent/20 text-center">
                                 <p class="text-xs text-text-muted uppercase tracking-wider mb-1">Títulos</p>
@@ -4053,7 +4176,7 @@
                                     <div class="analytics-kpi-icon"><i class="fas fa-circle-check"></i></div>
                                     <span class="analytics-pill">Win</span>
                                 </div>
-                                <div id="totalVitorias" class="analytics-kpi-value text-secondary cursor-pointer hover:opacity-80" onclick="showDetails('all-wins', 'ATP250PLUS', 'wins')" title="Ver campanhas">0</div>
+                                <div id="totalVitorias" class="analytics-kpi-value text-secondary cursor-pointer hover:opacity-80" onclick="openMatchResultsModal('V')" title="Ver todas as vitórias" title="Ver campanhas">0</div>
                                 <div class="analytics-kpi-label">Vitórias ATP</div>
                             </article>
 
@@ -4062,7 +4185,7 @@
                                     <div class="analytics-kpi-icon"><i class="fas fa-circle-xmark"></i></div>
                                     <span class="analytics-pill">Loss</span>
                                 </div>
-                                <div id="totalDerrotas" class="analytics-kpi-value text-red-400 cursor-pointer hover:opacity-80" onclick="showDetails('all-wins', 'ATP250PLUS', 'wins')" title="Ver campanhas">0</div>
+                                <div id="totalDerrotas" class="analytics-kpi-value text-red-400 cursor-pointer hover:opacity-80" onclick="openMatchResultsModal('D')" title="Ver todas as derrotas">0</div>
                                 <div class="analytics-kpi-label">Derrotas ATP</div>
                             </article>
 
@@ -5953,7 +6076,20 @@ const ROUNDS_BY_TYPE = {
                 (officialPoints != null ? `Oficial ATP: ${officialPoints.toLocaleString('pt-BR')} pts` : 'Cálculo automático');
             document.getElementById('premiacao').textContent = formatCurrency(stats.premiacao);
             document.getElementById('titulosTotal').textContent = stats.titulosATP;
-            document.getElementById('vitoriasDerrotas').textContent = `${stats.vitoriasATP} / ${stats.derrotasATP}`;
+            {
+                const vd = document.getElementById('vitoriasDerrotas');
+                if (vd) {
+                    const spans = vd.querySelectorAll('span');
+                    if (spans.length >= 3) {
+                        spans[0].textContent = String(stats.vitoriasATP || 0);
+                        spans[2].textContent = String(stats.derrotasATP || 0);
+                    } else {
+                        vd.innerHTML = `<span class="text-secondary hover:underline" onclick="event.stopPropagation(); openMatchResultsModal('V')">${stats.vitoriasATP || 0}</span>` +
+                            `<span class="text-text-muted"> / </span>` +
+                            `<span class="text-red-400 hover:underline" onclick="event.stopPropagation(); openMatchResultsModal('D')">${stats.derrotasATP || 0}</span>`;
+                    }
+                }
+            }
             
             // Análise de ranking (aba Ranking)
             const curPtsEl = document.getElementById('currentRankingPoints');
@@ -7429,7 +7565,148 @@ const ROUNDS_BY_TYPE = {
             return { items, explanation };
         }
 
-        window.openRecordDetail = function(index) {
+        
+        window._matchResultsFilter = { type: 'V', season: 'all', surface: 'all', category: 'all', q: '' };
+
+        function collectMatchResults(resultType) {
+            const list = [];
+            const tournaments = [...(allTournaments || [])]
+                .filter(t => typeof isAtp250Plus === 'function' ? isAtp250Plus(t.tipo) : !String(t.tipo || '').startsWith('CH'))
+                .sort((a, b) => new Date(b.dataInicio || b.dataFim || 0) - new Date(a.dataInicio || a.dataFim || 0));
+            tournaments.forEach(t => {
+                (t.jogos || []).forEach(j => {
+                    if (String(j.adversario || '').toLowerCase() === 'bye' || j.resultado === 'Bye') return;
+                    if (j.resultado !== resultType) return;
+                    list.push({
+                        result: j.resultado,
+                        rodada: (typeof normalizeRoundLabel === 'function' ? normalizeRoundLabel(j.rodada) : j.rodada) || j.rodada || '—',
+                        adversario: j.adversario || '—',
+                        nacionalidade: j.nacionalidade || '',
+                        placar: j.placar || '—',
+                        ranking: j.adversarioRanking || '',
+                        seed: j.adversarioSeed || '',
+                        torneio: t.nome || 'Torneio',
+                        tipo: t.tipo || '',
+                        superficie: t.superficie || '',
+                        ano: t.ano || '',
+                        pais: t.paisTorneio || '',
+                        tournamentId: t.id
+                    });
+                });
+            });
+            return list;
+        }
+
+        function renderMatchResultsList() {
+            const f = window._matchResultsFilter || {};
+            const all = collectMatchResults(f.type === 'D' ? 'D' : 'V');
+            let filtered = all.filter(m => {
+                if (f.season && f.season !== 'all' && String(m.ano) !== String(f.season)) return false;
+                if (f.surface && f.surface !== 'all' && m.superficie !== f.surface) return false;
+                if (f.category && f.category !== 'all' && m.tipo !== f.category) return false;
+                if (f.q) {
+                    const q = f.q.toLowerCase();
+                    const blob = `${m.adversario} ${m.torneio} ${m.rodada} ${m.tipo}`.toLowerCase();
+                    if (!blob.includes(q)) return false;
+                }
+                return true;
+            });
+
+            const host = document.getElementById('matchResultsList');
+            const countEl = document.getElementById('matchResultsCount');
+            if (countEl) countEl.textContent = `${filtered.length} de ${all.length}`;
+            if (!host) return;
+
+            if (!filtered.length) {
+                host.innerHTML = '<div class="rd2-empty"><i class="fas fa-filter"></i><p>Nenhuma partida com esses filtros.</p></div>';
+                return;
+            }
+
+            host.innerHTML = filtered.map((m, i) => {
+                const flag = m.nacionalidade ? getFlagEmoji(m.nacionalidade) : getFlagEmoji(m.pais);
+                const resClass = m.result === 'V' ? 'win' : 'loss';
+                return (
+                    '<div class="mr-row ' + resClass + '" style="animation-delay:' + (Math.min(i, 12) * 0.02) + 's">' +
+                    '<div class="mr-row-main">' +
+                    '<div class="mr-top">' +
+                    '<span class="mr-round">' + m.rodada + '</span>' +
+                    '<span class="mr-tour">' + (m.torneio || '') + (m.ano ? ' · ' + m.ano : '') + '</span>' +
+                    '</div>' +
+                    '<div class="mr-vs">' +
+                    '<span class="mr-flag">' + flag + '</span>' +
+                    '<span class="mr-opp">' + m.adversario +
+                    (m.ranking ? ' <small class="text-text-muted">#' + m.ranking + '</small>' : '') +
+                    '</span>' +
+                    '</div>' +
+                    '<div class="mr-meta">' + [m.tipo, m.superficie, m.pais].filter(Boolean).join(' · ') + '</div>' +
+                    '</div>' +
+                    '<div class="mr-side">' +
+                    '<span class="mr-score">' + m.placar + '</span>' +
+                    '<span class="mr-pill ' + resClass + '">' + m.result + '</span>' +
+                    '</div></div>'
+                );
+            }).join('');
+        }
+
+        window.applyMatchResultsFilter = function() {
+            const f = window._matchResultsFilter || { type: 'V' };
+            f.season = document.getElementById('mrFilterSeason')?.value || 'all';
+            f.surface = document.getElementById('mrFilterSurface')?.value || 'all';
+            f.category = document.getElementById('mrFilterCategory')?.value || 'all';
+            f.q = document.getElementById('mrFilterSearch')?.value || '';
+            window._matchResultsFilter = f;
+            renderMatchResultsList();
+        };
+
+        window.openMatchResultsModal = function(resultType) {
+            const type = resultType === 'D' ? 'D' : 'V';
+            window._matchResultsFilter = { type, season: 'all', surface: 'all', category: 'all', q: '' };
+
+            const all = collectMatchResults(type);
+            const seasons = [...new Set(all.map(m => m.ano).filter(Boolean))].sort((a, b) => b - a);
+            const surfaces = [...new Set(all.map(m => m.superficie).filter(Boolean))].sort();
+            const categories = [...new Set(all.map(m => m.tipo).filter(Boolean))].sort();
+
+            const titleColor = type === 'V' ? 'text-secondary' : 'text-red-400';
+            const titleText = type === 'V' ? 'Vitórias' : 'Derrotas';
+            const icon = type === 'V' ? 'fa-circle-check' : 'fa-circle-xmark';
+
+            const body =
+                '<div class="mr-modal">' +
+                '<div class="mr-hero ' + (type === 'V' ? 'win' : 'loss') + '">' +
+                '<div class="mr-hero-icon"><i class="fas ' + icon + '"></i></div>' +
+                '<div><div class="mr-hero-kicker">Carreira ATP 250+</div>' +
+                '<h3 class="mr-hero-title ' + titleColor + '">' + titleText + '</h3>' +
+                '<p class="mr-hero-sub">Lista completa das partidas · use os filtros para refinar</p></div>' +
+                '<div class="mr-hero-count"><b id="matchResultsCount">' + all.length + '</b><span>partidas</span></div>' +
+                '</div>' +
+                '<div class="mr-filters">' +
+                '<input id="mrFilterSearch" class="form-input" type="search" placeholder="Buscar adversário ou torneio…" oninput="applyMatchResultsFilter()">' +
+                '<div class="mr-filters-row">' +
+                '<select id="mrFilterSeason" class="form-select" onchange="applyMatchResultsFilter()">' +
+                '<option value="all">Todas as temporadas</option>' +
+                seasons.map(y => '<option value="' + y + '">' + y + '</option>').join('') +
+                '</select>' +
+                '<select id="mrFilterSurface" class="form-select" onchange="applyMatchResultsFilter()">' +
+                '<option value="all">Todos os pisos</option>' +
+                surfaces.map(s => '<option value="' + s + '">' + s + '</option>').join('') +
+                '</select>' +
+                '<select id="mrFilterCategory" class="form-select" onchange="applyMatchResultsFilter()">' +
+                '<option value="all">Todas as categorias</option>' +
+                categories.map(c => '<option value="' + c + '">' + c + '</option>').join('') +
+                '</select>' +
+                '</div></div>' +
+                '<div id="matchResultsList" class="mr-list"></div></div>';
+
+            modal.open(
+                '<i class="fas ' + icon + ' ' + titleColor + ' mr-2"></i>' + titleText,
+                body,
+                '<button onclick="modal.close()" class="btn btn-ghost">Fechar</button>'
+            );
+            renderMatchResultsList();
+        };
+
+window.openRecordDetail = function(index) {
             const record = HISTORIC_SINGLES_RECORDS[index];
             if (!record) return;
             const stats = (typeof lastCalculatedStats !== 'undefined' && lastCalculatedStats) ? lastCalculatedStats : calculateStats();
@@ -7442,39 +7719,50 @@ const ROUNDS_BY_TYPE = {
             const items = built.items || [];
             const explanation = built.explanation || '';
             const gap = record.lowerIsBetter ? null : Math.max(0, Number(record.record) - Number(playerValue));
+            const reached = record.lowerIsBetter
+                ? (playerValue > 0 && playerValue <= record.record)
+                : (playerValue >= record.record);
 
             const listHtml = items.length
-                ? items.map((it, i) => (
-                    '<div class="record-detail-item" style="animation-delay:' + Math.min(i, 10) * 0.03 + 's">' +
-                    '<span class="rd-flag">' + (it.flag || '🏆') + '</span>' +
-                    '<div class="rd-body"><div class="rd-name">' + (it.name || '') + '</div>' +
-                    '<div class="rd-meta">' + (it.meta || '') + '</div></div>' +
-                    '<div class="rd-side">' + (it.side || '') + '</div></div>'
+                ? items.slice(0, 80).map((it, i) => (
+                    '<div class="rd2-row" style="animation-delay:' + (Math.min(i, 12) * 0.025) + 's">' +
+                    '<div class="rd2-row-left">' +
+                    '<span class="rd2-flag">' + (it.flag || '•') + '</span>' +
+                    '<div><div class="rd2-name">' + (it.name || '') + '</div>' +
+                    '<div class="rd2-meta">' + (it.meta || '') + '</div></div></div>' +
+                    '<div class="rd2-badge">' + (it.side || '') + '</div></div>'
                 )).join('')
-                : '<div class="record-detail-empty">Ainda não há itens de campanha para este recorde.<br>Continue registrando partidas e títulos.</div>';
+                : '<div class="rd2-empty"><i class="fas fa-inbox"></i><p>Nenhum item ainda neste indicador.<br>Registre mais campanhas para ver a evolução aqui.</p></div>';
 
             const body =
-                '<div class="record-detail">' +
-                '<div class="record-detail-hero">' +
-                '<div class="record-detail-kicker">' + (record.source || 'ATP') + ' · Recorde histórico</div>' +
-                '<h3 class="record-detail-title">' + record.title + '</h3>' +
-                '<p class="record-detail-sub">' + explanation + '</p>' +
-                '<div class="record-detail-metrics">' +
-                '<div class="record-detail-metric ok"><b>' + formatRecordValue(record, playerValue) + '</b><span>Fernando Lapa</span></div>' +
-                '<div class="record-detail-metric warn"><b>' + formatRecordValue(record, record.record) + '</b><span>' + record.holder + '</span></div>' +
-                '<div class="record-detail-metric"><b>' + progress.toFixed(1) + '%</b><span>' +
-                (record.lowerIsBetter ? 'Proximidade' : (gap != null ? ('Faltam ' + formatRecordValue(record, gap)) : 'Progresso')) +
-                '</span></div></div></div>' +
-                '<div class="record-detail-hint"><i class="fas fa-info-circle mr-1"></i>Comparação com <strong>' + record.holder +
-                '</strong>. A lista é a campanha do Fernando neste indicador.</div>' +
-                '<div class="record-detail-list">' + listHtml + '</div></div>';
+                '<div class="rd2">' +
+                '<div class="rd2-hero">' +
+                '<div class="rd2-hero-top">' +
+                '<span class="rd2-pill">' + (record.source || 'ATP') + '</span>' +
+                (reached ? '<span class="rd2-pill ok">Recorde igualado/superado</span>' : '<span class="rd2-pill muted">Em busca do recorde</span>') +
+                '</div>' +
+                '<h3 class="rd2-title">' + record.title + '</h3>' +
+                '<p class="rd2-desc">' + explanation + '</p>' +
+                '<div class="rd2-compare">' +
+                '<div class="rd2-you"><div class="rd2-compare-label">Você</div><div class="rd2-compare-value">' + formatRecordValue(record, playerValue) + '</div></div>' +
+                '<div class="rd2-vs">vs</div>' +
+                '<div class="rd2-them"><div class="rd2-compare-label">' + record.holder + '</div><div class="rd2-compare-value gold">' + formatRecordValue(record, record.record) + '</div></div>' +
+                '</div>' +
+                '<div class="rd2-progress-wrap">' +
+                '<div class="rd2-progress-labels"><span>Progresso</span><span>' + progress.toFixed(1) + '%</span></div>' +
+                '<div class="rd2-progress-bar"><span style="width:' + progress + '%"></span></div>' +
+                (gap != null && gap > 0 ? '<div class="rd2-gap">Faltam <strong>' + formatRecordValue(record, gap) + '</strong> para o recorde</div>' : '') +
+                '</div></div>' +
+                '<div class="rd2-section-title"><i class="fas fa-route mr-2"></i>Campanha neste indicador · ' + items.length + ' item(ns)</div>' +
+                '<div class="rd2-list">' + listHtml + '</div></div>';
 
             modal.open(
-                '<i class="fas fa-trophy text-accent mr-2"></i>' + record.title,
+                '<i class="fas fa-trophy text-accent mr-2"></i>Recorde',
                 body,
                 '<button onclick="modal.close()" class="btn btn-ghost">Fechar</button>'
             );
         };
+
 
         function updateRecordsTab(stats) {
             const container = document.getElementById('recordesConquistados');
