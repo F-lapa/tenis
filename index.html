@@ -7471,13 +7471,20 @@ const ROUNDS_BY_TYPE = {
         function buildOpponentDirectory() {
             const map = new Map();
 
-            // 1) Ranking ATP oficial (prioridade máxima para ranking e país)
-            (atpRanking || []).forEach(p => {
+            // Ranking da ABA RANKING: mesma lista com Fernando Lapa incluso
+            // (posição = displayRank, não o rank oficial ATP sem o nosso tenista)
+            const fernandoPts = Number(lastCalculatedStats?.pontosRanking) || 0;
+            const merged = (typeof mergeFernandoRanking === 'function' && atpRanking?.length)
+                ? mergeFernandoRanking(fernandoPts)
+                : null;
+            const systemRows = merged?.rows || [];
+
+            systemRows.forEach(p => {
+                if (p.isFernando) return; // não oferece o próprio Fernando como adversário
                 const name = String(p.name || '').trim();
                 if (!name) return;
                 const key = normalizePlayerName(name);
-                if (key === 'fernando lapa') return;
-                const rank = Number(p.rank) || Number(p.position) || null;
+                const rank = Number(p.displayRank) || Number(p.rank) || null;
                 const country = toIocCountryCode(p.country);
                 map.set(key, {
                     name,
@@ -7488,7 +7495,26 @@ const ROUNDS_BY_TYPE = {
                 });
             });
 
-            // 2) Histórico de confrontos (complementa quem não está no ranking ou sem país)
+            // Fallback: ranking oficial bruto se merge ainda não estiver disponível
+            if (!map.size) {
+                (atpRanking || []).forEach(p => {
+                    const name = String(p.name || '').trim();
+                    if (!name) return;
+                    const key = normalizePlayerName(name);
+                    if (key === 'fernando lapa') return;
+                    const rank = Number(p.rank) || Number(p.position) || null;
+                    const country = toIocCountryCode(p.country);
+                    map.set(key, {
+                        name,
+                        country: country || '',
+                        ranking: rank > 0 ? rank : null,
+                        points: Number(p.points) || 0,
+                        source: 'atp'
+                    });
+                });
+            }
+
+            // Histórico de confrontos (só preenche quem não está no ranking / país)
             (allTournaments || []).forEach(t => {
                 (t.jogos || []).forEach(j => {
                     const name = String(j.adversario || '').trim();
@@ -7511,12 +7537,14 @@ const ROUNDS_BY_TYPE = {
                         return;
                     }
 
-                    // Preenche gaps sem sobrescrever dados oficiais do ATP
                     if (!existing.country && country) existing.country = country;
-                    if ((!existing.ranking || existing.ranking <= 0) && ranking > 0) {
-                        existing.ranking = ranking;
+                    // NÃO sobrescreve ranking do sistema com histórico antigo
+                    if (existing.source !== 'atp') {
+                        if ((!existing.ranking || existing.ranking <= 0) && ranking > 0) {
+                            existing.ranking = ranking;
+                        }
+                        existing.name = name;
                     }
-                    if (existing.source !== 'atp') existing.name = name;
                 });
             });
 
