@@ -3422,6 +3422,7 @@
             white-space: nowrap;
         }
 
+        .analytics-chart-wide{min-height:280px;}
         .analytics-chart {
             position: relative;
             height: 285px;
@@ -4219,6 +4220,19 @@
                                 </div>
                                 <div class="analytics-chart">
                                     <canvas id="vitoriasChart"></canvas>
+                                </div>
+                            </article>
+
+                            <article class="analytics-card">
+                                <div class="analytics-card-header">
+                                    <div>
+                                        <h3 class="analytics-card-title">Desempenho por tipo de torneio</h3>
+                                        <p class="analytics-card-subtitle">Vitórias e derrotas por categoria (sem Challenger)</p>
+                                    </div>
+                                    <span class="analytics-pill">ATP 250+</span>
+                                </div>
+                                <div class="analytics-chart analytics-chart-wide">
+                                    <canvas id="vitoriasTipoChart"></canvas>
                                 </div>
                             </article>
 
@@ -6498,16 +6512,22 @@ const ROUNDS_BY_TYPE = {
             document.getElementById('bestSurfaceKpi').textContent =
                 bestSurface ? `${bestSurface.surface} · ${bestSurface.rate.toFixed(0)}%` : 'Sem dados';
 
-            const atpTypes = TOURNAMENT_TYPES.filter(t => !t.startsWith('CH'));
+            // Ordem fixa: GS, Finals, Next Gen, Masters, 500, 250, Olimpíadas (sem Challenger)
+            const atpTypes = [
+                'Grand Slam',
+                'ATP Finals',
+                'Next Gen Finals',
+                'ATP Masters 1000',
+                'ATP 500',
+                'ATP 250',
+                'Jogos Olímpicos'
+            ];
             document.getElementById('vitoriasList').innerHTML = atpTypes.map(type => {
                 const value = stats.porTipo[type] || {};
                 const categoryWins = Number(value.vitorias || 0);
                 const categoryLosses = Number(value.derrotas || 0);
                 const categoryTotal = categoryWins + categoryLosses;
-
-                if (!categoryTotal) return '';
-
-                const categoryRate = (categoryWins / categoryTotal) * 100;
+                const categoryRate = categoryTotal > 0 ? (categoryWins / categoryTotal) * 100 : 0;
 
                 return `
                     <div class="analytics-row analytics-row-clickable"
@@ -6527,7 +6547,7 @@ const ROUNDS_BY_TYPE = {
                                 <span style="width:${categoryRate}%"></span>
                             </div>
                         </div>
-                        <span class="analytics-value-badge">${categoryRate.toFixed(0)}%</span>
+                        <span class="analytics-value-badge">${categoryTotal ? categoryRate.toFixed(0) + '%' : '—'}</span>
                     </div>
                 `;
             }).join('') || '<div class="smart-empty-hint">Ainda não há partidas ATP cadastradas.</div>';
@@ -7967,6 +7987,82 @@ window.openRecordDetail = function(index) {
                     }
                 }
             });
+
+            // Gráfico V/D por tipo de torneio (sem Challenger)
+            const tipoChartOrder = [
+                { key: 'Grand Slam', label: 'GS' },
+                { key: 'ATP Finals', label: 'Finals' },
+                { key: 'Next Gen Finals', label: 'Next Gen' },
+                { key: 'ATP Masters 1000', label: 'M1000' },
+                { key: 'ATP 500', label: '500' },
+                { key: 'ATP 250', label: '250' },
+                { key: 'Jogos Olímpicos', label: 'Olimp.' }
+            ];
+            const tipoCanvas = document.getElementById('vitoriasTipoChart');
+            if (tipoCanvas) {
+                if (charts.vitoriasTipo) charts.vitoriasTipo.destroy();
+                charts.vitoriasTipo = new Chart(tipoCanvas, {
+                    type: 'bar',
+                    data: {
+                        labels: tipoChartOrder.map(t => t.label),
+                        datasets: [
+                            {
+                                label: 'Vitórias',
+                                data: tipoChartOrder.map(t => Number(stats.porTipo?.[t.key]?.vitorias || 0)),
+                                backgroundColor: 'rgba(16,185,129,.78)',
+                                borderColor: '#34d399',
+                                borderWidth: 1,
+                                borderRadius: 9,
+                                maxBarThickness: 36
+                            },
+                            {
+                                label: 'Derrotas',
+                                data: tipoChartOrder.map(t => Number(stats.porTipo?.[t.key]?.derrotas || 0)),
+                                backgroundColor: 'rgba(239,68,68,.7)',
+                                borderColor: '#f87171',
+                                borderWidth: 1,
+                                borderRadius: 9,
+                                maxBarThickness: 36
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: { duration: 850, easing: 'easeOutQuart' },
+                        interaction: { mode: 'index', intersect: false },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: 'rgba(148,163,184,.09)' },
+                                ticks: { color: '#94a3b8', precision: 0 }
+                            },
+                            x: {
+                                stacked: false,
+                                grid: { display: false },
+                                ticks: {
+                                    color: '#cbd5e1',
+                                    font: { weight: '600', size: 11 },
+                                    maxRotation: 0,
+                                    autoSkip: false
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: commonLegend,
+                            tooltip: {
+                                ...(typeof tooltip === 'object' ? tooltip : {}),
+                                callbacks: {
+                                    title: (items) => {
+                                        const i = items?.[0]?.dataIndex;
+                                        return tipoChartOrder[i]?.key || items?.[0]?.label || '';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
         }
 
 
