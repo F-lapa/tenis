@@ -7211,6 +7211,271 @@ const ROUNDS_BY_TYPE = {
             {title:'Terminar o ano no Top 100',holder:'Marco ATP',record:100,value:a=>a.bestRanking,unit:'posição',source:'ATP',lowerIsBetter:true}
         ];
 
+
+        function formatRecordValue(record, value) {
+            if (record.unit === '%') return `${Number(value).toFixed(1)}%`;
+            if (record.unit === 'US$') return formatCurrency(value);
+            if (record.unit === 'posição') return value ? `${value}º` : '—';
+            return `${Number(value).toLocaleString('pt-BR')} ${record.unit || ''}`.trim();
+        }
+
+        function buildRecordCampaign(record, athlete) {
+            const key = record.key || '';
+            const title = record.title || '';
+            const atpTournaments = (allTournaments || []).filter(t => typeof isAtp250Plus === 'function' ? isAtp250Plus(t.tipo) : !String(t.tipo||'').startsWith('CH'));
+            const isBye = j => !j || j.resultado === 'Bye' || String(j.adversario || '').toLowerCase() === 'bye';
+            const isWin = j => j && j.resultado === 'V' && !isBye(j);
+            const isLoss = j => j && j.resultado === 'D';
+
+            const winsInTypes = (...types) => {
+                const set = new Set(types);
+                const items = [];
+                atpTournaments.filter(t => set.has(t.tipo)).forEach(t => {
+                    (t.jogos || []).forEach(j => {
+                        if (!isWin(j)) return;
+                        items.push({
+                            flag: getFlagEmoji(t.paisTorneio),
+                            name: t.nome || 'Torneio',
+                            meta: [t.ano || '', t.tipo || '', (typeof normalizeRoundLabel === 'function' ? normalizeRoundLabel(j.rodada) : j.rodada) || '', j.adversario ? `vs ${j.adversario}` : '', j.placar || ''].filter(Boolean).join(' · '),
+                            side: 'V'
+                        });
+                    });
+                });
+                return items;
+            };
+
+            const titlesInTypes = (...types) => {
+                const set = new Set(types);
+                return atpTournaments.filter(t => set.has(t.tipo) && t.faseFinal === 'Campeão').map(t => ({
+                    flag: getFlagEmoji(t.paisTorneio),
+                    name: t.nome || 'Torneio',
+                    meta: [t.ano || '', t.tipo || '', t.superficie || '', t.pontos ? `${t.pontos} pts` : ''].filter(Boolean).join(' · '),
+                    side: '🏆'
+                }));
+            };
+
+            const titlesByName = (needle) => atpTournaments
+                .filter(t => t.faseFinal === 'Campeão' && String(t.nome || '').toLowerCase().includes(String(needle).toLowerCase()))
+                .map(t => ({
+                    flag: getFlagEmoji(t.paisTorneio),
+                    name: t.nome || 'Torneio',
+                    meta: [t.ano || '', t.tipo || '', t.superficie || ''].filter(Boolean).join(' · '),
+                    side: '🏆'
+                }));
+
+            const titlesBySurface = (surface) => atpTournaments
+                .filter(t => t.faseFinal === 'Campeão' && t.superficie === surface)
+                .map(t => ({
+                    flag: getFlagEmoji(t.paisTorneio),
+                    name: t.nome || 'Torneio',
+                    meta: [t.ano || '', t.tipo || '', t.superficie || ''].filter(Boolean).join(' · '),
+                    side: '🏆'
+                }));
+
+            const allWins = () => {
+                const items = [];
+                atpTournaments.forEach(t => {
+                    (t.jogos || []).forEach(j => {
+                        if (!isWin(j)) return;
+                        items.push({
+                            flag: getFlagEmoji(t.paisTorneio),
+                            name: t.nome || 'Torneio',
+                            meta: [t.ano || '', (typeof normalizeRoundLabel === 'function' ? normalizeRoundLabel(j.rodada) : j.rodada) || '', `vs ${j.adversario}`, j.placar || ''].filter(Boolean).join(' · '),
+                            side: 'V'
+                        });
+                    });
+                });
+                return items;
+            };
+
+            const allTitles = () => atpTournaments.filter(t => t.faseFinal === 'Campeão').map(t => ({
+                flag: getFlagEmoji(t.paisTorneio),
+                name: t.nome || 'Torneio',
+                meta: [t.ano || '', t.tipo || '', t.superficie || ''].filter(Boolean).join(' · '),
+                side: '🏆'
+            }));
+
+            let items = [];
+            let explanation = 'Campanha do Fernando Lapa relacionada a este recorde.';
+
+            if (key === 'winsGrandSlam' || /Vitórias em Grand Slam/i.test(title)) {
+                items = winsInTypes('Grand Slam');
+                explanation = 'Todas as vitórias em partidas de Grand Slam.';
+            } else if (key === 'winsMasters1000' || /Vitórias em Masters/i.test(title)) {
+                items = winsInTypes('ATP Masters 1000');
+                explanation = 'Vitórias em partidas de ATP Masters 1000.';
+            } else if (key === 'winsAtp250500' || /Vitórias em ATP 250/i.test(title)) {
+                items = winsInTypes('ATP 250', 'ATP 500');
+                explanation = 'Vitórias em partidas de ATP 250 e ATP 500.';
+            } else if (key === 'winsAtpFinals' || /Vitórias em ATP Finals/i.test(title)) {
+                items = winsInTypes('ATP Finals');
+                explanation = 'Vitórias no ATP Finals.';
+            } else if (key === 'winsOlympics' || /Vitórias em Olimp/i.test(title)) {
+                items = winsInTypes('Jogos Olímpicos');
+                explanation = 'Vitórias em simples nos Jogos Olímpicos.';
+            } else if (key === 'wins') {
+                items = allWins();
+                explanation = 'Todas as vitórias em nível ATP 250 ou superior.';
+            } else if (key === 'grandSlams') {
+                items = titlesInTypes('Grand Slam');
+                explanation = 'Títulos de Grand Slam (campeão).';
+            } else if (key === 'masters1000') {
+                items = titlesInTypes('ATP Masters 1000');
+                explanation = 'Títulos de ATP Masters 1000.';
+            } else if (key === 'atpFinals') {
+                items = titlesInTypes('ATP Finals');
+                explanation = 'Títulos no ATP Finals.';
+            } else if (key === 'olympics') {
+                items = titlesInTypes('Jogos Olímpicos');
+                explanation = 'Ouros olímpicos em simples.';
+            } else if (key === 'atp500') {
+                items = titlesInTypes('ATP 500');
+                explanation = 'Títulos em ATP 500.';
+            } else if (key === 'atp250') {
+                items = titlesInTypes('ATP 250');
+                explanation = 'Títulos em ATP 250.';
+            } else if (key === 'nextGen') {
+                items = titlesInTypes('Next Gen Finals');
+                explanation = 'Títulos no Next Gen Finals.';
+            } else if (key === 'totalTitles') {
+                items = allTitles();
+                explanation = 'Todos os títulos ATP 250+.';
+            } else if (key === 'australianOpen') {
+                items = titlesByName('Australian Open');
+                explanation = 'Títulos no Australian Open.';
+            } else if (key === 'rolandGarros') {
+                items = titlesByName('Roland Garros');
+                explanation = 'Títulos em Roland Garros.';
+            } else if (key === 'wimbledon') {
+                items = titlesByName('Wimbledon');
+                explanation = 'Títulos em Wimbledon.';
+            } else if (key === 'usOpen') {
+                items = titlesByName('US Open');
+                explanation = 'Títulos no US Open.';
+            } else if (key === 'clayTitles') {
+                items = titlesBySurface('Saibro');
+                explanation = 'Títulos ATP em saibro.';
+            } else if (key === 'hardTitles') {
+                items = titlesBySurface('Rápida');
+                explanation = 'Títulos ATP em quadra rápida.';
+            } else if (key === 'grassTitles') {
+                items = titlesBySurface('Grama');
+                explanation = 'Títulos ATP na grama.';
+            } else if (key === 'finals') {
+                items = atpTournaments
+                    .filter(t => t.faseFinal === 'Campeão' || String(t.faseFinal || '').toLowerCase().includes('final'))
+                    .map(t => ({
+                        flag: getFlagEmoji(t.paisTorneio),
+                        name: t.nome || 'Torneio',
+                        meta: [t.ano || '', t.tipo || '', t.faseFinal || ''].filter(Boolean).join(' · '),
+                        side: t.faseFinal === 'Campeão' ? '🏆' : 'F'
+                    }));
+                explanation = 'Torneios com final disputada ou título.';
+            } else if (key === 'prizeMoney') {
+                items = [...(allTournaments || [])]
+                    .filter(t => Number(t.premiacao) > 0)
+                    .sort((a, b) => Number(b.premiacao) - Number(a.premiacao))
+                    .map(t => ({
+                        flag: getFlagEmoji(t.paisTorneio),
+                        name: t.nome || 'Torneio',
+                        meta: [t.ano || '', t.tipo || ''].filter(Boolean).join(' · '),
+                        side: formatCurrency(Number(t.premiacao) || 0)
+                    }));
+                explanation = 'Premiação por torneio cadastrado.';
+            } else if (key === 'bestStreak') {
+                const games = atpTournaments
+                    .slice()
+                    .sort((a, b) => new Date(a.dataInicio) - new Date(b.dataInicio))
+                    .flatMap(t => (t.jogos || []).map(j => ({ ...j, t })))
+                    .filter(j => j.resultado === 'V' || j.resultado === 'D');
+                let streak = [], best = [];
+                games.forEach(j => {
+                    if (j.resultado === 'V') {
+                        streak.push(j);
+                        if (streak.length > best.length) best = streak.slice();
+                    } else streak = [];
+                });
+                items = best.map(j => ({
+                    flag: getFlagEmoji(j.t.paisTorneio),
+                    name: j.t.nome || 'Torneio',
+                    meta: [j.t.ano || '', j.rodada || '', `vs ${j.adversario}`, j.placar || ''].filter(Boolean).join(' · '),
+                    side: 'V'
+                }));
+                explanation = 'Maior sequência de vitórias consecutivas (ATP 250+).';
+            } else if (key === 'totalGames') {
+                items = allWins();
+                atpTournaments.forEach(t => {
+                    (t.jogos || []).filter(isLoss).forEach(j => {
+                        items.push({
+                            flag: getFlagEmoji(t.paisTorneio),
+                            name: t.nome || 'Torneio',
+                            meta: [t.ano || '', j.rodada || '', `vs ${j.adversario}`, j.placar || ''].filter(Boolean).join(' · '),
+                            side: 'D'
+                        });
+                    });
+                });
+                explanation = 'Partidas V/D em nível ATP 250+.';
+            } else if (key === 'winRate') {
+                items = allWins().slice(0, 50);
+                explanation = `Aproveitamento: ${Number(athlete.winRate || 0).toFixed(1)}% (${athlete.wins || 0}V · ${athlete.losses || 0}D).`;
+            } else if (record.unit === 'posição') {
+                items = [];
+                explanation = `Melhor posição no sistema: ${athlete.bestRanking ? athlete.bestRanking + 'º' : '—'}.`;
+            } else {
+                items = allTitles().slice(0, 40);
+                explanation = 'Campanha geral (títulos) ligada a este indicador.';
+            }
+
+            return { items, explanation };
+        }
+
+        window.openRecordDetail = function(index) {
+            const record = HISTORIC_SINGLES_RECORDS[index];
+            if (!record) return;
+            const stats = (typeof lastCalculatedStats !== 'undefined' && lastCalculatedStats) ? lastCalculatedStats : calculateStats();
+            const athlete = calculateAdvancedRecords(stats);
+            const playerValue = record.value ? Number(record.value(athlete) || 0) : Number(athlete[record.key] || 0);
+            const progress = record.lowerIsBetter
+                ? (playerValue > 0 ? Math.min(100, (record.record / playerValue) * 100) : 0)
+                : (record.record > 0 ? Math.min(100, (playerValue / record.record) * 100) : 0);
+            const built = buildRecordCampaign(record, athlete);
+            const items = built.items || [];
+            const explanation = built.explanation || '';
+            const gap = record.lowerIsBetter ? null : Math.max(0, Number(record.record) - Number(playerValue));
+
+            const listHtml = items.length
+                ? items.map((it, i) => (
+                    '<div class="record-detail-item" style="animation-delay:' + Math.min(i, 10) * 0.03 + 's">' +
+                    '<span class="rd-flag">' + (it.flag || '🏆') + '</span>' +
+                    '<div class="rd-body"><div class="rd-name">' + (it.name || '') + '</div>' +
+                    '<div class="rd-meta">' + (it.meta || '') + '</div></div>' +
+                    '<div class="rd-side">' + (it.side || '') + '</div></div>'
+                )).join('')
+                : '<div class="record-detail-empty">Ainda não há itens de campanha para este recorde.<br>Continue registrando partidas e títulos.</div>';
+
+            const body =
+                '<div class="record-detail">' +
+                '<div class="record-detail-hero">' +
+                '<div class="record-detail-kicker">' + (record.source || 'ATP') + ' · Recorde histórico</div>' +
+                '<h3 class="record-detail-title">' + record.title + '</h3>' +
+                '<p class="record-detail-sub">' + explanation + '</p>' +
+                '<div class="record-detail-metrics">' +
+                '<div class="record-detail-metric ok"><b>' + formatRecordValue(record, playerValue) + '</b><span>Fernando Lapa</span></div>' +
+                '<div class="record-detail-metric warn"><b>' + formatRecordValue(record, record.record) + '</b><span>' + record.holder + '</span></div>' +
+                '<div class="record-detail-metric"><b>' + progress.toFixed(1) + '%</b><span>' +
+                (record.lowerIsBetter ? 'Proximidade' : (gap != null ? ('Faltam ' + formatRecordValue(record, gap)) : 'Progresso')) +
+                '</span></div></div></div>' +
+                '<div class="record-detail-hint"><i class="fas fa-info-circle mr-1"></i>Comparação com <strong>' + record.holder +
+                '</strong>. A lista é a campanha do Fernando neste indicador.</div>' +
+                '<div class="record-detail-list">' + listHtml + '</div></div>';
+
+            modal.open(
+                '<i class="fas fa-trophy text-accent mr-2"></i>' + record.title,
+                body,
+                '<button onclick="modal.close()" class="btn btn-ghost">Fechar</button>'
+            );
+        };
+
         function updateRecordsTab(stats) {
             const container = document.getElementById('recordesConquistados');
             if (!container) return;
@@ -7230,7 +7495,10 @@ const ROUNDS_BY_TYPE = {
                 };
 
                 return `
-                    <article class="record-v2-card" style="min-height:170px">
+                    <article class="record-v2-card" style="min-height:170px"
+                             role="button" tabindex="0"
+                             onclick="openRecordDetail(${index})"
+                             title="Ver campanha neste recorde">
                         <div class="flex items-start justify-between gap-3">
                             <div class="record-v2-icon"><i class="fas fa-trophy"></i></div>
                             <span class="text-[10px] font-bold text-text-muted">#${String(index+1).padStart(2,'0')} · ${record.source}</span>
@@ -7249,6 +7517,9 @@ const ROUNDS_BY_TYPE = {
                             <div class="progress-container">
                                 <div class="progress-bar bg-primary" style="width:${progress}%"></div>
                             </div>
+                        </div>
+                        <div class="text-[10px] text-primary/80 mt-2 font-semibold">
+                            <i class="fas fa-hand-pointer mr-1"></i>Toque para ver a campanha
                         </div>
                     </article>
                 `;
