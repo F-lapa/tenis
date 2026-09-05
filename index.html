@@ -730,6 +730,39 @@
             border-color: rgba(6, 182, 212, 0.35);
         }
 
+        
+        .match-top-right {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+        .match-actions {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        .match-action-btn {
+            width: 1.7rem;
+            height: 1.7rem;
+            border-radius: 0.4rem;
+            display: grid;
+            place-items: center;
+            font-size: 0.7rem;
+            border: 1px solid var(--border-subtle);
+            background: rgba(15, 23, 42, 0.7);
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: 0.15s ease;
+        }
+        .match-action-btn.edit:hover {
+            color: #22d3ee;
+            border-color: rgba(6, 182, 212, 0.4);
+        }
+        .match-action-btn.delete:hover {
+            color: #f87171;
+            border-color: rgba(248, 113, 113, 0.4);
+        }
+
         .match-top {
             display: flex;
             align-items: center;
@@ -6401,22 +6434,30 @@ const ROUNDS_BY_TYPE = {
         };
 
         // ==================== NOVO: FUNÇÃO PARA RENDERIZAR PARTIDA COM RANKING BONITO ====================
-        function renderVSMatch(j, flSeedFromFirstMatch = null) {
+        function renderVSMatch(j, flSeedFromFirstMatch = null, options = {}) {
+            const {
+                canEdit = false,
+                tournamentId = null,
+                matchIndex = null,
+                // Ranking na época do torneio (NÃO usar ranking atual)
+                flRankAtTournament = null
+            } = options || {};
+
             const isWin = j.resultado === 'V';
             const isLoss = j.resultado === 'D';
-            const isBye = j.resultado === 'Bye';
+            const isBye = j.resultado === 'Bye' || String(j.adversario || '').toLowerCase() === 'bye';
             const cardClass = isWin ? 'is-win' : isLoss ? 'is-loss' : isBye ? 'is-bye' : '';
             const pillClass = isWin ? 'win' : isLoss ? 'loss' : 'bye';
             const pillText = isWin ? 'V' : isLoss ? 'D' : isBye ? 'BYE' : '—';
 
             const flSeed = j.flSeed || flSeedFromFirstMatch || '';
-            const flRank = j.flRanking || currentRanking || '';
+            // Só ranking gravado na partida ou o da época do torneio — nunca o ranking de hoje
+            const flRank = j.flRanking || flRankAtTournament || '';
             const oppSeed = j.adversarioSeed || '';
             const oppRank = j.adversarioRanking || '';
             const oppFlag = !isBye && j.nacionalidade ? getFlagEmoji(j.nacionalidade) : '';
             const oppName = isBye ? 'Bye' : (j.adversario || 'Adversário');
 
-            // Cabeça de chave entre parênteses ao lado do nome — padrão ATP
             const flName = flSeed
                 ? `(${flSeed}) Fernando Lapa`
                 : 'Fernando Lapa';
@@ -6431,11 +6472,27 @@ const ROUNDS_BY_TYPE = {
                 ? `<span class="rank-label opp">Ranking <b>${oppRank}</b></span>`
                 : '';
 
+            const actionsHtml = (canEdit && tournamentId != null && matchIndex != null)
+                ? `<div class="match-actions">
+                        <button type="button" class="match-action-btn edit" title="Editar partida"
+                            onclick="event.stopPropagation(); startEditMatch('${tournamentId}', ${matchIndex})">
+                            <i class="fas fa-pen"></i>
+                        </button>
+                        <button type="button" class="match-action-btn delete" title="Excluir partida"
+                            onclick="event.stopPropagation(); deleteMatch('${tournamentId}', ${matchIndex})">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                   </div>`
+                : '';
+
             return `
                 <div class="match-card ${cardClass}">
                     <div class="match-top">
                         <span class="match-round-chip">${normalizeRoundLabel(j.rodada) || j.rodada || '—'}</span>
-                        <span class="match-result-pill ${pillClass}">${pillText}</span>
+                        <div class="match-top-right">
+                            ${actionsHtml}
+                            <span class="match-result-pill ${pillClass}">${pillText}</span>
+                        </div>
                     </div>
                     <div class="match-scoreboard">
                         <div class="sb-player home ${isWin ? 'winner' : isLoss ? 'loser' : ''}">
@@ -8014,7 +8071,9 @@ const ROUNDS_BY_TYPE = {
                     adversario: 'Bye',
                     nacionalidade: 'ATP',
                     placar: 'Bye',
-                    resultado: 'Bye'
+                    resultado: 'Bye',
+                    flRanking: currentRanking || null,
+                    flSeed: null
                 });
             }
             
@@ -8073,17 +8132,96 @@ const ROUNDS_BY_TYPE = {
             const t = allTournaments.find(x => x.id === id);
             if (!t) return;
 
-            // Pega o seed do Fernando do primeiro jogo real (não bye)
-            const firstRealMatch = (t.jogos || []).find(j => j.resultado !== 'Bye');
-            const flSeedFromFirstMatch = firstRealMatch?.flSeed || null;
+            const jogosList = Array.isArray(t.jogos) ? t.jogos : [];
 
-            const matchesHtml = [...(t.jogos || [])].slice().reverse().map((j, i) => renderVSMatch(j, flSeedFromFirstMatch)).join('');
+            // Seed e ranking DA ÉPOCA do torneio (gravados nas partidas) — nunca o ranking atual
+            const firstWithRank = jogosList.find(j => j.flRanking != null && j.flRanking !== '');
+            const firstRealMatch = jogosList.find(j => j.resultado !== 'Bye' && String(j.adversario || '').toLowerCase() !== 'bye');
+            const flSeedFromFirstMatch = firstRealMatch?.flSeed || firstWithRank?.flSeed || null;
+            const flRankAtTournament = firstWithRank?.flRanking
+                || firstRealMatch?.flRanking
+                || null;
 
-            const isFinished = t.status === 'Finalizado';
-            const canAddMatch = !isFinished && t.faseFinal !== 'Campeão';
+            const isFinished = t.status === 'Finalizado' || t.faseFinal === 'Campeão';
+            const canEditMatches = !isFinished;
+            const editingIdx = (window._editMatchContext && window._editMatchContext.tournamentId === id)
+                ? window._editMatchContext.matchIndex
+                : null;
+
+            const matchesHtml = jogosList
+                .map((j, realIdx) => ({ j, realIdx }))
+                .slice()
+                .reverse()
+                .map(({ j, realIdx }) => renderVSMatch(j, flSeedFromFirstMatch, {
+                    canEdit: canEditMatches,
+                    tournamentId: id,
+                    matchIndex: realIdx,
+                    flRankAtTournament
+                }))
+                .join('');
+
+            const canAddMatch = canEditMatches && editingIdx == null;
             
             let addMatchForm = '';
-            if (canAddMatch) {
+            if (editingIdx != null && canEditMatches && jogosList[editingIdx]) {
+                const ej = jogosList[editingIdx];
+                const isEjBye = ej.resultado === 'Bye' || String(ej.adversario || '').toLowerCase() === 'bye';
+                const allRounds = (ROUNDS_BY_TYPE[t.tipo] || ROUNDS_BY_TYPE['Default'] || []).slice();
+                // Ao editar, permite a rodada atual + disponíveis
+                const available = getAvailableRounds(t.tipo, jogosList.filter((_, i) => i !== editingIdx));
+                const roundOptions = [...new Set([normalizeRoundLabel(ej.rodada) || ej.rodada, ...available].filter(Boolean))];
+                addMatchForm = `
+                    <div class="border-t border-border-subtle pt-3 mt-3">
+                        <div class="flex items-center justify-between mb-2">
+                            <h4 class="text-sm font-semibold text-text-main">Editar partida</h4>
+                            <button type="button" class="btn btn-ghost text-xs py-1 px-2" onclick="cancelEditMatch()">Cancelar</button>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="grid grid-cols-2 gap-3">
+                                <select id="editRound" class="form-select">
+                                    ${roundOptions.map(r => `<option value="${r}" ${normalizeRoundLabel(ej.rodada) === r ? 'selected' : ''}>${r}</option>`).join('')}
+                                </select>
+                                <select id="editResultado" class="form-select">
+                                    <option value="V" ${ej.resultado === 'V' ? 'selected' : ''}>Vitória</option>
+                                    <option value="D" ${ej.resultado === 'D' ? 'selected' : ''}>Derrota</option>
+                                    <option value="Bye" ${isEjBye ? 'selected' : ''}>Bye</option>
+                                </select>
+                            </div>
+                            <div class="search-container relative">
+                                <input type="text" id="editAdversario" class="form-input" placeholder="Adversário" value="${isEjBye ? 'Bye' : (ej.adversario || '').replace(/"/g, '&quot;')}" autocomplete="off">
+                                <div id="editAdversarioSuggestions" class="suggestions-dropdown"></div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <input type="text" id="editNacionalidade" class="form-input" placeholder="País" maxlength="3" value="${isEjBye ? '' : (ej.nacionalidade || '')}">
+                                <input type="text" id="editPlacar" class="form-input" placeholder="Placar" value="${isEjBye ? 'Bye' : (ej.placar || '').replace(/"/g, '&quot;')}">
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs text-text-muted mb-1">Ranking FL (época)</label>
+                                    <input type="number" id="editFlRanking" class="form-input" min="1" value="${ej.flRanking || flRankAtTournament || ''}" placeholder="Ex: 45">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-text-muted mb-1">Seed FL</label>
+                                    <input type="number" id="editFlSeed" class="form-input" min="1" value="${ej.flSeed || flSeedFromFirstMatch || ''}" placeholder="Ex: 9">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs text-text-muted mb-1">Ranking adversário</label>
+                                    <input type="number" id="editAdversarioRanking" class="form-input" min="1" value="${ej.adversarioRanking || ''}">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-text-muted mb-1">Seed adversário</label>
+                                    <input type="number" id="editAdversarioSeed" class="form-input" min="1" value="${ej.adversarioSeed || ''}">
+                                </div>
+                            </div>
+                            <button type="button" onclick="saveEditedMatch('${id}', ${editingIdx})" class="btn btn-primary w-full">
+                                <i class="fas fa-save mr-2"></i>Salvar alterações
+                            </button>
+                        </div>
+                    </div>
+                `;
+            } else if (canAddMatch) {
                 // Próximas rodadas sem repetir (corrige bug de R32/R16 duplicados)
                 const nextRounds = getAvailableRounds(t.tipo, t.jogos);
                 
@@ -8251,6 +8389,112 @@ const ROUNDS_BY_TYPE = {
                 Detalhes do Torneio
             `, body, footer);
             wireOpponentAutocompleteInModal();
+            if (document.getElementById('editAdversario') && document.getElementById('editAdversarioSuggestions')) {
+                setupOpponentAutocomplete({
+                    nameId: 'editAdversario',
+                    countryId: 'editNacionalidade',
+                    rankingId: 'editAdversarioRanking',
+                    dropdownId: 'editAdversarioSuggestions'
+                });
+            }
+        };
+
+        window.startEditMatch = function(tournamentId, matchIndex) {
+            const t = allTournaments.find(x => x.id === tournamentId);
+            if (!t) return;
+            if (t.status === 'Finalizado' || t.faseFinal === 'Campeão') {
+                showToast('Torneio finalizado: partidas não podem ser alteradas', 'warning');
+                return;
+            }
+            window._editMatchContext = { tournamentId, matchIndex };
+            openTournamentModal(tournamentId);
+        };
+
+        window.cancelEditMatch = function() {
+            const id = window._editMatchContext?.tournamentId;
+            window._editMatchContext = null;
+            if (id) openTournamentModal(id);
+        };
+
+        window.deleteMatch = async function(tournamentId, matchIndex) {
+            const t = allTournaments.find(x => x.id === tournamentId);
+            if (!t) return;
+            if (t.status === 'Finalizado' || t.faseFinal === 'Campeão') {
+                showToast('Torneio finalizado: partidas não podem ser excluídas', 'warning');
+                return;
+            }
+            const jogos = Array.isArray(t.jogos) ? [...t.jogos] : [];
+            if (matchIndex < 0 || matchIndex >= jogos.length) return;
+            const label = jogos[matchIndex]?.adversario || jogos[matchIndex]?.rodada || 'partida';
+            if (!confirm(`Excluir a partida (${label})?`)) return;
+            jogos.splice(matchIndex, 1);
+            window._editMatchContext = null;
+            await updateTournament(tournamentId, { jogos });
+            openTournamentModal(tournamentId);
+            showToast('Partida excluída', 'success');
+        };
+
+        window.saveEditedMatch = async function(tournamentId, matchIndex) {
+            const t = allTournaments.find(x => x.id === tournamentId);
+            if (!t) return;
+            if (t.status === 'Finalizado' || t.faseFinal === 'Campeão') {
+                showToast('Torneio finalizado: partidas não podem ser alteradas', 'warning');
+                return;
+            }
+            const jogos = Array.isArray(t.jogos) ? [...t.jogos] : [];
+            if (matchIndex < 0 || matchIndex >= jogos.length) return;
+
+            const round = normalizeRoundLabel(document.getElementById('editRound')?.value) || document.getElementById('editRound')?.value;
+            const resultado = document.getElementById('editResultado')?.value || 'V';
+            let adversario = (document.getElementById('editAdversario')?.value || '').trim();
+            let placar = (document.getElementById('editPlacar')?.value || '').trim();
+            let nacionalidade = (document.getElementById('editNacionalidade')?.value || '').trim().toUpperCase();
+            const flRanking = Number(document.getElementById('editFlRanking')?.value) || null;
+            const flSeed = Number(document.getElementById('editFlSeed')?.value) || null;
+            const adversarioRanking = Number(document.getElementById('editAdversarioRanking')?.value) || null;
+            const adversarioSeed = Number(document.getElementById('editAdversarioSeed')?.value) || null;
+
+            if (resultado === 'Bye') {
+                adversario = 'Bye';
+                placar = 'Bye';
+                nacionalidade = 'ATP';
+            } else {
+                if (!adversario || !placar) {
+                    showToast('Preencha adversário e placar', 'warning');
+                    return;
+                }
+            }
+            if (!round) {
+                showToast('Selecione a rodada', 'warning');
+                return;
+            }
+
+            // Impede duplicar rodada (exceto a própria e RR)
+            const used = jogos
+                .map((j, i) => i === matchIndex ? null : normalizeRoundLabel(j.rodada))
+                .filter(Boolean);
+            if (!isRoundRobinRound(round) && used.includes(round)) {
+                showToast(`A rodada ${round} já existe neste torneio`, 'warning');
+                return;
+            }
+
+            jogos[matchIndex] = {
+                ...jogos[matchIndex],
+                rodada: round,
+                adversario,
+                nacionalidade: resultado === 'Bye' ? 'ATP' : (toIocCountryCode(nacionalidade) || nacionalidade || 'UNK'),
+                placar,
+                resultado,
+                flRanking: flRanking || jogos[matchIndex].flRanking || null,
+                flSeed: flSeed || jogos[matchIndex].flSeed || null,
+                adversarioRanking: resultado === 'Bye' ? null : adversarioRanking,
+                adversarioSeed: resultado === 'Bye' ? null : adversarioSeed
+            };
+
+            window._editMatchContext = null;
+            await updateTournament(tournamentId, { jogos });
+            openTournamentModal(tournamentId);
+            showToast('Partida atualizada', 'success');
         };
 
         window.addMatch = function(id, result) {
