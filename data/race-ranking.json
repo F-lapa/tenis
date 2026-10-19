@@ -1,0 +1,3209 @@
+{
+  "source": "tennisexplorer.com/race",
+  "sourceUrl": "https://www.tennisexplorer.com/ranking/atp-men/?t=race",
+  "rankingDate": "2026-10-19",
+  "updatedAt": "2026-10-19T20:16:49.014Z",
+  "count": 400,
+  "players": [
+    {
+      "rank": 1,
+      "name": "Alexander Zverev",
+      "country": "GER",
+      "points": 9150,
+      "playerId": "zverev-6f768",
+      "league": "ATP"
+    },
+    {
+      "rank": 2,
+      "name": "Jannik Sinner",
+      "country": "ITA",
+      "points": 7950,
+      "playerId": "sinner-8b8e8",
+      "league": "ATP"
+    },
+    {
+      "rank": 3,
+      "name": "Carlos Alcaraz",
+      "country": "ESP",
+      "points": 4600,
+      "playerId": "alcaraz-5ab70",
+      "league": "ATP"
+    },
+    {
+      "rank": 4,
+      "name": "Ben Shelton",
+      "country": "USA",
+      "points": 4480,
+      "playerId": "shelton-38989",
+      "league": "ATP"
+    },
+    {
+      "rank": 5,
+      "name": "Flavio Cobolli",
+      "country": "ITA",
+      "points": 3540,
+      "playerId": "cobolli-d6311",
+      "league": "ATP"
+    },
+    {
+      "rank": 6,
+      "name": "Daniil Medvedev",
+      "country": "RUS",
+      "points": 3420,
+      "playerId": "medvedev-e0d2d",
+      "league": "ATP"
+    },
+    {
+      "rank": 7,
+      "name": "Frances Tiafoe",
+      "country": "USA",
+      "points": 3380,
+      "playerId": "tiafoe",
+      "league": "ATP"
+    },
+    {
+      "rank": 8,
+      "name": "Arthur Fils",
+      "country": "FRA",
+      "points": 3325,
+      "playerId": "fils",
+      "league": "ATP"
+    },
+    {
+      "rank": 9,
+      "name": "Rafael Jodar",
+      "country": "ESP",
+      "points": 3159,
+      "playerId": "jodar",
+      "league": "ATP"
+    },
+    {
+      "rank": 10,
+      "name": "Alex De Minaur",
+      "country": "AUS",
+      "points": 2880,
+      "playerId": "de-minaur",
+      "league": "ATP"
+    },
+    {
+      "rank": 11,
+      "name": "Novak Djokovic",
+      "country": "SRB",
+      "points": 2840,
+      "playerId": "djokovic",
+      "league": "ATP"
+    },
+    {
+      "rank": 12,
+      "name": "Tommy Paul",
+      "country": "USA",
+      "points": 2585,
+      "playerId": "paul-324c3",
+      "league": "ATP"
+    },
+    {
+      "rank": 13,
+      "name": "Taylor Fritz",
+      "country": "USA",
+      "points": 2530,
+      "playerId": "fritz-f1aa7",
+      "league": "ATP"
+    },
+    {
+      "rank": 14,
+      "name": "Jakub Mensik",
+      "country": "CZE",
+      "points": 2495,
+      "playerId": "mensik",
+      "league": "ATP"
+    },
+    {
+      "rank": 15,
+      "name": "Felix Auger Aliassime",
+      "country": "CAN",
+      "points": 2465,
+      "playerId": "auger-aliassime",
+      "league": "ATP"
+    },
+    {
+      "rank": 16,
+      "name": "Alejandro Davidovich Fokina",
+      "country": "ESP",
+      "points": 2450,
+      "playerId": "davidovich-fokina",
+      "league": "ATP"
+    },
+    {
+      "rank": 17,
+      "name": "Brandon Nakashima",
+      "country": "USA",
+      "points": 2325,
+      "playerId": "nakashima-68876",
+      "league": "ATP"
+    },
+    {
+      "rank": 18,
+      "name": "Jiri Lehecka",
+      "country": "CZE",
+      "points": 2225,
+      "playerId": "lehecka",
+      "league": "ATP"
+    },
+    {
+      "rank": 19,
+      "name": "Luciano Darderi",
+      "country": "ITA",
+      "points": 2150,
+      "playerId": "darderi",
+      "league": "ATP"
+    },
+    {
+      "rank": 20,
+      "name": "Francisco Cerundolo",
+      "country": "ARG",
+      "points": 2120,
+      "playerId": "cerundolo",
+      "league": "ATP"
+    },
+    {
+      "rank": 21,
+      "name": "Andrey Rublev",
+      "country": "RUS",
+      "points": 2075,
+      "playerId": "rublev",
+      "league": "ATP"
+    },
+    {
+      "rank": 22,
+      "name": "Learner Tien",
+      "country": "USA",
+      "points": 2045,
+      "playerId": "tien",
+      "league": "ATP"
+    },
+    {
+      "rank": 23,
+      "name": "Casper Ruud",
+      "country": "NOR",
+      "points": 1985,
+      "playerId": "ruud-dfb38",
+      "league": "ATP"
+    },
+    {
+      "rank": 24,
+      "name": "Karen Khachanov",
+      "country": "RUS",
+      "points": 1890,
+      "playerId": "khachanov",
+      "league": "ATP"
+    },
+    {
+      "rank": 25,
+      "name": "Alexander Bublik",
+      "country": "KAZ",
+      "points": 1785,
+      "playerId": "bublik-43f80",
+      "league": "ATP"
+    },
+    {
+      "rank": 26,
+      "name": "Alexander Blockx",
+      "country": "BEL",
+      "points": 1640,
+      "playerId": "blockx",
+      "league": "ATP"
+    },
+    {
+      "rank": 27,
+      "name": "Hubert Hurkacz",
+      "country": "POL",
+      "points": 1575,
+      "playerId": "hurkacz",
+      "league": "ATP"
+    },
+    {
+      "rank": 28,
+      "name": "Martin Etcheverry Tomas",
+      "country": "ARG",
+      "points": 1525,
+      "playerId": "etcheverry-7101a",
+      "league": "ATP"
+    },
+    {
+      "rank": 29,
+      "name": "Alejandro Tabilo",
+      "country": "CHI",
+      "points": 1515,
+      "playerId": "tabilo",
+      "league": "ATP"
+    },
+    {
+      "rank": 30,
+      "name": "Ignacio Buse",
+      "country": "PER",
+      "points": 1420,
+      "playerId": "buse",
+      "league": "ATP"
+    },
+    {
+      "rank": 31,
+      "name": "Arthur Fery",
+      "country": "GBR",
+      "points": 1403,
+      "playerId": "fery",
+      "league": "ATP"
+    },
+    {
+      "rank": 32,
+      "name": "Alex Michelsen",
+      "country": "USA",
+      "points": 1345,
+      "playerId": "michelsen-a98bb",
+      "league": "ATP"
+    },
+    {
+      "rank": 33,
+      "name": "Stefanos Tsitsipas",
+      "country": "GRE",
+      "points": 1340,
+      "playerId": "tsitsipas-b526f",
+      "league": "ATP"
+    },
+    {
+      "rank": 34,
+      "name": "Matteo Arnaldi",
+      "country": "ITA",
+      "points": 1311,
+      "playerId": "arnaldi",
+      "league": "ATP"
+    },
+    {
+      "rank": 35,
+      "name": "Lorenzo Musetti",
+      "country": "ITA",
+      "points": 1295,
+      "playerId": "musetti",
+      "league": "ATP"
+    },
+    {
+      "rank": 36,
+      "name": "Valentin Vacherot",
+      "country": "MON",
+      "points": 1280,
+      "playerId": "vacherot",
+      "league": "ATP"
+    },
+    {
+      "rank": 37,
+      "name": "Botic Van De Zandschulp",
+      "country": "NED",
+      "points": 1270,
+      "playerId": "van-de-zandschulp",
+      "league": "ATP"
+    },
+    {
+      "rank": 38,
+      "name": "Ugo Humbert",
+      "country": "FRA",
+      "points": 1270,
+      "playerId": "humbert-e2553",
+      "league": "ATP"
+    },
+    {
+      "rank": 39,
+      "name": "Joao Fonseca",
+      "country": "BRA",
+      "points": 1200,
+      "playerId": "fonseca-57dc1",
+      "league": "ATP"
+    },
+    {
+      "rank": 40,
+      "name": "Daniel Merida Aguilar",
+      "country": "ESP",
+      "points": 1187,
+      "playerId": "merida-aguilar",
+      "league": "ATP"
+    },
+    {
+      "rank": 41,
+      "name": "Zizou Bergs",
+      "country": "BEL",
+      "points": 1170,
+      "playerId": "bergs",
+      "league": "ATP"
+    },
+    {
+      "rank": 42,
+      "name": "Arthur Gea",
+      "country": "FRA",
+      "points": 1146,
+      "playerId": "gea",
+      "league": "ATP"
+    },
+    {
+      "rank": 43,
+      "name": "Quentin Halys",
+      "country": "FRA",
+      "points": 1114,
+      "playerId": "halys",
+      "league": "ATP"
+    },
+    {
+      "rank": 44,
+      "name": "Mariano Navone",
+      "country": "ARG",
+      "points": 1074,
+      "playerId": "navone",
+      "league": "ATP"
+    },
+    {
+      "rank": 45,
+      "name": "Luca Van Assche",
+      "country": "FRA",
+      "points": 1052,
+      "playerId": "van-assche",
+      "league": "ATP"
+    },
+    {
+      "rank": 46,
+      "name": "Matteo Berrettini",
+      "country": "ITA",
+      "points": 1033,
+      "playerId": "berrettini-707ad",
+      "league": "ATP"
+    },
+    {
+      "rank": 47,
+      "name": "Agustin Tirante Thiago",
+      "country": "ARG",
+      "points": 1016,
+      "playerId": "tirante",
+      "league": "ATP"
+    },
+    {
+      "rank": 48,
+      "name": "Sebastian Baez",
+      "country": "ARG",
+      "points": 1014,
+      "playerId": "baez-a8fb1",
+      "league": "ATP"
+    },
+    {
+      "rank": 49,
+      "name": "Denis Shapovalov",
+      "country": "CAN",
+      "points": 1005,
+      "playerId": "shapovalov",
+      "league": "ATP"
+    },
+    {
+      "rank": 50,
+      "name": "Nuno Borges",
+      "country": "POR",
+      "points": 950,
+      "playerId": "borges-8d823",
+      "league": "ATP"
+    },
+    {
+      "rank": 51,
+      "name": "Manuel Cerundolo Juan",
+      "country": "ARG",
+      "points": 950,
+      "playerId": "cerundolo-08df6",
+      "league": "ATP"
+    },
+    {
+      "rank": 52,
+      "name": "Cameron Norrie",
+      "country": "GBR",
+      "points": 940,
+      "playerId": "norrie",
+      "league": "ATP"
+    },
+    {
+      "rank": 53,
+      "name": "Daniel Vallejo Adolfo",
+      "country": "PAR",
+      "points": 933,
+      "playerId": "vallejo-d7859",
+      "league": "ATP"
+    },
+    {
+      "rank": 54,
+      "name": "Jaime Faria",
+      "country": "POR",
+      "points": 929,
+      "playerId": "faria-4754c",
+      "league": "ATP"
+    },
+    {
+      "rank": 55,
+      "name": "Raphael Collignon",
+      "country": "BEL",
+      "points": 918,
+      "playerId": "collignon",
+      "league": "ATP"
+    },
+    {
+      "rank": 56,
+      "name": "Jan-Lennard Struff",
+      "country": "GER",
+      "points": 916,
+      "playerId": "struff",
+      "league": "ATP"
+    },
+    {
+      "rank": 57,
+      "name": "Fabian Marozsan",
+      "country": "HUN",
+      "points": 850,
+      "playerId": "marozsan",
+      "league": "ATP"
+    },
+    {
+      "rank": 58,
+      "name": "Miomir Kecmanovic",
+      "country": "SRB",
+      "points": 843,
+      "playerId": "kecmanovic",
+      "league": "ATP"
+    },
+    {
+      "rank": 59,
+      "name": "Ethan Quinn",
+      "country": "USA",
+      "points": 821,
+      "playerId": "quinn-d0193",
+      "league": "ATP"
+    },
+    {
+      "rank": 60,
+      "name": "Arthur Rinderknech",
+      "country": "FRA",
+      "points": 820,
+      "playerId": "rinderknech",
+      "league": "ATP"
+    },
+    {
+      "rank": 61,
+      "name": "Martin Landaluce",
+      "country": "ESP",
+      "points": 816,
+      "playerId": "landaluce-84126",
+      "league": "ATP"
+    },
+    {
+      "rank": 62,
+      "name": "Vit Kopriva",
+      "country": "CZE",
+      "points": 812,
+      "playerId": "kopriva",
+      "league": "ATP"
+    },
+    {
+      "rank": 63,
+      "name": "Yannick Hanfmann",
+      "country": "GER",
+      "points": 810,
+      "playerId": "hanfmann",
+      "league": "ATP"
+    },
+    {
+      "rank": 64,
+      "name": "Roman Safiullin",
+      "country": "RUS",
+      "points": 807,
+      "playerId": "safiullin",
+      "league": "ATP"
+    },
+    {
+      "rank": 65,
+      "name": "Jaume Munar",
+      "country": "ESP",
+      "points": 800,
+      "playerId": "munar-d1298",
+      "league": "ATP"
+    },
+    {
+      "rank": 66,
+      "name": "Mattia Bellucci",
+      "country": "ITA",
+      "points": 799,
+      "playerId": "bellucci-47e7e",
+      "league": "ATP"
+    },
+    {
+      "rank": 67,
+      "name": "Facundo Diaz Acosta",
+      "country": "ARG",
+      "points": 782,
+      "playerId": "diaz-acosta",
+      "league": "ATP"
+    },
+    {
+      "rank": 68,
+      "name": "Tallon Griekspoor",
+      "country": "NED",
+      "points": 775,
+      "playerId": "griekspoor-d58ed",
+      "league": "ATP"
+    },
+    {
+      "rank": 69,
+      "name": "Tomas Machac",
+      "country": "CZE",
+      "points": 769,
+      "playerId": "machac",
+      "league": "ATP"
+    },
+    {
+      "rank": 70,
+      "name": "Pablo Carreno-Busta",
+      "country": "ESP",
+      "points": 760,
+      "playerId": "carreno-busta",
+      "league": "ATP"
+    },
+    {
+      "rank": 71,
+      "name": "Zachary Svajda",
+      "country": "USA",
+      "points": 759,
+      "playerId": "svajda",
+      "league": "ATP"
+    },
+    {
+      "rank": 72,
+      "name": "Hamad Medjedovic",
+      "country": "SRB",
+      "points": 751,
+      "playerId": "medjedovic",
+      "league": "ATP"
+    },
+    {
+      "rank": 73,
+      "name": "Andres Burruchaga Roman",
+      "country": "ARG",
+      "points": 742,
+      "playerId": "burruchaga",
+      "league": "ATP"
+    },
+    {
+      "rank": 74,
+      "name": "Adrian Mannarino",
+      "country": "FRA",
+      "points": 733,
+      "playerId": "mannarino-a7108",
+      "league": "ATP"
+    },
+    {
+      "rank": 75,
+      "name": "Titouan Droguet",
+      "country": "FRA",
+      "points": 732,
+      "playerId": "droguet",
+      "league": "ATP"
+    },
+    {
+      "rank": 76,
+      "name": "Alex Molcan",
+      "country": "SVK",
+      "points": 727,
+      "playerId": "molcan",
+      "league": "ATP"
+    },
+    {
+      "rank": 77,
+      "name": "James Duckworth",
+      "country": "AUS",
+      "points": 724,
+      "playerId": "duckworth",
+      "league": "ATP"
+    },
+    {
+      "rank": 78,
+      "name": "Daniel Altmaier",
+      "country": "GER",
+      "points": 724,
+      "playerId": "altmaier",
+      "league": "ATP"
+    },
+    {
+      "rank": 79,
+      "name": "Camilo Ugo Carabelli",
+      "country": "ARG",
+      "points": 720,
+      "playerId": "ugo-carabelli",
+      "league": "ATP"
+    },
+    {
+      "rank": 80,
+      "name": "Kamil Majchrzak",
+      "country": "POL",
+      "points": 715,
+      "playerId": "majchrzak-905d8",
+      "league": "ATP"
+    },
+    {
+      "rank": 81,
+      "name": "Aleksandar Kovacevic",
+      "country": "USA",
+      "points": 677,
+      "playerId": "kovacevic-a2706",
+      "league": "ATP"
+    },
+    {
+      "rank": 82,
+      "name": "Rinky Hijikata",
+      "country": "AUS",
+      "points": 673,
+      "playerId": "hijikata",
+      "league": "ATP"
+    },
+    {
+      "rank": 83,
+      "name": "Kyrian Jacquet",
+      "country": "FRA",
+      "points": 653,
+      "playerId": "jacquet-d2059",
+      "league": "ATP"
+    },
+    {
+      "rank": 84,
+      "name": "Marco Trungelliti",
+      "country": "ARG",
+      "points": 645,
+      "playerId": "trungelliti",
+      "league": "ATP"
+    },
+    {
+      "rank": 85,
+      "name": "Dino Prizmic",
+      "country": "CRO",
+      "points": 638,
+      "playerId": "prizmic",
+      "league": "ATP"
+    },
+    {
+      "rank": 86,
+      "name": "Bu Yunchaokete",
+      "country": "CHN",
+      "points": 638,
+      "playerId": "yunchaokete",
+      "league": "ATP"
+    },
+    {
+      "rank": 87,
+      "name": "Damir Dzumhur",
+      "country": "BOS",
+      "points": 636,
+      "playerId": "dzumhur",
+      "league": "ATP"
+    },
+    {
+      "rank": 88,
+      "name": "Jacob Fearnley",
+      "country": "GBR",
+      "points": 628,
+      "playerId": "fearnley",
+      "league": "ATP"
+    },
+    {
+      "rank": 89,
+      "name": "Marcos Giron",
+      "country": "USA",
+      "points": 626,
+      "playerId": "giron-49e97",
+      "league": "ATP"
+    },
+    {
+      "rank": 90,
+      "name": "Toby Samuel",
+      "country": "GBR",
+      "points": 617,
+      "playerId": "samuel-371b3",
+      "league": "ATP"
+    },
+    {
+      "rank": 91,
+      "name": "Terence Atmane",
+      "country": "FRA",
+      "points": 616,
+      "playerId": "atmane",
+      "league": "ATP"
+    },
+    {
+      "rank": 92,
+      "name": "Marin Cilic",
+      "country": "CRO",
+      "points": 613,
+      "playerId": "cilic",
+      "league": "ATP"
+    },
+    {
+      "rank": 93,
+      "name": "Adam Walton",
+      "country": "AUS",
+      "points": 612,
+      "playerId": "walton",
+      "league": "ATP"
+    },
+    {
+      "rank": 94,
+      "name": "Benjamin Bonzi",
+      "country": "FRA",
+      "points": 605,
+      "playerId": "bonzi-a38fa",
+      "league": "ATP"
+    },
+    {
+      "rank": 95,
+      "name": "Michael Zheng",
+      "country": "USA",
+      "points": 594,
+      "playerId": "zheng-c91db",
+      "league": "ATP"
+    },
+    {
+      "rank": 96,
+      "name": "Sebastian Korda",
+      "country": "USA",
+      "points": 590,
+      "playerId": "korda-2529f",
+      "league": "ATP"
+    },
+    {
+      "rank": 97,
+      "name": "Zsombor Piros",
+      "country": "HUN",
+      "points": 590,
+      "playerId": "piros",
+      "league": "ATP"
+    },
+    {
+      "rank": 98,
+      "name": "Jesper De Jong",
+      "country": "NED",
+      "points": 575,
+      "playerId": "de-jong-57322",
+      "league": "ATP"
+    },
+    {
+      "rank": 99,
+      "name": "Coleman Wong",
+      "country": "HKG",
+      "points": 575,
+      "playerId": "wong-d3ead",
+      "league": "ATP"
+    },
+    {
+      "rank": 100,
+      "name": "Lloyd Harris",
+      "country": "RSA",
+      "points": 571,
+      "playerId": "harris-9f62b",
+      "league": "ATP"
+    },
+    {
+      "rank": 101,
+      "name": "Yibing Wu",
+      "country": "CHN",
+      "points": 565,
+      "playerId": "wu-9762d",
+      "league": "ATP"
+    },
+    {
+      "rank": 102,
+      "name": "Jenson Brooksby",
+      "country": "USA",
+      "points": 563,
+      "playerId": "brooksby",
+      "league": "ATP"
+    },
+    {
+      "rank": 103,
+      "name": "Alexander Shevchenko",
+      "country": "KAZ",
+      "points": 553,
+      "playerId": "shevchenko-3bd40",
+      "league": "ATP"
+    },
+    {
+      "rank": 104,
+      "name": "Thiago Seyboth Wild",
+      "country": "BRA",
+      "points": 545,
+      "playerId": "seyboth-wild",
+      "league": "ATP"
+    },
+    {
+      "rank": 105,
+      "name": "Hugo Gaston",
+      "country": "FRA",
+      "points": 523,
+      "playerId": "gaston-e1fa4",
+      "league": "ATP"
+    },
+    {
+      "rank": 106,
+      "name": "Jan Choinski",
+      "country": "GBR",
+      "points": 520,
+      "playerId": "choinski",
+      "league": "ATP"
+    },
+    {
+      "rank": 107,
+      "name": "(2003) Damm Martin",
+      "country": "USA",
+      "points": 513,
+      "playerId": "damm-4f98a",
+      "league": "ATP"
+    },
+    {
+      "rank": 108,
+      "name": "Nicolas Mejia",
+      "country": "COL",
+      "points": 509,
+      "playerId": "mejia-a7d27",
+      "league": "ATP"
+    },
+    {
+      "rank": 109,
+      "name": "Henrique Rocha",
+      "country": "POR",
+      "points": 507,
+      "playerId": "rocha-0492a",
+      "league": "ATP"
+    },
+    {
+      "rank": 110,
+      "name": "Dane Sweeny",
+      "country": "AUS",
+      "points": 503,
+      "playerId": "sweeny",
+      "league": "ATP"
+    },
+    {
+      "rank": 111,
+      "name": "Christopher O'Connell",
+      "country": "AUS",
+      "points": 499,
+      "playerId": "o-connell-020b8",
+      "league": "ATP"
+    },
+    {
+      "rank": 112,
+      "name": "Dalibor Svrcina",
+      "country": "CZE",
+      "points": 494,
+      "playerId": "svrcina",
+      "league": "ATP"
+    },
+    {
+      "rank": 113,
+      "name": "Sebastian Ofner",
+      "country": "AUT",
+      "points": 491,
+      "playerId": "ofner-44428",
+      "league": "ATP"
+    },
+    {
+      "rank": 114,
+      "name": "Hugo Dellien",
+      "country": "BOL",
+      "points": 491,
+      "playerId": "dellien",
+      "league": "ATP"
+    },
+    {
+      "rank": 115,
+      "name": "Corentin Moutet",
+      "country": "FRA",
+      "points": 490,
+      "playerId": "moutet",
+      "league": "ATP"
+    },
+    {
+      "rank": 116,
+      "name": "Gustavo Heide",
+      "country": "BRA",
+      "points": 488,
+      "playerId": "heide-17a3d",
+      "league": "ATP"
+    },
+    {
+      "rank": 117,
+      "name": "Valentin Royer",
+      "country": "FRA",
+      "points": 480,
+      "playerId": "royer",
+      "league": "ATP"
+    },
+    {
+      "rank": 118,
+      "name": "Emilio Nava",
+      "country": "USA",
+      "points": 477,
+      "playerId": "nava-337db",
+      "league": "ATP"
+    },
+    {
+      "rank": 119,
+      "name": "Rei Sakamoto",
+      "country": "JPN",
+      "points": 469,
+      "playerId": "sakamoto-9c9d5",
+      "league": "ATP"
+    },
+    {
+      "rank": 120,
+      "name": "Nikoloz Basilashvili",
+      "country": "GEO",
+      "points": 466,
+      "playerId": "basilashvili",
+      "league": "ATP"
+    },
+    {
+      "rank": 121,
+      "name": "Pedro Martinez",
+      "country": "ESP",
+      "points": 462,
+      "playerId": "martinez-c0caf",
+      "league": "ATP"
+    },
+    {
+      "rank": 122,
+      "name": "Lorenzo Sonego",
+      "country": "ITA",
+      "points": 458,
+      "playerId": "sonego",
+      "league": "ATP"
+    },
+    {
+      "rank": 123,
+      "name": "Alexei Popyrin",
+      "country": "AUS",
+      "points": 448,
+      "playerId": "popyrin",
+      "league": "ATP"
+    },
+    {
+      "rank": 124,
+      "name": "Shintaro Mochizuki",
+      "country": "JPN",
+      "points": 444,
+      "playerId": "mochizuki-f2487",
+      "league": "ATP"
+    },
+    {
+      "rank": 125,
+      "name": "Nishesh Basavareddy",
+      "country": "USA",
+      "points": 432,
+      "playerId": "basavareddy",
+      "league": "ATP"
+    },
+    {
+      "rank": 126,
+      "name": "Stefanos Sakellaridis",
+      "country": "GRE",
+      "points": 425,
+      "playerId": "sakellaridis-6aacb",
+      "league": "ATP"
+    },
+    {
+      "rank": 127,
+      "name": "Max Alcala Gurri",
+      "country": "ESP",
+      "points": 423,
+      "playerId": "alcala-gurri",
+      "league": "ATP"
+    },
+    {
+      "rank": 128,
+      "name": "Grigor Dimitrov",
+      "country": "BUL",
+      "points": 422,
+      "playerId": "dimitrov-779bc",
+      "league": "ATP"
+    },
+    {
+      "rank": 129,
+      "name": "Sho Shimabukuro",
+      "country": "JPN",
+      "points": 421,
+      "playerId": "shimabukuro",
+      "league": "ATP"
+    },
+    {
+      "rank": 130,
+      "name": "Otto Virtanen",
+      "country": "FIN",
+      "points": 413,
+      "playerId": "virtanen-7d161",
+      "league": "ATP"
+    },
+    {
+      "rank": 131,
+      "name": "Aleksandar Vukic",
+      "country": "AUS",
+      "points": 410,
+      "playerId": "vukic",
+      "league": "ATP"
+    },
+    {
+      "rank": 132,
+      "name": "Francisco Comesana",
+      "country": "ARG",
+      "points": 409,
+      "playerId": "comesana-c17e0",
+      "league": "ATP"
+    },
+    {
+      "rank": 133,
+      "name": "Laslo Djere",
+      "country": "SRB",
+      "points": 404,
+      "playerId": "djere",
+      "league": "ATP"
+    },
+    {
+      "rank": 134,
+      "name": "Federico Cina",
+      "country": "ITA",
+      "points": 401,
+      "playerId": "cina",
+      "league": "ATP"
+    },
+    {
+      "rank": 135,
+      "name": "Marton Fucsovics",
+      "country": "HUN",
+      "points": 400,
+      "playerId": "fucsovics",
+      "league": "ATP"
+    },
+    {
+      "rank": 136,
+      "name": "Pablo Llamas Ruiz",
+      "country": "ESP",
+      "points": 397,
+      "playerId": "llamas-ruiz",
+      "league": "ATP"
+    },
+    {
+      "rank": 137,
+      "name": "Jurij Rodionov",
+      "country": "AUT",
+      "points": 396,
+      "playerId": "rodionov-f5e38",
+      "league": "ATP"
+    },
+    {
+      "rank": 138,
+      "name": "Vilius Gaubas",
+      "country": "LTU",
+      "points": 396,
+      "playerId": "gaubas",
+      "league": "ATP"
+    },
+    {
+      "rank": 139,
+      "name": "Ilia Simakin",
+      "country": "RUS",
+      "points": 393,
+      "playerId": "simakin",
+      "league": "ATP"
+    },
+    {
+      "rank": 140,
+      "name": "Andrea Pellegrino",
+      "country": "ITA",
+      "points": 390,
+      "playerId": "pellegrino-fd654",
+      "league": "ATP"
+    },
+    {
+      "rank": 141,
+      "name": "Michael Mmoh",
+      "country": "USA",
+      "points": 386,
+      "playerId": "mmoh",
+      "league": "ATP"
+    },
+    {
+      "rank": 142,
+      "name": "Borna Gojo",
+      "country": "CRO",
+      "points": 385,
+      "playerId": "gojo",
+      "league": "ATP"
+    },
+    {
+      "rank": 143,
+      "name": "Matej Dodig",
+      "country": "CRO",
+      "points": 383,
+      "playerId": "dodig-b6156",
+      "league": "ATP"
+    },
+    {
+      "rank": 144,
+      "name": "Clement Chidekh",
+      "country": "FRA",
+      "points": 378,
+      "playerId": "chidekh",
+      "league": "ATP"
+    },
+    {
+      "rank": 145,
+      "name": "Giovanni Mpetshi Perricard",
+      "country": "FRA",
+      "points": 375,
+      "playerId": "mpetshi-perricard",
+      "league": "ATP"
+    },
+    {
+      "rank": 146,
+      "name": "Nikolas Sanchez Izquierdo",
+      "country": "ESP",
+      "points": 363,
+      "playerId": "sanchez-izquierdo-99add",
+      "league": "ATP"
+    },
+    {
+      "rank": 147,
+      "name": "Jack Draper",
+      "country": "GBR",
+      "points": 360,
+      "playerId": "draper-e73d3",
+      "league": "ATP"
+    },
+    {
+      "rank": 148,
+      "name": "Woo Kwon Soon",
+      "country": "KOR",
+      "points": 355,
+      "playerId": "kwon-b3d34",
+      "league": "ATP"
+    },
+    {
+      "rank": 149,
+      "name": "Dusan Lajovic",
+      "country": "SRB",
+      "points": 353,
+      "playerId": "lajovic",
+      "league": "ATP"
+    },
+    {
+      "rank": 150,
+      "name": "Elmer Moller",
+      "country": "DEN",
+      "points": 353,
+      "playerId": "moller-6ea06",
+      "league": "ATP"
+    },
+    {
+      "rank": 151,
+      "name": "Andrea Guerrieri",
+      "country": "ITA",
+      "points": 349,
+      "playerId": "guerrieri",
+      "league": "ATP"
+    },
+    {
+      "rank": 152,
+      "name": "Mark Lajal",
+      "country": "EST",
+      "points": 349,
+      "playerId": "lajal",
+      "league": "ATP"
+    },
+    {
+      "rank": 153,
+      "name": "Alexandre Muller",
+      "country": "FRA",
+      "points": 347,
+      "playerId": "muller-c81bc",
+      "league": "ATP"
+    },
+    {
+      "rank": 154,
+      "name": "Francesco Passaro",
+      "country": "ITA",
+      "points": 347,
+      "playerId": "passaro-5f6f1",
+      "league": "ATP"
+    },
+    {
+      "rank": 155,
+      "name": "Tom Gentzsch",
+      "country": "GER",
+      "points": 346,
+      "playerId": "gentzsch",
+      "league": "ATP"
+    },
+    {
+      "rank": 156,
+      "name": "Daniil Glinka",
+      "country": "EST",
+      "points": 341,
+      "playerId": "glinka",
+      "league": "ATP"
+    },
+    {
+      "rank": 157,
+      "name": "Zhizhen Zhang",
+      "country": "CHN",
+      "points": 340,
+      "playerId": "zhang-45ae9",
+      "league": "ATP"
+    },
+    {
+      "rank": 158,
+      "name": "Pavel Kotov",
+      "country": "RUS",
+      "points": 339,
+      "playerId": "kotov-392a7",
+      "league": "ATP"
+    },
+    {
+      "rank": 159,
+      "name": "Lukas Neumayer",
+      "country": "AUT",
+      "points": 337,
+      "playerId": "neumayer",
+      "league": "ATP"
+    },
+    {
+      "rank": 160,
+      "name": "Darwin Blanch",
+      "country": "USA",
+      "points": 334,
+      "playerId": "blanch-748a3",
+      "league": "ATP"
+    },
+    {
+      "rank": 161,
+      "name": "Gauthier Onclin",
+      "country": "BEL",
+      "points": 333,
+      "playerId": "onclin-89017",
+      "league": "ATP"
+    },
+    {
+      "rank": 162,
+      "name": "Gabriel Diallo",
+      "country": "CAN",
+      "points": 332,
+      "playerId": "diallo-dd116",
+      "league": "ATP"
+    },
+    {
+      "rank": 163,
+      "name": "Alex Bolt",
+      "country": "AUS",
+      "points": 332,
+      "playerId": "bolt-fa7eb",
+      "league": "ATP"
+    },
+    {
+      "rank": 164,
+      "name": "Joel Schwaerzler",
+      "country": "AUT",
+      "points": 328,
+      "playerId": "schwaerzler",
+      "league": "ATP"
+    },
+    {
+      "rank": 165,
+      "name": "Cristian Garin",
+      "country": "CHI",
+      "points": 324,
+      "playerId": "garin",
+      "league": "ATP"
+    },
+    {
+      "rank": 166,
+      "name": "Tristan Schoolkate",
+      "country": "AUS",
+      "points": 323,
+      "playerId": "schoolkate",
+      "league": "ATP"
+    },
+    {
+      "rank": 167,
+      "name": "Stan Wawrinka",
+      "country": "SUI",
+      "points": 318,
+      "playerId": "wawrinka-ffdb9",
+      "league": "ATP"
+    },
+    {
+      "rank": 168,
+      "name": "Taro Daniel",
+      "country": "JPN",
+      "points": 318,
+      "playerId": "daniel-2dd17",
+      "league": "ATP"
+    },
+    {
+      "rank": 169,
+      "name": "Chris Rodesch",
+      "country": "LUX",
+      "points": 317,
+      "playerId": "rodesch",
+      "league": "ATP"
+    },
+    {
+      "rank": 170,
+      "name": "Francesco Maestrelli",
+      "country": "ITA",
+      "points": 316,
+      "playerId": "maestrelli",
+      "league": "ATP"
+    },
+    {
+      "rank": 171,
+      "name": "Bernard Tomic",
+      "country": "AUS",
+      "points": 315,
+      "playerId": "tomic-4ca3d",
+      "league": "ATP"
+    },
+    {
+      "rank": 172,
+      "name": "Nicolai Budkov Kjaer",
+      "country": "NOR",
+      "points": 313,
+      "playerId": "budkov-kjaer",
+      "league": "ATP"
+    },
+    {
+      "rank": 173,
+      "name": "Marco Cecchinato",
+      "country": "ITA",
+      "points": 309,
+      "playerId": "cecchinato",
+      "league": "ATP"
+    },
+    {
+      "rank": 174,
+      "name": "Stefano Travaglia",
+      "country": "ITA",
+      "points": 308,
+      "playerId": "travaglia",
+      "league": "ATP"
+    },
+    {
+      "rank": 175,
+      "name": "Jack Pinnington Jones",
+      "country": "GBR",
+      "points": 302,
+      "playerId": "pinnington-jones",
+      "league": "ATP"
+    },
+    {
+      "rank": 176,
+      "name": "Ivan Justo Guido",
+      "country": "ARG",
+      "points": 302,
+      "playerId": "justo",
+      "league": "ATP"
+    },
+    {
+      "rank": 177,
+      "name": "Moise Kouame",
+      "country": "FRA",
+      "points": 300,
+      "playerId": "kouame-d4969",
+      "league": "ATP"
+    },
+    {
+      "rank": 178,
+      "name": "Mika Brunold",
+      "country": "SUI",
+      "points": 300,
+      "playerId": "brunold-a21c2",
+      "league": "ATP"
+    },
+    {
+      "rank": 179,
+      "name": "Felix Balshaw",
+      "country": "FRA",
+      "points": 299,
+      "playerId": "balshaw",
+      "league": "ATP"
+    },
+    {
+      "rank": 180,
+      "name": "Diego Dedura-Palomero",
+      "country": "GER",
+      "points": 299,
+      "playerId": "dedura-palomero-d612d",
+      "league": "ATP"
+    },
+    {
+      "rank": 181,
+      "name": "Jan Kumstat",
+      "country": "CZE",
+      "points": 298,
+      "playerId": "kumstat",
+      "league": "ATP"
+    },
+    {
+      "rank": 182,
+      "name": "Lautaro Midon",
+      "country": "ARG",
+      "points": 297,
+      "playerId": "midon",
+      "league": "ATP"
+    },
+    {
+      "rank": 183,
+      "name": "Inaki Montes-De La Torre",
+      "country": "ESP",
+      "points": 293,
+      "playerId": "montes-de-la-torre",
+      "league": "ATP"
+    },
+    {
+      "rank": 184,
+      "name": "Carlos Prado Angelo Juan",
+      "country": "BOL",
+      "points": 292,
+      "playerId": "prado-angelo",
+      "league": "ATP"
+    },
+    {
+      "rank": 185,
+      "name": "Clement Tabur",
+      "country": "FRA",
+      "points": 292,
+      "playerId": "tabur",
+      "league": "ATP"
+    },
+    {
+      "rank": 186,
+      "name": "Facundo Mena",
+      "country": "ARG",
+      "points": 292,
+      "playerId": "mena-99e7a",
+      "league": "ATP"
+    },
+    {
+      "rank": 187,
+      "name": "Liam Draxl",
+      "country": "CAN",
+      "points": 291,
+      "playerId": "draxl",
+      "league": "ATP"
+    },
+    {
+      "rank": 188,
+      "name": "David Jorda Sanchis",
+      "country": "ESP",
+      "points": 291,
+      "playerId": "jorda-sanchis",
+      "league": "ATP"
+    },
+    {
+      "rank": 189,
+      "name": "Alexis Galarneau",
+      "country": "CAN",
+      "points": 290,
+      "playerId": "galarneau-32e1f",
+      "league": "ATP"
+    },
+    {
+      "rank": 190,
+      "name": "Timofey Skatov",
+      "country": "KAZ",
+      "points": 290,
+      "playerId": "skatov",
+      "league": "ATP"
+    },
+    {
+      "rank": 191,
+      "name": "Tomas Barrios Vera Marcelo",
+      "country": "CHI",
+      "points": 289,
+      "playerId": "barrios-vera",
+      "league": "ATP"
+    },
+    {
+      "rank": 192,
+      "name": "Keegan Smith",
+      "country": "USA",
+      "points": 289,
+      "playerId": "smith-8b3b8",
+      "league": "ATP"
+    },
+    {
+      "rank": 193,
+      "name": "Luka Pavlovic",
+      "country": "FRA",
+      "points": 281,
+      "playerId": "pavlovic-c059e",
+      "league": "ATP"
+    },
+    {
+      "rank": 194,
+      "name": "Andre Ilagan",
+      "country": "USA",
+      "points": 280,
+      "playerId": "ilagan",
+      "league": "ATP"
+    },
+    {
+      "rank": 195,
+      "name": "Pablo Varillas Juan",
+      "country": "PER",
+      "points": 279,
+      "playerId": "varillas",
+      "league": "ATP"
+    },
+    {
+      "rank": 196,
+      "name": "Tristan Boyer",
+      "country": "USA",
+      "points": 272,
+      "playerId": "boyer-64ede",
+      "league": "ATP"
+    },
+    {
+      "rank": 197,
+      "name": "Agustin Gomez Federico",
+      "country": "ARG",
+      "points": 272,
+      "playerId": "gomez-e101b",
+      "league": "ATP"
+    },
+    {
+      "rank": 198,
+      "name": "Zdenek Kolar",
+      "country": "CZE",
+      "points": 270,
+      "playerId": "kolar-d6d52",
+      "league": "ATP"
+    },
+    {
+      "rank": 199,
+      "name": "Pol Martin Tiffon",
+      "country": "ESP",
+      "points": 268,
+      "playerId": "martin-tiffon",
+      "league": "ATP"
+    },
+    {
+      "rank": 200,
+      "name": "Sascha Gueymard Wayenburg",
+      "country": "FRA",
+      "points": 267,
+      "playerId": "gueymard-wayenburg",
+      "league": "ATP"
+    },
+    {
+      "rank": 201,
+      "name": "Edas Butvilas",
+      "country": "LTU",
+      "points": 266,
+      "playerId": "butvilas",
+      "league": "ATP"
+    },
+    {
+      "rank": 202,
+      "name": "Gonzalo Bueno",
+      "country": "PER",
+      "points": 266,
+      "playerId": "bueno-01b7e",
+      "league": "ATP"
+    },
+    {
+      "rank": 203,
+      "name": "Gianluca Cadenasso",
+      "country": "ITA",
+      "points": 261,
+      "playerId": "cadenasso",
+      "league": "ATP"
+    },
+    {
+      "rank": 204,
+      "name": "Lucas Reis Da Silva Joao",
+      "country": "BRA",
+      "points": 261,
+      "playerId": "reis-da-silva",
+      "league": "ATP"
+    },
+    {
+      "rank": 205,
+      "name": "Braden Shick",
+      "country": "USA",
+      "points": 261,
+      "playerId": "shick-9f067",
+      "league": "ATP"
+    },
+    {
+      "rank": 206,
+      "name": "John Wolf Jeffrey",
+      "country": "USA",
+      "points": 260,
+      "playerId": "wolf-e839f",
+      "league": "ATP"
+    },
+    {
+      "rank": 207,
+      "name": "Maks Kasnikowski",
+      "country": "POL",
+      "points": 259,
+      "playerId": "kasnikowski",
+      "league": "ATP"
+    },
+    {
+      "rank": 208,
+      "name": "Max Houkes",
+      "country": "NED",
+      "points": 257,
+      "playerId": "houkes",
+      "league": "ATP"
+    },
+    {
+      "rank": 209,
+      "name": "Colton Smith",
+      "country": "USA",
+      "points": 256,
+      "playerId": "smith-4a480",
+      "league": "ATP"
+    },
+    {
+      "rank": 210,
+      "name": "Ilya Ivashka",
+      "country": "BEL",
+      "points": 254,
+      "playerId": "ivashka",
+      "league": "ATP"
+    },
+    {
+      "rank": 211,
+      "name": "Jerome Kym",
+      "country": "SUI",
+      "points": 253,
+      "playerId": "kym",
+      "league": "ATP"
+    },
+    {
+      "rank": 212,
+      "name": "Hsin Tseng Chun",
+      "country": "CHI",
+      "points": 250,
+      "playerId": "tseng-5c1bc",
+      "league": "ATP"
+    },
+    {
+      "rank": 213,
+      "name": "(2002) Sharipov Marat",
+      "country": "RUS",
+      "points": 250,
+      "playerId": "sharipov-a3d0a",
+      "league": "ATP"
+    },
+    {
+      "rank": 214,
+      "name": "Maxim Mrva",
+      "country": "CZE",
+      "points": 249,
+      "playerId": "mrva",
+      "league": "ATP"
+    },
+    {
+      "rank": 215,
+      "name": "Marvin Moeller",
+      "country": "GER",
+      "points": 249,
+      "playerId": "moeller-322bf",
+      "league": "ATP"
+    },
+    {
+      "rank": 216,
+      "name": "Alex Barrena",
+      "country": "ARG",
+      "points": 248,
+      "playerId": "barrena-f6642",
+      "league": "ATP"
+    },
+    {
+      "rank": 217,
+      "name": "Raul Brancaccio",
+      "country": "ITA",
+      "points": 248,
+      "playerId": "brancaccio",
+      "league": "ATP"
+    },
+    {
+      "rank": 218,
+      "name": "Felix Gill",
+      "country": "GBR",
+      "points": 248,
+      "playerId": "gill-59a09",
+      "league": "ATP"
+    },
+    {
+      "rank": 219,
+      "name": "Andres Andrade",
+      "country": "ECU",
+      "points": 247,
+      "playerId": "andrade-58258",
+      "league": "ATP"
+    },
+    {
+      "rank": 220,
+      "name": "Henry Searle",
+      "country": "GBR",
+      "points": 246,
+      "playerId": "searle-78f04",
+      "league": "ATP"
+    },
+    {
+      "rank": 221,
+      "name": "Kimmer Coppejans",
+      "country": "BEL",
+      "points": 245,
+      "playerId": "coppejans",
+      "league": "ATP"
+    },
+    {
+      "rank": 222,
+      "name": "Rio Noguchi",
+      "country": "JPN",
+      "points": 244,
+      "playerId": "noguchi-08bde",
+      "league": "ATP"
+    },
+    {
+      "rank": 223,
+      "name": "Harold Mayot",
+      "country": "FRA",
+      "points": 243,
+      "playerId": "mayot",
+      "league": "ATP"
+    },
+    {
+      "rank": 224,
+      "name": "Daniel Rincon",
+      "country": "ESP",
+      "points": 240,
+      "playerId": "rincon-d1dab",
+      "league": "ATP"
+    },
+    {
+      "rank": 225,
+      "name": "Harry Wendelken",
+      "country": "GBR",
+      "points": 239,
+      "playerId": "wendelken",
+      "league": "ATP"
+    },
+    {
+      "rank": 226,
+      "name": "Liam Broady",
+      "country": "GBR",
+      "points": 239,
+      "playerId": "broady-9ff27",
+      "league": "ATP"
+    },
+    {
+      "rank": 227,
+      "name": "Thiago Monteiro",
+      "country": "BRA",
+      "points": 238,
+      "playerId": "monteiro-f1500",
+      "league": "ATP"
+    },
+    {
+      "rank": 228,
+      "name": "Roberto Bautista-Agut",
+      "country": "ESP",
+      "points": 233,
+      "playerId": "bautista-agut",
+      "league": "ATP"
+    },
+    {
+      "rank": 229,
+      "name": "Patrick Kypson",
+      "country": "USA",
+      "points": 233,
+      "playerId": "kypson",
+      "league": "ATP"
+    },
+    {
+      "rank": 230,
+      "name": "Remy Bertola",
+      "country": "SUI",
+      "points": 230,
+      "playerId": "bertola-e4bb8",
+      "league": "ATP"
+    },
+    {
+      "rank": 231,
+      "name": "Leandro Riedi",
+      "country": "SUI",
+      "points": 227,
+      "playerId": "riedi-a3a3d",
+      "league": "ATP"
+    },
+    {
+      "rank": 232,
+      "name": "Alejandro Moro Canas",
+      "country": "ESP",
+      "points": 226,
+      "playerId": "moro-canas",
+      "league": "ATP"
+    },
+    {
+      "rank": 233,
+      "name": "Vitaliy Sachko",
+      "country": "UKR",
+      "points": 225,
+      "playerId": "sachko",
+      "league": "ATP"
+    },
+    {
+      "rank": 234,
+      "name": "Matteo Martineau",
+      "country": "FRA",
+      "points": 224,
+      "playerId": "martineau-40903",
+      "league": "ATP"
+    },
+    {
+      "rank": 235,
+      "name": "Eliot Spizzirri",
+      "country": "USA",
+      "points": 223,
+      "playerId": "spizzirri",
+      "league": "ATP"
+    },
+    {
+      "rank": 236,
+      "name": "Hayato Matsuoka",
+      "country": "JPN",
+      "points": 223,
+      "playerId": "matsuoka-5fe86",
+      "league": "ATP"
+    },
+    {
+      "rank": 237,
+      "name": "Jay Clarke",
+      "country": "GBR",
+      "points": 221,
+      "playerId": "clarke-60a59",
+      "league": "ATP"
+    },
+    {
+      "rank": 238,
+      "name": "Juncheng Shang",
+      "country": "CHN",
+      "points": 220,
+      "playerId": "shang",
+      "league": "ATP"
+    },
+    {
+      "rank": 239,
+      "name": "Elias Ymer",
+      "country": "SWE",
+      "points": 219,
+      "playerId": "ymer",
+      "league": "ATP"
+    },
+    {
+      "rank": 240,
+      "name": "Luka Mikrut",
+      "country": "CRO",
+      "points": 218,
+      "playerId": "mikrut",
+      "league": "ATP"
+    },
+    {
+      "rank": 241,
+      "name": "Dominic Stricker",
+      "country": "SUI",
+      "points": 217,
+      "playerId": "stricker",
+      "league": "ATP"
+    },
+    {
+      "rank": 242,
+      "name": "Mackenzie McDonald",
+      "country": "USA",
+      "points": 215,
+      "playerId": "mcdonald-4d935",
+      "league": "ATP"
+    },
+    {
+      "rank": 243,
+      "name": "Luca Nardi",
+      "country": "ITA",
+      "points": 215,
+      "playerId": "nardi-e2cda",
+      "league": "ATP"
+    },
+    {
+      "rank": 244,
+      "name": "Roberto Carballes Baena",
+      "country": "ESP",
+      "points": 213,
+      "playerId": "carballes-baena",
+      "league": "ATP"
+    },
+    {
+      "rank": 245,
+      "name": "Kilian Feldbausch",
+      "country": "SUI",
+      "points": 211,
+      "playerId": "feldbausch",
+      "league": "ATP"
+    },
+    {
+      "rank": 246,
+      "name": "Matheus Pucinelli De Almeida",
+      "country": "BRA",
+      "points": 211,
+      "playerId": "pucinelli-de-almeida",
+      "league": "ATP"
+    },
+    {
+      "rank": 247,
+      "name": "Billy Harris",
+      "country": "GBR",
+      "points": 210,
+      "playerId": "harris-5a94c",
+      "league": "ATP"
+    },
+    {
+      "rank": 248,
+      "name": "Rodrigo Pacheco Mendez",
+      "country": "MEX",
+      "points": 210,
+      "playerId": "pacheco-mendez",
+      "league": "ATP"
+    },
+    {
+      "rank": 249,
+      "name": "Franco Roncadelli",
+      "country": "URU",
+      "points": 210,
+      "playerId": "roncadelli",
+      "league": "ATP"
+    },
+    {
+      "rank": 250,
+      "name": "Hans Rehberg Max",
+      "country": "GER",
+      "points": 210,
+      "playerId": "rehberg-2d8d7",
+      "league": "ATP"
+    },
+    {
+      "rank": 251,
+      "name": "Matthew Dellavedova",
+      "country": "AUS",
+      "points": 210,
+      "playerId": "dellavedova",
+      "league": "ATP"
+    },
+    {
+      "rank": 252,
+      "name": "Andrej Nedic",
+      "country": "BOS",
+      "points": 209,
+      "playerId": "nedic",
+      "league": "ATP"
+    },
+    {
+      "rank": 253,
+      "name": "Matias Soto",
+      "country": "CHI",
+      "points": 208,
+      "playerId": "soto-fec8d",
+      "league": "ATP"
+    },
+    {
+      "rank": 254,
+      "name": "Philip Henning",
+      "country": "RSA",
+      "points": 208,
+      "playerId": "henning-421d6",
+      "league": "ATP"
+    },
+    {
+      "rank": 255,
+      "name": "August Holmgren",
+      "country": "DEN",
+      "points": 207,
+      "playerId": "holmgren-a5794",
+      "league": "ATP"
+    },
+    {
+      "rank": 256,
+      "name": "Charles Broom",
+      "country": "GBR",
+      "points": 206,
+      "playerId": "broom-cb719",
+      "league": "ATP"
+    },
+    {
+      "rank": 257,
+      "name": "Max Basing",
+      "country": "GBR",
+      "points": 204,
+      "playerId": "basing",
+      "league": "ATP"
+    },
+    {
+      "rank": 258,
+      "name": "Dylan Dietrich",
+      "country": "SUI",
+      "points": 204,
+      "playerId": "dietrich-fa350",
+      "league": "ATP"
+    },
+    {
+      "rank": 259,
+      "name": "Buvaysar Gadamauri",
+      "country": "BEL",
+      "points": 204,
+      "playerId": "gadamauri-10965",
+      "league": "ATP"
+    },
+    {
+      "rank": 260,
+      "name": "Manuel La Serna Juan",
+      "country": "ARG",
+      "points": 204,
+      "playerId": "la-serna",
+      "league": "ATP"
+    },
+    {
+      "rank": 261,
+      "name": "Alberto Olivieri Genaro",
+      "country": "ARG",
+      "points": 203,
+      "playerId": "olivieri-ff875",
+      "league": "ATP"
+    },
+    {
+      "rank": 262,
+      "name": "Reilly Opelka",
+      "country": "USA",
+      "points": 200,
+      "playerId": "opelka",
+      "league": "ATP"
+    },
+    {
+      "rank": 263,
+      "name": "Mili Poljicak",
+      "country": "CRO",
+      "points": 199,
+      "playerId": "poljicak",
+      "league": "ATP"
+    },
+    {
+      "rank": 264,
+      "name": "Jay Friend",
+      "country": "JPN",
+      "points": 198,
+      "playerId": "friend",
+      "league": "ATP"
+    },
+    {
+      "rank": 265,
+      "name": "Mihai Papoe Radu",
+      "country": "ROU",
+      "points": 198,
+      "playerId": "papoe",
+      "league": "ATP"
+    },
+    {
+      "rank": 266,
+      "name": "Hynek Barton",
+      "country": "CZE",
+      "points": 194,
+      "playerId": "barton-61a23",
+      "league": "ATP"
+    },
+    {
+      "rank": 267,
+      "name": "Sumit Nagal",
+      "country": "IND",
+      "points": 193,
+      "playerId": "nagal",
+      "league": "ATP"
+    },
+    {
+      "rank": 268,
+      "name": "Pierre-Hugues Herbert",
+      "country": "FRA",
+      "points": 191,
+      "playerId": "herbert-fa5ad",
+      "league": "ATP"
+    },
+    {
+      "rank": 269,
+      "name": "Stefan Kozlov",
+      "country": "USA",
+      "points": 191,
+      "playerId": "kozlov",
+      "league": "ATP"
+    },
+    {
+      "rank": 270,
+      "name": "Petr Nesterov",
+      "country": "BUL",
+      "points": 191,
+      "playerId": "nesterov-34bdf",
+      "league": "ATP"
+    },
+    {
+      "rank": 271,
+      "name": "(2001) Cretu Cezar",
+      "country": "ROU",
+      "points": 190,
+      "playerId": "cretu-93488",
+      "league": "ATP"
+    },
+    {
+      "rank": 272,
+      "name": "Calvin Hemery",
+      "country": "FRA",
+      "points": 190,
+      "playerId": "hemery",
+      "league": "ATP"
+    },
+    {
+      "rank": 273,
+      "name": "Stefano Napolitano",
+      "country": "ITA",
+      "points": 188,
+      "playerId": "napolitano",
+      "league": "ATP"
+    },
+    {
+      "rank": 274,
+      "name": "Cristian Jianu Filip",
+      "country": "ROU",
+      "points": 188,
+      "playerId": "jianu-c67fb",
+      "league": "ATP"
+    },
+    {
+      "rank": 275,
+      "name": "Lorenzo Giustino",
+      "country": "ITA",
+      "points": 186,
+      "playerId": "giustino-1d545",
+      "league": "ATP"
+    },
+    {
+      "rank": 276,
+      "name": "Murphy Cassone",
+      "country": "USA",
+      "points": 185,
+      "playerId": "cassone",
+      "league": "ATP"
+    },
+    {
+      "rank": 277,
+      "name": "James McCabe",
+      "country": "AUS",
+      "points": 185,
+      "playerId": "mccabe-b71c6",
+      "league": "ATP"
+    },
+    {
+      "rank": 278,
+      "name": "Pedro Boscardin Dias",
+      "country": "BRA",
+      "points": 185,
+      "playerId": "boscardin-dias-3afa8",
+      "league": "ATP"
+    },
+    {
+      "rank": 279,
+      "name": "Alastair Gray",
+      "country": "GBR",
+      "points": 184,
+      "playerId": "gray-0bd9f",
+      "league": "ATP"
+    },
+    {
+      "rank": 280,
+      "name": "Marc-Andrea Huesler",
+      "country": "SUI",
+      "points": 183,
+      "playerId": "huesler",
+      "league": "ATP"
+    },
+    {
+      "rank": 281,
+      "name": "Yanki Erel",
+      "country": "TUR",
+      "points": 183,
+      "playerId": "erel",
+      "league": "ATP"
+    },
+    {
+      "rank": 282,
+      "name": "Stefan Dostanic",
+      "country": "USA",
+      "points": 181,
+      "playerId": "dostanic",
+      "league": "ATP"
+    },
+    {
+      "rank": 283,
+      "name": "Florent Bax",
+      "country": "FRA",
+      "points": 180,
+      "playerId": "bax-6f3c7",
+      "league": "ATP"
+    },
+    {
+      "rank": 284,
+      "name": "Martin Krumich",
+      "country": "CZE",
+      "points": 180,
+      "playerId": "krumich",
+      "league": "ATP"
+    },
+    {
+      "rank": 285,
+      "name": "Igor Marcondes",
+      "country": "BRA",
+      "points": 177,
+      "playerId": "marcondes",
+      "league": "ATP"
+    },
+    {
+      "rank": 286,
+      "name": "Abedallah Shelbayh",
+      "country": "JOR",
+      "points": 177,
+      "playerId": "shelbayh",
+      "league": "ATP"
+    },
+    {
+      "rank": 287,
+      "name": "Max Schoenhaus",
+      "country": "GER",
+      "points": 176,
+      "playerId": "schoenhaus",
+      "league": "ATP"
+    },
+    {
+      "rank": 288,
+      "name": "Georgii Kravchenko",
+      "country": "UKR",
+      "points": 176,
+      "playerId": "kravchenko-62c4a",
+      "league": "ATP"
+    },
+    {
+      "rank": 289,
+      "name": "Oriol Roca Batalla",
+      "country": "ESP",
+      "points": 175,
+      "playerId": "roca-batalla",
+      "league": "ATP"
+    },
+    {
+      "rank": 290,
+      "name": "Enrico Dalla Valle",
+      "country": "ITA",
+      "points": 174,
+      "playerId": "dalla-valle",
+      "league": "ATP"
+    },
+    {
+      "rank": 291,
+      "name": "Guy Den Ouden",
+      "country": "NED",
+      "points": 173,
+      "playerId": "den-ouden",
+      "league": "ATP"
+    },
+    {
+      "rank": 292,
+      "name": "Nick Hardt",
+      "country": "DOM",
+      "points": 173,
+      "playerId": "hardt-79c77",
+      "league": "ATP"
+    },
+    {
+      "rank": 293,
+      "name": "Henri Squire",
+      "country": "GER",
+      "points": 173,
+      "playerId": "squire",
+      "league": "ATP"
+    },
+    {
+      "rank": 294,
+      "name": "Fajing Sun",
+      "country": "CHN",
+      "points": 173,
+      "playerId": "sun-2f389",
+      "league": "ATP"
+    },
+    {
+      "rank": 295,
+      "name": "Jonas Forejtek",
+      "country": "CZE",
+      "points": 172,
+      "playerId": "forejtek",
+      "league": "ATP"
+    },
+    {
+      "rank": 296,
+      "name": "Sean Cuenin",
+      "country": "FRA",
+      "points": 171,
+      "playerId": "cuenin",
+      "league": "ATP"
+    },
+    {
+      "rank": 297,
+      "name": "Daniel Michalski",
+      "country": "POL",
+      "points": 171,
+      "playerId": "michalski-8906f",
+      "league": "ATP"
+    },
+    {
+      "rank": 298,
+      "name": "Filippo Romano",
+      "country": "ITA",
+      "points": 171,
+      "playerId": "romano-cf2f0",
+      "league": "ATP"
+    },
+    {
+      "rank": 299,
+      "name": "Michele Ribecai",
+      "country": "ITA",
+      "points": 171,
+      "playerId": "ribecai",
+      "league": "ATP"
+    },
+    {
+      "rank": 300,
+      "name": "Samuele Pieri",
+      "country": "ITA",
+      "points": 171,
+      "playerId": "pieri-b83b4",
+      "league": "ATP"
+    },
+    {
+      "rank": 301,
+      "name": "Oliver Tarvet",
+      "country": "GBR",
+      "points": 170,
+      "playerId": "tarvet",
+      "league": "ATP"
+    },
+    {
+      "rank": 302,
+      "name": "Florian Broska",
+      "country": "GER",
+      "points": 170,
+      "playerId": "broska",
+      "league": "ATP"
+    },
+    {
+      "rank": 303,
+      "name": "Yi Zhou",
+      "country": "CHN",
+      "points": 168,
+      "playerId": "zhou-472f7",
+      "league": "ATP"
+    },
+    {
+      "rank": 304,
+      "name": "Emil Overbeck Carl",
+      "country": "DEN",
+      "points": 168,
+      "playerId": "overbeck",
+      "league": "ATP"
+    },
+    {
+      "rank": 305,
+      "name": "Dali Blanch",
+      "country": "USA",
+      "points": 168,
+      "playerId": "blanch-5d667",
+      "league": "ATP"
+    },
+    {
+      "rank": 306,
+      "name": "Tiago Pereira",
+      "country": "POR",
+      "points": 168,
+      "playerId": "pereira-96af4",
+      "league": "ATP"
+    },
+    {
+      "rank": 307,
+      "name": "Alejo Sanchez Quilez",
+      "country": "ESP",
+      "points": 167,
+      "playerId": "sanchez-quilez",
+      "league": "ATP"
+    },
+    {
+      "rank": 308,
+      "name": "Thomas Faurel",
+      "country": "FRA",
+      "points": 166,
+      "playerId": "faurel-53b9f",
+      "league": "ATP"
+    },
+    {
+      "rank": 309,
+      "name": "Lucas Poullain",
+      "country": "FRA",
+      "points": 166,
+      "playerId": "poullain",
+      "league": "ATP"
+    },
+    {
+      "rank": 310,
+      "name": "Giles Hussey",
+      "country": "GBR",
+      "points": 165,
+      "playerId": "hussey-d2863",
+      "league": "ATP"
+    },
+    {
+      "rank": 311,
+      "name": "Ferreira Silva Frederico",
+      "country": "POR",
+      "points": 164,
+      "playerId": "silva-cb43c",
+      "league": "ATP"
+    },
+    {
+      "rank": 312,
+      "name": "Federico Bondioli",
+      "country": "ITA",
+      "points": 164,
+      "playerId": "bondioli",
+      "league": "ATP"
+    },
+    {
+      "rank": 313,
+      "name": "Carlos Sanchez Jover",
+      "country": "ESP",
+      "points": 164,
+      "playerId": "sanchez-jover",
+      "league": "ATP"
+    },
+    {
+      "rank": 314,
+      "name": "Petr Bar Biryukov",
+      "country": "RUS",
+      "points": 163,
+      "playerId": "bar-biryukov",
+      "league": "ATP"
+    },
+    {
+      "rank": 315,
+      "name": "Sandro Kopp",
+      "country": "AUT",
+      "points": 162,
+      "playerId": "kopp-0e635",
+      "league": "ATP"
+    },
+    {
+      "rank": 316,
+      "name": "Anton Matusevich",
+      "country": "GBR",
+      "points": 161,
+      "playerId": "matusevich",
+      "league": "ATP"
+    },
+    {
+      "rank": 317,
+      "name": "Francesco Forti",
+      "country": "ITA",
+      "points": 161,
+      "playerId": "forti-f61d4",
+      "league": "ATP"
+    },
+    {
+      "rank": 318,
+      "name": "Mees Rottgering",
+      "country": "NED",
+      "points": 159,
+      "playerId": "rottgering",
+      "league": "ATP"
+    },
+    {
+      "rank": 319,
+      "name": "Gonzalo Villanueva",
+      "country": "ARG",
+      "points": 159,
+      "playerId": "villanueva-55ff0",
+      "league": "ATP"
+    },
+    {
+      "rank": 320,
+      "name": "Oliver Crawford",
+      "country": "GBR",
+      "points": 158,
+      "playerId": "crawford-71058",
+      "league": "ATP"
+    },
+    {
+      "rank": 321,
+      "name": "Cruz Hewitt",
+      "country": "AUS",
+      "points": 158,
+      "playerId": "hewitt-d8622",
+      "league": "ATP"
+    },
+    {
+      "rank": 322,
+      "name": "Mert Alkaya",
+      "country": "TUR",
+      "points": 158,
+      "playerId": "alkaya",
+      "league": "ATP"
+    },
+    {
+      "rank": 323,
+      "name": "Bautista Torres Juan",
+      "country": "ARG",
+      "points": 158,
+      "playerId": "torres-dc0bf",
+      "league": "ATP"
+    },
+    {
+      "rank": 324,
+      "name": "Aidan Mayo",
+      "country": "USA",
+      "points": 157,
+      "playerId": "mayo-58e8a",
+      "league": "ATP"
+    },
+    {
+      "rank": 325,
+      "name": "Laurent Lokoli",
+      "country": "FRA",
+      "points": 157,
+      "playerId": "lokoli",
+      "league": "ATP"
+    },
+    {
+      "rank": 326,
+      "name": "Emanuel Ambrogi Luciano",
+      "country": "ARG",
+      "points": 157,
+      "playerId": "ambrogi",
+      "league": "ATP"
+    },
+    {
+      "rank": 327,
+      "name": "Daniel Milavsky",
+      "country": "USA",
+      "points": 155,
+      "playerId": "milavsky",
+      "league": "ATP"
+    },
+    {
+      "rank": 328,
+      "name": "Sergey Fomin",
+      "country": "UZB",
+      "points": 155,
+      "playerId": "fomin",
+      "league": "ATP"
+    },
+    {
+      "rank": 329,
+      "name": "Patrick Schoen",
+      "country": "SUI",
+      "points": 152,
+      "playerId": "schoen-d4727",
+      "league": "ATP"
+    },
+    {
+      "rank": 330,
+      "name": "Miguel Damas",
+      "country": "ESP",
+      "points": 152,
+      "playerId": "damas",
+      "league": "ATP"
+    },
+    {
+      "rank": 331,
+      "name": "Hsiou Hsu Yu",
+      "country": "CHI",
+      "points": 151,
+      "playerId": "hsu-b2ce0",
+      "league": "ATP"
+    },
+    {
+      "rank": 332,
+      "name": "Marko Topo",
+      "country": "GER",
+      "points": 150,
+      "playerId": "topo-77408",
+      "league": "ATP"
+    },
+    {
+      "rank": 333,
+      "name": "Ugo Blanchet",
+      "country": "FRA",
+      "points": 150,
+      "playerId": "blanchet",
+      "league": "ATP"
+    },
+    {
+      "rank": 334,
+      "name": "Alberto Caniato Carlo",
+      "country": "ITA",
+      "points": 147,
+      "playerId": "caniato",
+      "league": "ATP"
+    },
+    {
+      "rank": 335,
+      "name": "Valerio Aboian",
+      "country": "ARG",
+      "points": 147,
+      "playerId": "aboian-f7ddc",
+      "league": "ATP"
+    },
+    {
+      "rank": 336,
+      "name": "Joaquin Aguilar Cardozo",
+      "country": "URU",
+      "points": 146,
+      "playerId": "aguilar-cardozo",
+      "league": "ATP"
+    },
+    {
+      "rank": 337,
+      "name": "Timo Legout",
+      "country": "FRA",
+      "points": 145,
+      "playerId": "legout",
+      "league": "ATP"
+    },
+    {
+      "rank": 338,
+      "name": "Philip Sekulic",
+      "country": "AUS",
+      "points": 145,
+      "playerId": "sekulic-13abc",
+      "league": "ATP"
+    },
+    {
+      "rank": 339,
+      "name": "Nicolas Kicker",
+      "country": "ARG",
+      "points": 145,
+      "playerId": "kicker",
+      "league": "ATP"
+    },
+    {
+      "rank": 340,
+      "name": "Robert Strombachs",
+      "country": "LAT",
+      "points": 145,
+      "playerId": "strombachs",
+      "league": "ATP"
+    },
+    {
+      "rank": 341,
+      "name": "Juan Estevez",
+      "country": "ARG",
+      "points": 144,
+      "playerId": "estevez-4ab72",
+      "league": "ATP"
+    },
+    {
+      "rank": 342,
+      "name": "Michael Geerts",
+      "country": "BEL",
+      "points": 143,
+      "playerId": "geerts",
+      "league": "ATP"
+    },
+    {
+      "rank": 343,
+      "name": "Andrej Martin",
+      "country": "SVK",
+      "points": 142,
+      "playerId": "martin-3dfa5",
+      "league": "ATP"
+    },
+    {
+      "rank": 344,
+      "name": "Moez Echargui",
+      "country": "TUN",
+      "points": 140,
+      "playerId": "echargui",
+      "league": "ATP"
+    },
+    {
+      "rank": 345,
+      "name": "Eduardo Ribeiro",
+      "country": "BRA",
+      "points": 139,
+      "playerId": "ribeiro-a7963",
+      "league": "ATP"
+    },
+    {
+      "rank": 346,
+      "name": "Jake Delaney",
+      "country": "AUS",
+      "points": 139,
+      "playerId": "delaney",
+      "league": "ATP"
+    },
+    {
+      "rank": 347,
+      "name": "Franco Agamenone",
+      "country": "ITA",
+      "points": 139,
+      "playerId": "agamenone",
+      "league": "ATP"
+    },
+    {
+      "rank": 348,
+      "name": "Akira Santillan",
+      "country": "AUS",
+      "points": 139,
+      "playerId": "santillan-29bed",
+      "league": "ATP"
+    },
+    {
+      "rank": 349,
+      "name": "Alibek Kachmazov",
+      "country": "RUS",
+      "points": 138,
+      "playerId": "kachmazov",
+      "league": "ATP"
+    },
+    {
+      "rank": 350,
+      "name": "Andres Martin",
+      "country": "USA",
+      "points": 138,
+      "playerId": "martin-e6e6e",
+      "league": "ATP"
+    },
+    {
+      "rank": 351,
+      "name": "Pablo Ficovich Juan",
+      "country": "ARG",
+      "points": 137,
+      "playerId": "ficovich",
+      "league": "ATP"
+    },
+    {
+      "rank": 352,
+      "name": "Elahi Galan Daniel",
+      "country": "COL",
+      "points": 137,
+      "playerId": "galan-e4b30",
+      "league": "ATP"
+    },
+    {
+      "rank": 353,
+      "name": "Massimo Giunta",
+      "country": "ITA",
+      "points": 137,
+      "playerId": "giunta-87d40",
+      "league": "ATP"
+    },
+    {
+      "rank": 354,
+      "name": "Daniel Masur",
+      "country": "GER",
+      "points": 135,
+      "playerId": "masur-d87d6",
+      "league": "ATP"
+    },
+    {
+      "rank": 355,
+      "name": "Dimitar Kuzmanov",
+      "country": "BUL",
+      "points": 135,
+      "playerId": "kuzmanov",
+      "league": "ATP"
+    },
+    {
+      "rank": 356,
+      "name": "Andrey Chepelev",
+      "country": "RUS",
+      "points": 135,
+      "playerId": "chepelev-1d3cb",
+      "league": "ATP"
+    },
+    {
+      "rank": 357,
+      "name": "Yosuke Watanuki",
+      "country": "JPN",
+      "points": 134,
+      "playerId": "watanuki-223ad",
+      "league": "ATP"
+    },
+    {
+      "rank": 358,
+      "name": "Tung-lin Wu",
+      "country": "CHI",
+      "points": 134,
+      "playerId": "wu-f664e",
+      "league": "ATP"
+    },
+    {
+      "rank": 359,
+      "name": "Mathys Erhard",
+      "country": "FRA",
+      "points": 134,
+      "playerId": "erhard",
+      "league": "ATP"
+    },
+    {
+      "rank": 360,
+      "name": "Maria Zarate Carlos",
+      "country": "ARG",
+      "points": 134,
+      "playerId": "zarate-fab15",
+      "league": "ATP"
+    },
+    {
+      "rank": 361,
+      "name": "Norbert Gombos",
+      "country": "SVK",
+      "points": 133,
+      "playerId": "gombos",
+      "league": "ATP"
+    },
+    {
+      "rank": 362,
+      "name": "Tommaso Compagnucci",
+      "country": "ITA",
+      "points": 133,
+      "playerId": "compagnucci-d4f62",
+      "league": "ATP"
+    },
+    {
+      "rank": 363,
+      "name": "Tiago Torres",
+      "country": "POR",
+      "points": 133,
+      "playerId": "torres-a7519",
+      "league": "ATP"
+    },
+    {
+      "rank": 364,
+      "name": "Lucio Ratti",
+      "country": "ARG",
+      "points": 133,
+      "playerId": "ratti-d9413",
+      "league": "ATP"
+    },
+    {
+      "rank": 365,
+      "name": "Aziz Dougaz",
+      "country": "TUN",
+      "points": 132,
+      "playerId": "dougaz",
+      "league": "ATP"
+    },
+    {
+      "rank": 366,
+      "name": "Henry Bernet",
+      "country": "SUI",
+      "points": 131,
+      "playerId": "bernet",
+      "league": "ATP"
+    },
+    {
+      "rank": 367,
+      "name": "Raphael Perot",
+      "country": "FRA",
+      "points": 130,
+      "playerId": "perot",
+      "league": "ATP"
+    },
+    {
+      "rank": 368,
+      "name": "Jacopo Vasami",
+      "country": "ITA",
+      "points": 129,
+      "playerId": "vasami-a02e2",
+      "league": "ATP"
+    },
+    {
+      "rank": 369,
+      "name": "Eliakim Coulibaly",
+      "country": "IVO",
+      "points": 129,
+      "playerId": "coulibaly-f4551",
+      "league": "ATP"
+    },
+    {
+      "rank": 370,
+      "name": "Omar Jasika",
+      "country": "AUS",
+      "points": 129,
+      "playerId": "jasika",
+      "league": "ATP"
+    },
+    {
+      "rank": 371,
+      "name": "Cruz Martin Manzano Juan",
+      "country": "ITA",
+      "points": 128,
+      "playerId": "martin-manzano",
+      "league": "ATP"
+    },
+    {
+      "rank": 372,
+      "name": "Mikhail Kukushkin",
+      "country": "KAZ",
+      "points": 127,
+      "playerId": "kukushkin",
+      "league": "ATP"
+    },
+    {
+      "rank": 373,
+      "name": "Felipe Meligeni Rodrigues Alves",
+      "country": "BRA",
+      "points": 127,
+      "playerId": "meligeni-rodrigues-alves",
+      "league": "ATP"
+    },
+    {
+      "rank": 374,
+      "name": "Ivan Marrero Curbelo",
+      "country": "ESP",
+      "points": 127,
+      "playerId": "marrero-curbelo",
+      "league": "ATP"
+    },
+    {
+      "rank": 375,
+      "name": "Gabriele Piraino",
+      "country": "ITA",
+      "points": 127,
+      "playerId": "piraino",
+      "league": "ATP"
+    },
+    {
+      "rank": 376,
+      "name": "Manas Dhamne",
+      "country": "IND",
+      "points": 127,
+      "playerId": "dhamne",
+      "league": "ATP"
+    },
+    {
+      "rank": 377,
+      "name": "Ryan Nijboer",
+      "country": "NED",
+      "points": 127,
+      "playerId": "nijboer",
+      "league": "ATP"
+    },
+    {
+      "rank": 378,
+      "name": "Sebastian Sorger",
+      "country": "AUT",
+      "points": 126,
+      "playerId": "sorger",
+      "league": "ATP"
+    },
+    {
+      "rank": 379,
+      "name": "Ognjen Milic",
+      "country": "SRB",
+      "points": 126,
+      "playerId": "milic-b10f4",
+      "league": "ATP"
+    },
+    {
+      "rank": 380,
+      "name": "Pavel Lagutin",
+      "country": "RUS",
+      "points": 126,
+      "playerId": "lagutin-d90ac",
+      "league": "ATP"
+    },
+    {
+      "rank": 381,
+      "name": "Paul Jubb",
+      "country": "GBR",
+      "points": 126,
+      "playerId": "jubb",
+      "league": "ATP"
+    },
+    {
+      "rank": 382,
+      "name": "Max Wiskandt",
+      "country": "GER",
+      "points": 124,
+      "playerId": "wiskandt",
+      "league": "ATP"
+    },
+    {
+      "rank": 383,
+      "name": "Jack Kennedy",
+      "country": "USA",
+      "points": 123,
+      "playerId": "kennedy-81205",
+      "league": "ATP"
+    },
+    {
+      "rank": 384,
+      "name": "Eric Vanshelboim",
+      "country": "UKR",
+      "points": 122,
+      "playerId": "vanshelboim",
+      "league": "ATP"
+    },
+    {
+      "rank": 385,
+      "name": "Edward Winter",
+      "country": "AUS",
+      "points": 121,
+      "playerId": "winter-e2184",
+      "league": "ATP"
+    },
+    {
+      "rank": 386,
+      "name": "Ozan Baris",
+      "country": "USA",
+      "points": 120,
+      "playerId": "baris",
+      "league": "ATP"
+    },
+    {
+      "rank": 387,
+      "name": "Duje Ajdukovic",
+      "country": "CRO",
+      "points": 120,
+      "playerId": "ajdukovic",
+      "league": "ATP"
+    },
+    {
+      "rank": 388,
+      "name": "(2001) Alves Mateus",
+      "country": "BRA",
+      "points": 119,
+      "playerId": "alves-4adf9",
+      "league": "ATP"
+    },
+    {
+      "rank": 389,
+      "name": "Kang Leong Mitsuki Wei",
+      "country": "MAL",
+      "points": 119,
+      "playerId": "leong-e28bd",
+      "league": "ATP"
+    },
+    {
+      "rank": 390,
+      "name": "Izan Almazan Valiente",
+      "country": "ESP",
+      "points": 119,
+      "playerId": "almazan-valiente",
+      "league": "ATP"
+    },
+    {
+      "rank": 391,
+      "name": "Thanasi Kokkinakis",
+      "country": "AUS",
+      "points": 118,
+      "playerId": "kokkinakis-7b2e6",
+      "league": "ATP"
+    },
+    {
+      "rank": 392,
+      "name": "Sebastian Gorzny",
+      "country": "USA",
+      "points": 118,
+      "playerId": "gorzny",
+      "league": "ATP"
+    },
+    {
+      "rank": 393,
+      "name": "Olle Wallin",
+      "country": "SWE",
+      "points": 117,
+      "playerId": "wallin-c26c8",
+      "league": "ATP"
+    },
+    {
+      "rank": 394,
+      "name": "Arthur Nagel",
+      "country": "FRA",
+      "points": 117,
+      "playerId": "nagel-eaef3",
+      "league": "ATP"
+    },
+    {
+      "rank": 395,
+      "name": "Marek Gengel",
+      "country": "CZE",
+      "points": 115,
+      "playerId": "gengel",
+      "league": "ATP"
+    },
+    {
+      "rank": 396,
+      "name": "Johan Nikles",
+      "country": "SUI",
+      "points": 115,
+      "playerId": "nikles",
+      "league": "ATP"
+    },
+    {
+      "rank": 397,
+      "name": "William Donald Matthew",
+      "country": "CZE",
+      "points": 115,
+      "playerId": "donald-1f277",
+      "league": "ATP"
+    },
+    {
+      "rank": 398,
+      "name": "Niels Visker",
+      "country": "NED",
+      "points": 114,
+      "playerId": "visker",
+      "league": "ATP"
+    },
+    {
+      "rank": 399,
+      "name": "Kasidit Samrej",
+      "country": "THA",
+      "points": 114,
+      "playerId": "samrej-f05ce",
+      "league": "ATP"
+    },
+    {
+      "rank": 400,
+      "name": "Semen Pankin",
+      "country": "RUS",
+      "points": 113,
+      "playerId": "pankin",
+      "league": "ATP"
+    }
+  ]
+}
