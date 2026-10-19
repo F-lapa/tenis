@@ -244,6 +244,53 @@ async function fetchFromWikipedia() {
   };
 }
 
+
+const RACE_OUT_FILE = join(ROOT, 'data', 'race-ranking.json');
+
+// ─── Race singles (Corrida para Turim) ─────────────────────────────────────
+async function fetchRaceFromTennisExplorer() {
+  const seen = new Set();
+  const allPlayers = [];
+
+  console.log('[TE Race] Lendo seletor de datas…');
+  const baseHtml = await fetchText('https://www.tennisexplorer.com/ranking/atp-men/?t=race');
+  const dates = parseAvailableDates(baseHtml);
+  if (!dates.length) {
+    throw new Error('TennisExplorer Race: nenhuma data encontrada');
+  }
+
+  const rankingDate = dates[0];
+  console.log(`[TE Race] Usando race de ${rankingDate}`);
+
+  for (let page = 1; page <= 10; page++) {
+    const url =
+      page === 1
+        ? `https://www.tennisexplorer.com/ranking/atp-men/?t=race&date=${rankingDate}`
+        : `https://www.tennisexplorer.com/ranking/atp-men/?t=race&date=${rankingDate}&page=${page}`;
+
+    console.log(`[TE Race] página ${page}…`);
+    const html = await fetchText(url);
+    const batch = extractPlayersFromHtml(html, seen);
+    console.log(`[TE Race] página ${page}: +${batch.length}`);
+    allPlayers.push(...batch);
+    if (batch.length === 0) break;
+    await new Promise(r => setTimeout(r, 350));
+  }
+
+  if (allPlayers.length < 20) {
+    throw new Error(`TennisExplorer Race retornou só ${allPlayers.length} jogadores`);
+  }
+
+  allPlayers.sort((a, b) => a.rank - b.rank || b.points - a.points);
+  const labelDate = parseRankingDateLabel(baseHtml) || rankingDate;
+
+  return {
+    source: 'tennisexplorer.com/race',
+    rankingDate: rankingDate || labelDate,
+    players: allPlayers
+  };
+}
+
 async function main() {
   console.log('[update-ranking] Fonte gratuita (sem API paga)…');
 
@@ -284,6 +331,32 @@ async function main() {
         .map(p => `${p.rank}. ${p.name} (${p.points})`)
         .join(' | ')
   );
+
+  // Race (Corrida para Turim)
+  try {
+    const race = await fetchRaceFromTennisExplorer();
+    const racePayload = {
+      source: race.source,
+      sourceUrl: `https://www.tennisexplorer.com/ranking/atp-men/?t=race&date=${race.rankingDate}`,
+      rankingDate: race.rankingDate,
+      updatedAt: now.toISOString(),
+      count: race.players.length,
+      players: race.players
+    };
+    await writeFile(RACE_OUT_FILE, JSON.stringify(racePayload, null, 2) + '\n', 'utf8');
+    console.log(
+      `[update-ranking] Race OK → ${RACE_OUT_FILE} (${race.players.length} jogadores, data: ${race.rankingDate})`
+    );
+    console.log(
+      'Race Top 5: ' +
+        race.players
+          .slice(0, 5)
+          .map(p => `${p.rank}. ${p.name} (${p.points})`)
+          .join(' | ')
+    );
+  } catch (raceErr) {
+    console.warn('[update-ranking] Race falhou (ranking ATP já salvo):', raceErr.message);
+  }
 }
 
 main().catch(err => {
