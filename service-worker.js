@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fernando-lapa-dashboard-v5';
+const CACHE_NAME = 'fernando-lapa-dashboard-v8';
 const CORE_FILES = [
   './',
   './index.html',
