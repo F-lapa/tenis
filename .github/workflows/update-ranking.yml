@@ -3,8 +3,10 @@ name: Atualizar ranking ATP
 on:
   workflow_dispatch:
   schedule:
-    # Segunda 16:00 UTC — depois da ATP e do TennisExplorer publicarem
+    # Segunda 16:00 UTC — após publicação ATP / TennisExplorer
     - cron: "0 16 * * 1"
+    # Segunda 20:00 UTC — segunda chance se a corrida atrasar
+    - cron: "0 20 * * 1"
 
 permissions:
   contents: write
@@ -12,7 +14,7 @@ permissions:
 jobs:
   atualizar-ranking:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 15
 
     steps:
       - name: Baixar repositório
@@ -23,26 +25,35 @@ jobs:
         with:
           node-version: "22"
 
-      - name: Atualizar ranking (gratuito)
+      - name: Atualizar ranking ATP + Race (gratuito)
         run: npm run update-ranking
 
-      - name: Salvar ranking no repositório
+      - name: Verificar arquivos gerados
         run: |
           if [ ! -f data/ranking.json ]; then
             echo "::error::data/ranking.json não foi gerado"
             exit 1
           fi
+          if [ ! -f data/race-ranking.json ]; then
+            echo "::error::data/race-ranking.json não foi gerado (Corrida Turim)"
+            exit 1
+          fi
+          echo "Ranking: $(wc -c < data/ranking.json) bytes"
+          echo "Race: $(wc -c < data/race-ranking.json) bytes"
+          node -e "const r=require('./data/race-ranking.json'); if(!r.players||r.players.length<20) process.exit(1); console.log('Race players:', r.players.length, 'date:', r.rankingDate);"
 
+      - name: Salvar ranking no repositório
+        run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add data/ranking.json
+          git add data/ranking.json data/race-ranking.json
 
           if git diff --cached --quiet; then
-            echo "Sem alteração no ranking."
+            echo "Sem alteração no ranking/race (já atualizado)."
             exit 0
           fi
 
-          git commit -m "Atualiza ranking ATP ($(date -u +%Y-%m-%d))"
+          git commit -m "Atualiza ranking ATP + Race ($(date -u +%Y-%m-%d))"
           git push
-          echo "Ranking publicado com sucesso."
+          echo "Ranking ATP + Race publicados com sucesso."
