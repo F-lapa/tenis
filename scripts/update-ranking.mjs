@@ -332,31 +332,47 @@ async function main() {
         .join(' | ')
   );
 
-  // Race (Corrida para Turim)
-  try {
-    const race = await fetchRaceFromTennisExplorer();
-    const racePayload = {
-      source: race.source,
-      sourceUrl: `https://www.tennisexplorer.com/ranking/atp-men/?t=race&date=${race.rankingDate}`,
-      rankingDate: race.rankingDate,
-      updatedAt: now.toISOString(),
-      count: race.players.length,
-      players: race.players
-    };
-    await writeFile(RACE_OUT_FILE, JSON.stringify(racePayload, null, 2) + '\n', 'utf8');
-    console.log(
-      `[update-ranking] Race OK → ${RACE_OUT_FILE} (${race.players.length} jogadores, data: ${race.rankingDate})`
-    );
-    console.log(
-      'Race Top 5: ' +
-        race.players
-          .slice(0, 5)
-          .map(p => `${p.rank}. ${p.name} (${p.points})`)
-          .join(' | ')
-    );
-  } catch (raceErr) {
-    console.warn('[update-ranking] Race falhou (ranking ATP já salvo):', raceErr.message);
+  // Race (Corrida para Turim) — obrigatória, com retries
+  let race = null;
+  let lastRaceErr = null;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      console.log(`[update-ranking] Race tentativa ${attempt}/3…`);
+      race = await fetchRaceFromTennisExplorer();
+      lastRaceErr = null;
+      break;
+    } catch (err) {
+      lastRaceErr = err;
+      console.warn(`[update-ranking] Race tentativa ${attempt} falhou:`, err.message || err);
+      if (attempt < 3) await new Promise(r => setTimeout(r, 2000 * attempt));
+    }
   }
+  if (!race || !Array.isArray(race.players) || race.players.length < 20) {
+    throw new Error(
+      `Race (Corrida Turim) não atualizou: ${lastRaceErr && lastRaceErr.message ? lastRaceErr.message : 'dados insuficientes'}`
+    );
+  }
+  const racePayload = {
+    source: race.source,
+    sourceUrl: `https://www.tennisexplorer.com/ranking/atp-men/?t=race&date=${race.rankingDate}`,
+    rankingDate: race.rankingDate,
+    updatedAt: now.toISOString(),
+    count: race.players.length,
+    players: race.players
+  };
+  await mkdir(dirname(RACE_OUT_FILE), { recursive: true });
+  await writeFile(RACE_OUT_FILE, JSON.stringify(racePayload, null, 2) + '\n', 'utf8');
+  console.log(
+    `[update-ranking] Race OK → ${RACE_OUT_FILE} (${race.players.length} jogadores, data: ${race.rankingDate})`
+  );
+  console.log(
+    'Race Top 5: ' +
+      race.players
+        .slice(0, 5)
+        .map(p => `${p.rank}. ${p.name} (${p.points})`)
+        .join(' | ')
+  );
+
 }
 
 main().catch(err => {
